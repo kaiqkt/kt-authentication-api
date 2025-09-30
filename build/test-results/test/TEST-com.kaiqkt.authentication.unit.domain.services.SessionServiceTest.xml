@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2025-09-30T21:37:12" hostname="MacBook-Air-de-Kaique.local" time="0.421">
+  <properties/>
+  <testcase name="given a id, refresh token and a user should create a session()" classname="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" time="0.152"/>
+  <testcase name="given a id and a user id when session does not exist should throw a domain exception()" classname="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" time="0.009"/>
+  <testcase name="given a session id when session exist should return it()" classname="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" time="0.096"/>
+  <testcase name="given a session id when session not exist should return null()" classname="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" time="0.004"/>
+  <testcase name="given a refresh token when not exist a session should thrown a exception()" classname="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" time="0.008"/>
+  <testcase name="given a refresh token when exist a session should return successfully()" classname="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" time="0.077"/>
+  <testcase name="given a id and a user id when session exist should revoke successfully()" classname="com.kaiqkt.authentication.unit.domain.services.SessionServiceTest" time="0.071"/>
+  <system-out><![CDATA[2025-09-30T18:37:12.674-03:00  INFO 15109 --- [kt-authentication-api] [    Test worker] c.k.a.d.services.AuthorizationService    : Session 01K6E8XQCRPSY8AM1JW1SCNCZJ persisted for user 01K6E8XQCR7ME6HJT9K7WS67CY successfully
+2025-09-30T18:37:12.943-03:00  INFO 15109 --- [kt-authentication-api] [    Test worker] c.k.a.d.services.AuthorizationService    : Session 01K6E8XQQFCEFBVCJYNNTHEJ6H revoked successfully
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

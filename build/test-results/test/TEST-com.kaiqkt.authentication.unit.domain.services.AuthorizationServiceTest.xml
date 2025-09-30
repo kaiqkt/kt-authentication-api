@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.kaiqkt.authentication.unit.domain.services.AuthorizationServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2025-09-30T21:37:12" hostname="MacBook-Air-de-Kaique.local" time="0.352">
+  <properties/>
+  <testcase name="given a code should delete successfully()" classname="com.kaiqkt.authentication.unit.domain.services.AuthorizationServiceTest" time="0.051"/>
+  <testcase name="given a code and a redirect uri when not exist a authorization code should throw an exception()" classname="com.kaiqkt.authentication.unit.domain.services.AuthorizationServiceTest" time="0.003"/>
+  <testcase name="given a request to authorize when password matches should create a authorization code successfully()" classname="com.kaiqkt.authentication.unit.domain.services.AuthorizationServiceTest" time="0.15"/>
+  <testcase name="given a code and a redirect uri when exist a authorization code should return successfully()" classname="com.kaiqkt.authentication.unit.domain.services.AuthorizationServiceTest" time="0.071"/>
+  <testcase name="given a request to authorize when password not matches should throw an exception()" classname="com.kaiqkt.authentication.unit.domain.services.AuthorizationServiceTest" time="0.075"/>
+  <system-out><![CDATA[2025-09-30T18:37:12.339-03:00  INFO 15109 --- [kt-authentication-api] [    Test worker] c.k.a.d.services.AuthorizationService    : Authorization code created for user 01K6E8XQ018VHBQG0TS9AZXYJ6
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

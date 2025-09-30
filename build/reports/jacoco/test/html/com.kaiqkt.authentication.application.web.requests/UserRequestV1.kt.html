@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserRequestV1.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">kt-authentication-api</a> &gt; <a href="index.source.html" class="el_package">com.kaiqkt.authentication.application.web.requests</a> &gt; <span class="el_source">UserRequestV1.kt</span></div><h1>UserRequestV1.kt</h1><pre class="source lang-java linenums">package com.kaiqkt.authentication.application.web.requests
+
+import com.kaiqkt.authentication.domain.dtos.UserDto
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
+
+<span class="nc" id="L8">data class UserRequestV1(</span>
+<span class="nc" id="L9">    @field:NotBlank(message = &quot;input should not be blank&quot;)</span>
+    @field:Email(message = &quot;must be a valid email&quot;)
+<span class="nc" id="L11">    val email: String,</span>
+
+<span class="nc" id="L13">    @field:Pattern(</span>
+        regexp = &quot;^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&amp;+=]).{8,}$&quot;,
+        message = &quot;must be at least 8 characters long and include at least one letter, one special character, and one number&quot;
+    )
+<span class="nc" id="L17">    val password: String</span>
+)
+
+<span class="nc" id="L20">fun UserRequestV1.toDto() = UserDto.Create(</span>
+<span class="nc" id="L21">    email = this.email,</span>
+<span class="nc" id="L22">    password = this.password</span>
+<span class="nc" id="L23">)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

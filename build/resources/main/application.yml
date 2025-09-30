@@ -1,0 +1,12 @@
+---
+server:
+  port: 8080
+
+spring:
+  application:
+    name: kt-authentication-api
+  profiles:
+    active: ${PROFILE:local}
+  web:
+    locale: en_US
+    locale-resolver: fixed

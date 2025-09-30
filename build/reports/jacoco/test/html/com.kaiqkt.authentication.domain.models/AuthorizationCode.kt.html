@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthorizationCode.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">kt-authentication-api</a> &gt; <a href="index.source.html" class="el_package">com.kaiqkt.authentication.domain.models</a> &gt; <span class="el_source">AuthorizationCode.kt</span></div><h1>AuthorizationCode.kt</h1><pre class="source lang-java linenums">package com.kaiqkt.authentication.domain.models
+
+import com.kaiqkt.authentication.domain.models.enums.AuthorizationCodeMethod
+import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.LocalDateTime
+
+<span class="fc" id="L10">@Entity</span>
+@Table(name = &quot;authorizations_code&quot;)
+@EntityListeners(AuditingEntityListener::class)
+<span class="fc" id="L13">class AuthorizationCode(</span>
+<span class="fc" id="L14">    @Id</span>
+<span class="nc" id="L15">    val code: String = &quot;&quot;,</span>
+<span class="pc" id="L16">    val redirectUri: String = &quot;&quot;,</span>
+<span class="pc" id="L17">    val codeChallenge: String = &quot;&quot;,</span>
+<span class="pc" id="L18">    val method: AuthorizationCodeMethod = AuthorizationCodeMethod.SA256,</span>
+<span class="pc" id="L19">    val expireAt: LocalDateTime = LocalDateTime.now(),</span>
+    //val clientId: String,
+<span class="fc" id="L21">    @ManyToOne(fetch = FetchType.LAZY)</span>
+    @JoinColumn(name = &quot;user_id&quot;)
+<span class="pc" id="L23">    val user: User = User()</span>
+) {
+    @CreatedDate
+<span class="pc" id="L26">    var createdAt: LocalDateTime = LocalDateTime.now()</span>
+    @LastModifiedDate
+<span class="nc" id="L28">    var updatedAt: LocalDateTime? = null</span>
+<span class="fc" id="L29">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

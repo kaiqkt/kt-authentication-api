@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-09-30T21:37:10" hostname="MacBook-Air-de-Kaique.local" time="0.286">
+  <properties/>
+  <testcase name="given a request should authorize successfully()" classname="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" time="0.222"/>
+  <testcase name="given a request should introspected successfully()" classname="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" time="0.037"/>
+  <testcase name="given a request should authenticate successfully()" classname="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" time="0.025"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/Users/kaiqkt/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.17.7/fbf3d6d649ed37fc9e9c59480a05be0a26e3c2da/byte-buddy-agent-1.17.7.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>

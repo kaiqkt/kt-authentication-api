@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RsaKeyService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">kt-authentication-api</a> &gt; <a href="index.source.html" class="el_package">com.kaiqkt.authentication.domain.services</a> &gt; <span class="el_source">RsaKeyService.kt</span></div><h1>RsaKeyService.kt</h1><pre class="source lang-java linenums">package com.kaiqkt.authentication.domain.services
+
+import com.nimbusds.jose.JWSAlgorithm
+import com.nimbusds.jose.jwk.KeyUse
+import com.nimbusds.jose.jwk.RSAKey
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.PrivateKey
+
+//utilizar hashicorp vault
+<span class="fc" id="L13">@Service</span>
+<span class="fc" id="L14">class RsaKeyService(</span>
+<span class="fc" id="L15">    @param:Value(&quot;\${authentication.key-id}&quot;)</span>
+    private val keyId: String
+) {
+    //mover para um vault
+<span class="fc" id="L19">    private val keyPair: KeyPair = KeyPairGenerator.getInstance(&quot;RSA&quot;).apply { initialize(2048) }.genKeyPair()</span>
+
+    fun publicJwk(): RSAKey {
+<span class="fc" id="L22">        val jwt = RSAKey.Builder(keyPair.public as java.security.interfaces.RSAPublicKey)</span>
+<span class="fc" id="L23">            .privateKey(keyPair.private)</span>
+<span class="fc" id="L24">            .keyUse(KeyUse.SIGNATURE)</span>
+<span class="fc" id="L25">            .algorithm(JWSAlgorithm.RS256)</span>
+<span class="fc" id="L26">            .keyID(keyId)</span>
+<span class="fc" id="L27">            .build()</span>
+
+<span class="fc" id="L29">        return jwt.toPublicJWK() as RSAKey</span>
+    }
+
+<span class="fc" id="L32">    fun privateKey(): PrivateKey = keyPair.private</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
