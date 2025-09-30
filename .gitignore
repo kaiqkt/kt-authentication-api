@@ -1,14 +1,9 @@
-### Maven ###
-/target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-!.mvn/wrapper/maven-wrapper.jar
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradlew
+!gradlew.bat
 
 ### Java ###
 *.class
@@ -20,11 +15,16 @@ hs_err_pid*
 # Package files
 *.jar
 *.war
-*.nar
 *.ear
 *.zip
 *.tar.gz
 *.rar
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
 
 ### Eclipse / STS ###
 .classpath
@@ -43,26 +43,20 @@ tmp/
 .scala_dependencies
 .worksheet
 
-### IntelliJ IDEA ###
-.idea/
-*.iws
-*.iml
-*.ipr
-
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-/build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
 
 ### OS files ###
+# macOS
+*.DS_Store
+
 # Windows
 Thumbs.db
 ehthumbs*.db
@@ -74,6 +68,3 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
-
-# macOS
-*.DS_Store
