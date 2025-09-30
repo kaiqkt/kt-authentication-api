@@ -22,18 +22,18 @@ import org.springframework.stereotype.Service
 <span class="fc" id="L22">    private val log = LoggerFactory.getLogger(AuthenticationService::class.java)</span>
 
     fun introspect(token: String): IntrospectionDto {
-<span class="nc" id="L25">        val claims = tokenService.getClaims(token)</span>
-<span class="nc" id="L26">        val sessionId = claims.getStringClaim(Constants.SID_KEY)</span>
-<span class="nc" id="L27">        val session = sessionService.findById(sessionId)</span>
+<span class="fc" id="L25">        val claims = tokenService.getClaims(token)</span>
+<span class="fc" id="L26">        val sessionId = claims.getStringClaim(Constants.SID_KEY)</span>
+<span class="fc" id="L27">        val session = sessionService.findById(sessionId)</span>
 
-<span class="nc" id="L29">        return IntrospectionDto(</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">            active = session != null,</span>
-<span class="nc" id="L31">            sid = sessionId,</span>
-<span class="nc" id="L32">            iss = claims.issuer,</span>
-<span class="nc" id="L33">            sub = claims.subject,</span>
-<span class="nc" id="L34">            scope = claims.getStringClaim(Constants.SCOPE_KEY),</span>
-<span class="nc" id="L35">            exp = claims.expirationTime.time,</span>
-<span class="nc" id="L36">            iat = claims.issueTime.time</span>
+<span class="fc" id="L29">        return IntrospectionDto(</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            active = session != null,</span>
+<span class="fc" id="L31">            sid = sessionId,</span>
+<span class="fc" id="L32">            iss = claims.issuer,</span>
+<span class="fc" id="L33">            sub = claims.subject,</span>
+<span class="fc" id="L34">            scope = claims.getStringClaim(Constants.SCOPE_KEY),</span>
+<span class="fc" id="L35">            exp = claims.expirationTime.time,</span>
+<span class="fc" id="L36">            iat = claims.issueTime.time</span>
         )
     }
 

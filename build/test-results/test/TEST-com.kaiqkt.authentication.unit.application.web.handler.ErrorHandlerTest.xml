@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2025-09-30T21:37:11" hostname="MacBook-Air-de-Kaique.local" time="0.599">
+<testsuite name="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2025-09-30T21:39:52" hostname="MacBook-Air-de-Kaique.local" time="0.502">
   <properties/>
-  <testcase name="given an DomainException when is INVALID_CODE_CHALLENGE should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.002"/>
+  <testcase name="given an DomainException when is INVALID_CODE_CHALLENGE should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
   <testcase name="given an DomainException when is EMAIL_IN_USE should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.001"/>
   <testcase name="given an DomainException when is EXPIRED_TOKEN should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
-  <testcase name="given an DomainException when is INVALID_TOKEN should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.001"/>
+  <testcase name="given an DomainException when is INVALID_TOKEN should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
   <testcase name="given an DomainException when is INVALID_GRANT_TYPE_ARGUMENTS should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
-  <testcase name="given an ConstraintViolationException should return the constraint violations()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.329"/>
+  <testcase name="given an ConstraintViolationException should return the constraint violations()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.227"/>
   <testcase name="given an DomainException when is SESSION_NOT_FOUND should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
-  <testcase name="given an MethodArgumentNotValid when handling if field error default message is null should return all fields errors with invalid message()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.26"/>
-  <testcase name="given an DomainException when is USER_NOT_FOUND should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.001"/>
-  <testcase name="given an MethodArgumentNotValid when handling should return all fields errors with his associated default message()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.003"/>
+  <testcase name="given an MethodArgumentNotValid when handling if field error default message is null should return all fields errors with invalid message()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.266"/>
+  <testcase name="given an DomainException when is USER_NOT_FOUND should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
+  <testcase name="given an MethodArgumentNotValid when handling should return all fields errors with his associated default message()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.004"/>
   <testcase name="given an DomainException when is INVALID_PASSWORD should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
-  <testcase name="given an DomainException when is AUTHORIZATION_CODE_NOT_FOUND should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.001"/>
+  <testcase name="given an DomainException when is AUTHORIZATION_CODE_NOT_FOUND should return the message based on the error type()" classname="com.kaiqkt.authentication.unit.application.web.handler.ErrorHandlerTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
