@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-09-30T21:39:52" hostname="MacBook-Air-de-Kaique.local" time="0.301">
-  <properties/>
-  <testcase name="given a request should authorize successfully()" classname="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" time="0.221"/>
-  <testcase name="given a request should introspected successfully()" classname="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" time="0.045"/>
-  <testcase name="given a request should authenticate successfully()" classname="com.kaiqkt.authentication.unit.application.web.controllers.OAuthControllerTest" time="0.034"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

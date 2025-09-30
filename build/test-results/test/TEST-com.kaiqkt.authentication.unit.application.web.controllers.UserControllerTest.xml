@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.kaiqkt.authentication.unit.application.web.controllers.UserControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-09-30T21:39:52" hostname="MacBook-Air-de-Kaique.local" time="0.096">
-  <properties/>
-  <testcase name="given a request should create a user successfully()" classname="com.kaiqkt.authentication.unit.application.web.controllers.UserControllerTest" time="0.096"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
