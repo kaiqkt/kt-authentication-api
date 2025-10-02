@@ -15,7 +15,6 @@ CREATE TABLE authorization_codes (
     user_id        VARCHAR(26)  NOT NULL,
     created_at     TIMESTAMP    NOT NULL,
     expire_at      TIMESTAMP    NOT NULL,
-    updated_at     TIMESTAMP,
     CONSTRAINT fk_auth_code_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

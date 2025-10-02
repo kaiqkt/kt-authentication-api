@@ -22,6 +22,4 @@ class AuthorizationCode(
 ) {
     @CreatedDate
     var createdAt: LocalDateTime = LocalDateTime.now()
-    @LastModifiedDate
-    var updatedAt: LocalDateTime? = null
 }
