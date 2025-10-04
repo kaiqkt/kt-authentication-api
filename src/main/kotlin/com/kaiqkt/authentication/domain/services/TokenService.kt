@@ -3,6 +3,7 @@ package com.kaiqkt.authentication.domain.services
 import com.kaiqkt.authentication.domain.dtos.AuthenticationDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
+import com.kaiqkt.authentication.domain.models.enums.Scope
 import com.kaiqkt.authentication.domain.utils.Constants
 import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jose.JWSAlgorithm
@@ -32,9 +33,10 @@ class TokenService(
     fun issueTokens(
         subject: String,
         sid: String,
-        scopes: List<String>
+        scopes: List<Scope>
     ): AuthenticationDto {
-        val accessToken = signToken(subject, accessTokenTll, sid, scopes)
+        val strScopes = scopes.joinToString(" ", transform = Scope::permission)
+        val accessToken = signToken(subject, accessTokenTll, sid, strScopes)
         val refreshToken = opaqueToken()
 
         return AuthenticationDto(
@@ -52,13 +54,13 @@ class TokenService(
             if (!signedJWT.verify(verifier)) {
                 throw DomainException(ErrorType.INVALID_TOKEN)
             }
-            val claims = signedJWT.jwtClaimsSet
+            val jwtClaimsSet = signedJWT.jwtClaimsSet
 
-            if (claims.expirationTime.before(Date())) {
+            if (jwtClaimsSet.expirationTime.before(Date())) {
                 throw DomainException(ErrorType.EXPIRED_TOKEN)
             }
 
-            return claims
+            return jwtClaimsSet
         } catch (_: ParseException) {
             throw DomainException(ErrorType.INVALID_TOKEN)
         }
@@ -66,21 +68,19 @@ class TokenService(
 
     private fun signToken(
         subject: String,
-//        audience: String, clientId
         ttl: Long,
         sid: String,
-        scopes: List<String>
+        scopes: String
     ): String {
         val now = Instant.now()
 
         val claims = JWTClaimsSet.Builder()
             .issuer(issuer)
             .subject(subject)
-//            .audience(audience)
             .issueTime(Date.from(now))
             .expirationTime(Date.from(now.plusSeconds(ttl)))
             .claim(Constants.SID_KEY, sid)
-            .claim(Constants.SCOPE_KEY, scopes.joinToString(" "))
+            .claim(Constants.SCOPE_KEY, scopes)
             .build()
 
         val header = JWSHeader.Builder(JWSAlgorithm.HS256)

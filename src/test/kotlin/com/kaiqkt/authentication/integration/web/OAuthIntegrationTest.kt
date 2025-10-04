@@ -1,15 +1,16 @@
 package com.kaiqkt.authentication.integration.web
 
-import com.kaiqkt.authentication.application.web.responses.AuthorizationCodeResponseV1
-import com.kaiqkt.authentication.application.web.responses.AuthorizationTokenResponse
+import com.kaiqkt.authentication.application.web.requests.LoginRequestV1
+import com.kaiqkt.authentication.application.web.responses.AuthenticationTokenResponseV1
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.application.web.responses.IntrospectResponseV1
+import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
+import com.kaiqkt.authentication.domain.models.User
 import com.kaiqkt.authentication.domain.utils.Constants
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.requests.AuthenticationTokenRequestV1Sampler
-import com.kaiqkt.authentication.unit.application.web.requests.AuthorizationCodeRequestV1Sampler
-import com.kaiqkt.authentication.unit.domain.models.AuthorizationCodeSampler
+import com.kaiqkt.authentication.unit.application.web.requests.LoginRequestV1Sampler
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import com.nimbusds.jose.JOSEObjectType
@@ -23,7 +24,7 @@ import io.restassured.http.ContentType
 import org.springframework.http.HttpHeaders
 import java.time.Instant
 import java.time.LocalDateTime
-import java.util.Date
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -32,130 +33,57 @@ import kotlin.test.assertTrue
 class OAuthIntegrationTest : IntegrationTest() {
 
     @Test
-    fun `given a request to authorize should create a authorization code successfully`() {
-        userRepository.save(UserSampler.sample())
-        val request = AuthorizationCodeRequestV1Sampler.sample()
+    fun `given a request to login with email and password when user does not exist should thrown an exception`(){
+        val user = userRepository.save(UserSampler.sample())
+        val request = LoginRequestV1Sampler.sample(user.email, "@Admin2345#")
 
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/oauth/authorize")
-            .then()
-            .statusCode(200)
-            .extract()
-            .`as`(AuthorizationCodeResponseV1::class.java)
-
-        assertEquals(request.codeChallenge, response.codeChallenge)
-        assertEquals(request.redirectUri, response.redirectUri)
-    }
-
-    @Test
-    fun `given a request to authorize when password does not match should thrown an exception`() {
-        userRepository.save(UserSampler.sample())
-        val request = AuthorizationCodeRequestV1Sampler.sample(password = "12345")
-
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/oauth/authorize")
+            .post("/v1/oauth/login")
             .then()
             .statusCode(401)
             .extract()
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.INVALID_PASSWORD, response.type)
+        assertEquals(ErrorType.INVALID_PASSWORD.message, response.message)
     }
 
     @Test
-    fun `given a request to authorize when user not found should thrown an exception`() {
-        val request = AuthorizationCodeRequestV1Sampler.sample()
+    fun `given a request to login with email and password when user exist but password does not match should thrown an exception`(){
+        val request = LoginRequestV1Sampler.sample("", "")
 
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/oauth/authorize")
+            .post("/v1/oauth/login")
             .then()
-            .statusCode(404)
+            .statusCode(400)
             .extract()
-            .`as`(ErrorV1::class.java)
+            .`as`(InvalidArgumentErrorV1::class.java)
 
-        assertEquals(ErrorType.USER_NOT_FOUND, response.type)
+        assertEquals("must not be blank", response.errors["email"])
+        assertEquals("must not be blank", response.errors["password"])
     }
 
     @Test
-    fun `given a request to authorize based on code should return a pair of tokens successfully`() {
+    fun `given a request to login with email and password when user exist and password does match should authenticate successfully`(){
         val user = userRepository.save(UserSampler.sample())
-        val authorizationCode = authorizationCodeRepository.save(AuthorizationCodeSampler.sample(user = user))
-
-        val request = AuthenticationTokenRequestV1Sampler.sample(code = authorizationCode.code)
+        val request = LoginRequestV1Sampler.sample(user.email, "@Admin12345#")
 
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/oauth/token")
+            .post("/v1/oauth/login")
             .then()
             .statusCode(200)
             .extract()
-            .`as`(AuthorizationTokenResponse::class.java)
+            .`as`(AuthenticationTokenResponseV1::class.java)
 
         assertEquals("bearer", response.tokenType)
         assertEquals(900, response.expiresIn)
     }
-
-    @Test
-    fun `given a request to authorize based on code when request is invalid thrown an exception`() {
-        val request = AuthenticationTokenRequestV1Sampler.sample(
-            code = null,
-            codeVerifier = null
-        )
-
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/oauth/token")
-            .then()
-            .statusCode(400)
-            .extract()
-            .`as`(ErrorV1::class.java)
-
-        assertEquals(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS, response.type)
-    }
-
-    @Test
-    fun `given a request to authorize based on code should when code not exists thrown an exception`() {
-        val request = AuthenticationTokenRequestV1Sampler.sample()
-
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/oauth/token")
-            .then()
-            .statusCode(404)
-            .extract()
-            .`as`(ErrorV1::class.java)
-
-        assertEquals(ErrorType.AUTHORIZATION_CODE_NOT_FOUND, response.type)
-    }
-
-    @Test
-    fun `given a request to authorize based on code when code challenge not matches should thrown an exception`() {
-        val user = userRepository.save(UserSampler.sample())
-        val authorizationCode = authorizationCodeRepository.save(AuthorizationCodeSampler.sample(user = user))
-
-        val request = AuthenticationTokenRequestV1Sampler.sample(code = authorizationCode.code, codeVerifier = "code")
-
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/oauth/token")
-            .then()
-            .statusCode(401)
-            .extract()
-            .`as`(ErrorV1::class.java)
-
-        assertEquals(ErrorType.INVALID_CODE_CHALLENGE, response.type)
-    }
-
 
     @Test
     fun `given a request to authorize based on refresh token should return a pair of tokens successfully`() {
@@ -174,7 +102,7 @@ class OAuthIntegrationTest : IntegrationTest() {
             .then()
             .statusCode(200)
             .extract()
-            .`as`(AuthorizationTokenResponse::class.java)
+            .`as`(AuthenticationTokenResponseV1::class.java)
 
         assertEquals("bearer", response.tokenType)
         assertEquals(900, response.expiresIn)

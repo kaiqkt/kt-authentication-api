@@ -29,7 +29,3 @@ class Session(
     @LastModifiedDate
     var updatedAt: LocalDateTime? = null
 }
-
-//device_name
-//user_agent
-//ip

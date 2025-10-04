@@ -2,31 +2,32 @@ package com.kaiqkt.authentication.domain.services
 
 import com.kaiqkt.authentication.domain.dtos.AuthenticationDto
 import com.kaiqkt.authentication.domain.dtos.AuthorizationTokenDto
-import com.kaiqkt.authentication.domain.dtos.IntrospectionDto
-import com.kaiqkt.authentication.domain.dtos.enums.GrantType
+import com.kaiqkt.authentication.domain.dtos.IntrospectDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
+import com.kaiqkt.authentication.domain.models.enums.AuthenticationType
+import com.kaiqkt.authentication.domain.models.enums.Scope
 import com.kaiqkt.authentication.domain.utils.Constants
-import com.kaiqkt.authentication.domain.utils.EncryptHelper
 import io.azam.ulidj.ULID
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class AuthenticationService(
-    private val authorizationService: AuthorizationService,
     private val sessionService: SessionService,
-    private val tokenService: TokenService
+    private val passwordEncoder: PasswordEncoder,
+    private val tokenService: TokenService,
+    private val userService: UserService
 ) {
     private val log = LoggerFactory.getLogger(AuthenticationService::class.java)
 
-    fun introspect(token: String): IntrospectionDto {
+    fun introspect(token: String): IntrospectDto {
         val claims = tokenService.getClaims(token)
         val sessionId = claims.getStringClaim(Constants.SID_KEY)
         val session = sessionService.findById(sessionId)
 
-        return IntrospectionDto(
+        return IntrospectDto(
             active = session != null,
             sid = sessionId,
             iss = claims.issuer,
@@ -38,34 +39,22 @@ class AuthenticationService(
     }
 
     fun getTokens(tokenDto: AuthorizationTokenDto.Create): AuthenticationDto {
-        return when (tokenDto.grantType) {
-            GrantType.AUTHORIZATION_CODE -> authorizationCode(tokenDto)
-            GrantType.REFRESH_TOKEN -> refreshToken(tokenDto)
-        }
+        return refreshToken(tokenDto)
     }
 
-    @Transactional
-    private fun authorizationCode(tokenDto: AuthorizationTokenDto.Create): AuthenticationDto {
-        if (tokenDto.code == null || tokenDto.codeVerifier ==  null) {
-            throw DomainException(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS)
+    fun login(email: String, password: String): AuthenticationDto {
+        val user = userService.findByEmailAndType(email, AuthenticationType.PASSWORD)
+
+        if (!passwordEncoder.matches(password, user.password)) {
+            throw DomainException(ErrorType.INVALID_PASSWORD)
         }
-
-        val authorizationCode = authorizationService.findByCodeAndRedirectUri(tokenDto.code, tokenDto.redirectUri)
-        val user = authorizationCode.user
-        val derived = EncryptHelper.encrypt(tokenDto.codeVerifier)
-
-        if (derived != authorizationCode.codeChallenge) {
-            throw DomainException(ErrorType.INVALID_CODE_CHALLENGE)
-        }
-
-        authorizationService.deleteByCode(tokenDto.code)
 
         val sessionId = ULID.random()
-        val tokens = tokenService.issueTokens(user.id, sessionId, listOf())
+        val tokens = tokenService.issueTokens(user.id, sessionId, listOf(Scope.USER))
 
         sessionService.save(sessionId, tokens.refreshToken, user)
 
-        log.info("Authenticated ${user.id} successfully")
+        log.info("User ${user.id} authenticated ${user.id} successfully")
 
         return tokens
     }

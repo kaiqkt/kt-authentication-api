@@ -2,36 +2,33 @@ package com.kaiqkt.authentication.unit.application.web.controllers
 
 import com.kaiqkt.authentication.application.web.controllers.OAuthController
 import com.kaiqkt.authentication.domain.services.AuthenticationService
-import com.kaiqkt.authentication.domain.services.AuthorizationService
 import com.kaiqkt.authentication.unit.application.web.requests.AuthenticationTokenRequestV1Sampler
-import com.kaiqkt.authentication.unit.application.web.requests.AuthorizationCodeRequestV1Sampler
+import com.kaiqkt.authentication.unit.application.web.requests.LoginRequestV1Sampler
 import com.kaiqkt.authentication.unit.domain.dtos.AuthenticationDtoSampler
 import com.kaiqkt.authentication.unit.domain.dtos.IntrospectionDtoSampler
-import com.kaiqkt.authentication.unit.domain.models.AuthorizationCodeSampler
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 
 class OAuthControllerTest {
-    private val authorizationService = mockk<AuthorizationService>()
     private val authenticationService = mockk<AuthenticationService>()
-    private val oAuthController = OAuthController(authorizationService, authenticationService)
+    private val oAuthController = OAuthController(authenticationService)
 
     @Test
-    fun `given a request should authorize successfully`(){
-        val request = AuthorizationCodeRequestV1Sampler.sample()
+    fun `given a request should authenticate successfully`(){
+        val request = LoginRequestV1Sampler.sample()
 
-        every { authorizationService.create(any()) } returns AuthorizationCodeSampler.sample()
+        every { authenticationService.login(any(), any()) } returns AuthenticationDtoSampler.sample()
 
-        oAuthController.authorize(request)
+        oAuthController.login(request)
 
-        verify { authorizationService.create(any()) }
+        verify { authenticationService.login(any(), any()) }
     }
 
 
     @Test
-    fun `given a request should authenticate successfully`(){
+    fun `given a request should issue and return the tokens successfully`(){
         val request = AuthenticationTokenRequestV1Sampler.sample()
 
         every { authenticationService.getTokens(any()) } returns AuthenticationDtoSampler.sample()

@@ -1,7 +1,6 @@
 package com.kaiqkt.authentication.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kaiqkt.authentication.domain.repositories.AuthorizationCodeRepository
 import com.kaiqkt.authentication.domain.repositories.SessionRepository
 import com.kaiqkt.authentication.domain.repositories.UserRepository
 import com.kaiqkt.authentication.domain.utils.Constants
@@ -46,8 +45,6 @@ class IntegrationTest {
     @Autowired
     lateinit var sessionRepository: SessionRepository
 
-    @Autowired
-    lateinit var authorizationCodeRepository: AuthorizationCodeRepository
 
     @BeforeAll
     fun before() {

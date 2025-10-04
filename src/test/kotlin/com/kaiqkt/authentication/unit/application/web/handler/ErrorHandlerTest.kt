@@ -78,28 +78,6 @@ class ErrorHandlerTest {
     }
 
     @Test
-    fun `given an DomainException when is AUTHORIZATION_CODE_NOT_FOUND should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.AUTHORIZATION_CODE_NOT_FOUND)
-
-        val response = errorHandler.handleDomainException(domainException)
-
-        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.AUTHORIZATION_CODE_NOT_FOUND, response.body?.type)
-        assertEquals("Authorization code not found", response.body?.message)
-    }
-
-    @Test
-    fun `given an DomainException when is INVALID_CODE_CHALLENGE should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.INVALID_CODE_CHALLENGE)
-
-        val response = errorHandler.handleDomainException(domainException)
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
-        assertEquals(ErrorType.INVALID_CODE_CHALLENGE, response.body?.type)
-        assertEquals("Invalid code challenge", response.body?.message)
-    }
-
-    @Test
     fun `given an DomainException when is INVALID_GRANT_TYPE_ARGUMENTS should return the message based on the error type`() {
         val domainException = DomainException(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS)
 

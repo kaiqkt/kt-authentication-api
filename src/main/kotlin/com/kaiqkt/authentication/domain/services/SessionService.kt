@@ -18,7 +18,7 @@ class SessionService(
     @param:Value("\${authentication.session-ttl}")
     private val sessionTtl: Long
 ) {
-    private val log = LoggerFactory.getLogger(AuthorizationService::class.java)
+    private val log = LoggerFactory.getLogger(SessionService::class.java)
 
     fun save(id: String, refreshToken: String, user: User): Session {
         val session = Session(

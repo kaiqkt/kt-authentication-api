@@ -6,8 +6,6 @@ enum class ErrorType(val message: String) {
     EMAIL_IN_USE("Email in use"),
     USER_NOT_FOUND("User not found"),
     INVALID_PASSWORD("Invalid password"),
-    AUTHORIZATION_CODE_NOT_FOUND("Authorization code not found"),
-    INVALID_CODE_CHALLENGE("Invalid code challenge"),
     INVALID_GRANT_TYPE_ARGUMENTS("Invalid grant type arguments"),
     SESSION_NOT_FOUND("Session not found")
 }

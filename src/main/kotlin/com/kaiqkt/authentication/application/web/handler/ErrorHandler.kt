@@ -56,8 +56,6 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
             ErrorType.EXPIRED_TOKEN -> HttpStatus.UNAUTHORIZED
             ErrorType.EMAIL_IN_USE -> HttpStatus.CONFLICT
             ErrorType.INVALID_PASSWORD -> HttpStatus.UNAUTHORIZED
-            ErrorType.AUTHORIZATION_CODE_NOT_FOUND -> HttpStatus.NOT_FOUND
-            ErrorType.INVALID_CODE_CHALLENGE -> HttpStatus.UNAUTHORIZED
             ErrorType.INVALID_GRANT_TYPE_ARGUMENTS -> HttpStatus.BAD_REQUEST
             ErrorType.USER_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.SESSION_NOT_FOUND -> HttpStatus.NOT_FOUND

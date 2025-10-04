@@ -8,16 +8,6 @@ CREATE TABLE users (
     updated_at          TIMESTAMP
 );
 
-CREATE TABLE authorization_codes (
-    code           VARCHAR(255) PRIMARY KEY,
-    redirect_uri   VARCHAR(255) NOT NULL,
-    code_challenge VARCHAR(255) NOT NULL,
-    user_id        VARCHAR(26)  NOT NULL,
-    created_at     TIMESTAMP    NOT NULL,
-    expire_at      TIMESTAMP    NOT NULL,
-    CONSTRAINT fk_auth_code_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 CREATE TABLE sessions (
     id            VARCHAR(26)  PRIMARY KEY,
     refresh_token VARCHAR(255) NOT NULL UNIQUE,

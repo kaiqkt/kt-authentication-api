@@ -1,95 +1,111 @@
 package com.kaiqkt.authentication.unit.domain.services
 
-import com.kaiqkt.authentication.domain.dtos.enums.GrantType
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.services.AuthenticationService
-import com.kaiqkt.authentication.domain.services.AuthorizationService
 import com.kaiqkt.authentication.domain.services.SessionService
 import com.kaiqkt.authentication.domain.services.TokenService
-import com.kaiqkt.authentication.domain.utils.Constants
+import com.kaiqkt.authentication.domain.services.UserService
 import com.kaiqkt.authentication.unit.domain.dtos.AuthenticationDtoSampler
 import com.kaiqkt.authentication.unit.domain.dtos.AuthorizationTokenDtoSampler
-import com.kaiqkt.authentication.unit.domain.models.AuthorizationCodeSampler
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
+import com.kaiqkt.authentication.unit.domain.models.UserSampler
+import com.nimbusds.jwt.JWTClaimsSet
+import io.azam.ulidj.ULID
 import io.mockk.every
-import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.security.MessageDigest
+import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AuthenticationServiceTest {
-    private val authorizationService = mockk<AuthorizationService>()
     private val sessionService = mockk<SessionService>()
+    private val passwordEncoder = mockk<PasswordEncoder>()
     private val tokenService = mockk<TokenService>()
-    private val authenticationService = AuthenticationService(authorizationService, sessionService, tokenService)
+    private val userService = mockk<UserService>()
+    private val authenticationService =
+        AuthenticationService(sessionService, passwordEncoder, tokenService, userService)
 
     @Test
-    fun `given a authorization code when is valid should return a pair of tokens`() {
-        val codeVerifierEncrypted = MessageDigest.getInstance(Constants.SHA_256).digest("code-verifier".toByteArray())
-        val codeChallenge = Base64.getUrlEncoder().withoutPadding().encodeToString(codeVerifierEncrypted)
-        val tokenDto = AuthorizationTokenDtoSampler.sampleCreate(grantType = GrantType.AUTHORIZATION_CODE)
-        val authorizationCode = AuthorizationCodeSampler.sample(codeChallenge)
+    fun `given a email and password when user exist but password does not match should thrown an exception`() {
+        every { userService.findByEmailAndType(any(), any()) } returns UserSampler.sample()
+        every { passwordEncoder.matches(any(), any()) } returns false
 
-        every { authorizationService.findByCodeAndRedirectUri(any(), any()) } returns authorizationCode
-        justRun { authorizationService.deleteByCode(any()) }
+        val exception = assertThrows<DomainException> {
+            authenticationService.login("kt@kt.com", "strong-password")
+        }
+
+        assertEquals(ErrorType.INVALID_PASSWORD, exception.type)
+
+        verify { userService.findByEmailAndType(any(), any()) }
+        verify { passwordEncoder.matches(any(), any()) }
+    }
+
+    @Test
+    fun `given a email and password when user exist and password does match should authenticate successfully`() {
+        every { userService.findByEmailAndType(any(), any()) } returns UserSampler.sample()
+        every { passwordEncoder.matches(any(), any()) } returns true
         every { sessionService.save(any(), any(), any()) } returns SessionSampler.sample()
         every { tokenService.issueTokens(any(), any(), any()) } returns AuthenticationDtoSampler.sample()
 
-        authenticationService.getTokens(tokenDto)
+        authenticationService.login("kt@kt.com", "strong-password")
 
-        verify { authorizationService.findByCodeAndRedirectUri(any(), any()) }
-        verify { authorizationService.deleteByCode(any()) }
+        verify { userService.findByEmailAndType(any(), any()) }
+        verify { passwordEncoder.matches(any(), any()) }
         verify { sessionService.save(any(), any(), any()) }
         verify { tokenService.issueTokens(any(), any(), any()) }
     }
 
     @Test
-    fun `given a authorization code when is code null should thrown an exception`() {
-        val tokenDto = AuthorizationTokenDtoSampler.sampleCreate(
-            code = null,
-            grantType = GrantType.AUTHORIZATION_CODE
-        )
+    fun `given a introspection when session exists should return successfully with active true`() {
+        val jwtClaimsSet = JWTClaimsSet
+            .Builder()
+            .claim("sid", ULID.random())
+            .issuer("iss")
+            .subject("sub")
+            .claim("scope", "")
+            .expirationTime(Date.from(Instant.now()))
+            .issueTime(Date.from(Instant.now()))
+            .build()
 
-        val exception = assertThrows<DomainException> {
-            authenticationService.getTokens(tokenDto)
-        }
+        every { tokenService.getClaims(any()) } returns jwtClaimsSet
+        every { sessionService.findById(any()) } returns SessionSampler.sample()
 
-        assertEquals(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS, exception.type)
+        val introspectDto = authenticationService.introspect("token")
+
+        verify { tokenService.getClaims(any()) }
+        verify { sessionService.findById(any()) }
+
+        assertTrue { introspectDto.active }
     }
 
     @Test
-    fun `given a authorization code when is code verifier null should thrown an exception`() {
-        val tokenDto = AuthorizationTokenDtoSampler.sampleCreate(
-            codeVerifier = null,
-            grantType = GrantType.AUTHORIZATION_CODE
-        )
+    fun `given a introspection when session not exists should return successfully with active false`() {
+        val jwtClaimsSet = JWTClaimsSet
+            .Builder()
+            .claim("sid", ULID.random())
+            .issuer("iss")
+            .subject("sub")
+            .claim("scope", "")
+            .expirationTime(Date.from(Instant.now()))
+            .issueTime(Date.from(Instant.now()))
+            .build()
 
-        val exception = assertThrows<DomainException> {
-            authenticationService.getTokens(tokenDto)
-        }
+        every { tokenService.getClaims(any()) } returns jwtClaimsSet
+        every { sessionService.findById(any()) } returns null
 
-        assertEquals(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS, exception.type)
-    }
+        val introspectDto = authenticationService.introspect("token")
 
-    @Test
-    fun `given a authorization code when code challenge is invalid should thrown a exception`() {
-        val tokenDto = AuthorizationTokenDtoSampler.sampleCreate(grantType = GrantType.AUTHORIZATION_CODE)
-        val authorizationCode = AuthorizationCodeSampler.sample()
+        verify { tokenService.getClaims(any()) }
+        verify { sessionService.findById(any()) }
 
-        every { authorizationService.findByCodeAndRedirectUri(any(), any()) } returns authorizationCode
-
-        val exception = assertThrows<DomainException> {
-            authenticationService.getTokens(tokenDto)
-        }
-
-        verify { authorizationService.findByCodeAndRedirectUri(any(), any()) }
-
-        assertEquals(ErrorType.INVALID_CODE_CHALLENGE, exception.type)
+        assertFalse { introspectDto.active }
     }
 
     @Test

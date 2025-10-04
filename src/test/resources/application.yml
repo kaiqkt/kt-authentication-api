@@ -12,5 +12,3 @@ authentication:
   issuer: kt-authentication
   access-token-ttl: 900
   access-token-secret: k2p4/4gX5h0x/1B9Y9O2VJ6ZcfjWQmV5UQJ4cZP9YvE=
-authorization:
-  code-ttl: 300

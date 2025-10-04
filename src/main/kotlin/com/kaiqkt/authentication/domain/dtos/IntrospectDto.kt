@@ -1,6 +1,6 @@
 package com.kaiqkt.authentication.domain.dtos
 
-data class IntrospectionDto(
+data class IntrospectDto(
     val active: Boolean,
     val sid: String,
     val sub: String,

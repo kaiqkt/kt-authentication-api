@@ -3,21 +3,16 @@ package com.kaiqkt.authentication.application.web.requests
 import com.kaiqkt.authentication.domain.dtos.AuthorizationTokenDto
 import com.kaiqkt.authentication.domain.dtos.enums.GrantType
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
 
-data class AuthorizationTokenRequestV1(
-    val code: String?,
-    val codeVerifier: String?,
+data class AuthenticationTokenRequestV1(
     val refreshToken: String?,
-    @field:NotBlank(message = "must no be blank")
-    val redirectUri: String,
-    @field:NotBlank(message = "must no be blank")
+    @field:NotBlank(message = "must not be blank")
+    @field:Pattern(regexp = "refresh_token", message = "must be refresh_token")
     val grantType: String
 )
 
-fun AuthorizationTokenRequestV1.toDto() = AuthorizationTokenDto.Create(
-    code = this.code,
-    codeVerifier = this.codeVerifier,
-    redirectUri = this.redirectUri,
+fun AuthenticationTokenRequestV1.toDto() = AuthorizationTokenDto.Create(
     refreshToken = this.refreshToken,
     grantType = GrantType.valueOf(this.grantType.uppercase())
 )

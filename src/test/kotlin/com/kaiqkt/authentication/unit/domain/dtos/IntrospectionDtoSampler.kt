@@ -1,10 +1,10 @@
 package com.kaiqkt.authentication.unit.domain.dtos
 
-import com.kaiqkt.authentication.domain.dtos.IntrospectionDto
+import com.kaiqkt.authentication.domain.dtos.IntrospectDto
 import io.azam.ulidj.ULID
 
 object IntrospectionDtoSampler {
-    fun sample() = IntrospectionDto(
+    fun sample() = IntrospectDto(
         active = true,
         sid = ULID.random(),
         sub = ULID.random(),
