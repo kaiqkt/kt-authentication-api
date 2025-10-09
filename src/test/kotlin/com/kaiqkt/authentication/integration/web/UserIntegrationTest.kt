@@ -23,7 +23,7 @@ class UserIntegrationTest : IntegrationTest() {
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/user")
+            .post("/v1/users")
             .then()
             .statusCode(200)
             .extract()
@@ -41,7 +41,7 @@ class UserIntegrationTest : IntegrationTest() {
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/user")
+            .post("/v1/users")
             .then()
             .statusCode(400)
             .extract()
@@ -59,12 +59,12 @@ class UserIntegrationTest : IntegrationTest() {
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/user")
+            .post("/v1/users")
             .then()
             .statusCode(409)
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.EMAIL_IN_USE, response.type)
+        assertEquals(ErrorType.EMAIL_ALREADY_IN_USE, response.type)
     }
 }

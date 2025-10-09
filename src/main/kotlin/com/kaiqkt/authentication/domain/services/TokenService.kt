@@ -3,7 +3,6 @@ package com.kaiqkt.authentication.domain.services
 import com.kaiqkt.authentication.domain.dtos.AuthenticationDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
-import com.kaiqkt.authentication.domain.models.enums.Scope
 import com.kaiqkt.authentication.domain.utils.Constants
 import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jose.JWSAlgorithm
@@ -32,11 +31,9 @@ class TokenService(
 
     fun issueTokens(
         subject: String,
-        sid: String,
-        scopes: List<Scope>
+        sid: String
     ): AuthenticationDto {
-        val strScopes = scopes.joinToString(" ", transform = Scope::permission)
-        val accessToken = signToken(subject, accessTokenTll, sid, strScopes)
+        val accessToken = signToken(subject, accessTokenTll, sid)
         val refreshToken = opaqueToken()
 
         return AuthenticationDto(
@@ -70,7 +67,8 @@ class TokenService(
         subject: String,
         ttl: Long,
         sid: String,
-        scopes: String
+        //roles
+        //permissions
     ): String {
         val now = Instant.now()
 
@@ -79,8 +77,7 @@ class TokenService(
             .subject(subject)
             .issueTime(Date.from(now))
             .expirationTime(Date.from(now.plusSeconds(ttl)))
-            .claim(Constants.SID_KEY, sid)
-            .claim(Constants.SCOPE_KEY, scopes)
+            .claim(Constants.Keys.SID_KEY, sid)
             .build()
 
         val header = JWSHeader.Builder(JWSAlgorithm.HS256)

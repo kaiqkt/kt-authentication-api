@@ -28,22 +28,15 @@ repositories {
 }
 
 dependencies {
-    // Spring Boot
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.security:spring-security-crypto")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
-    // Database
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("org.flywaydb:flyway-core:11.1.0")
     implementation("org.flywaydb:flyway-database-postgresql")
-
-    // Kotlin
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-
-    // External Libraries
     implementation("io.azam.ulidj:ulidj:1.0.1")
     implementation("com.nimbusds:nimbus-jose-jwt:10.5")
 

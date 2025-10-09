@@ -33,36 +33,6 @@ class AuthenticationServiceTest {
         AuthenticationService(sessionService, passwordEncoder, tokenService, userService)
 
     @Test
-    fun `given a email and password when user exist but password does not match should thrown an exception`() {
-        every { userService.findByEmailAndType(any(), any()) } returns UserSampler.sample()
-        every { passwordEncoder.matches(any(), any()) } returns false
-
-        val exception = assertThrows<DomainException> {
-            authenticationService.login("kt@kt.com", "strong-password")
-        }
-
-        assertEquals(ErrorType.INVALID_PASSWORD, exception.type)
-
-        verify { userService.findByEmailAndType(any(), any()) }
-        verify { passwordEncoder.matches(any(), any()) }
-    }
-
-    @Test
-    fun `given a email and password when user exist and password does match should authenticate successfully`() {
-        every { userService.findByEmailAndType(any(), any()) } returns UserSampler.sample()
-        every { passwordEncoder.matches(any(), any()) } returns true
-        every { sessionService.save(any(), any(), any()) } returns SessionSampler.sample()
-        every { tokenService.issueTokens(any(), any(), any()) } returns AuthenticationDtoSampler.sample()
-
-        authenticationService.login("kt@kt.com", "strong-password")
-
-        verify { userService.findByEmailAndType(any(), any()) }
-        verify { passwordEncoder.matches(any(), any()) }
-        verify { sessionService.save(any(), any(), any()) }
-        verify { tokenService.issueTokens(any(), any(), any()) }
-    }
-
-    @Test
     fun `given a introspection when session exists should return successfully with active true`() {
         val jwtClaimsSet = JWTClaimsSet
             .Builder()
@@ -110,29 +80,51 @@ class AuthenticationServiceTest {
 
     @Test
     fun `given a refresh token when exist a session attached should return a new pair of tokens`() {
-        val tokenDto = AuthorizationTokenDtoSampler.sampleCreate()
+        val tokenDto = AuthorizationTokenDtoSampler.sampleRefresh()
 
         every { sessionService.findByRefreshToken(any()) } returns SessionSampler.sample()
-        every { tokenService.issueTokens(any(), any(), any()) } returns AuthenticationDtoSampler.sample()
+        every { tokenService.issueTokens(any(), any()) } returns AuthenticationDtoSampler.sample()
         every { sessionService.save(any(), any(), any()) } returns SessionSampler.sample()
 
         authenticationService.getTokens(tokenDto)
 
         verify { sessionService.findByRefreshToken(any()) }
-        verify { tokenService.issueTokens(any(), any(), any()) }
+        verify { tokenService.issueTokens(any(), any()) }
         verify { sessionService.save(any(), any(), any()) }
     }
 
     @Test
-    fun `given a refresh token when is invalid should thrown an exception`() {
-        val tokenDto = AuthorizationTokenDtoSampler.sampleCreate(
-            refreshToken = null
-        )
+    fun `given a email and password when user exist but password does not match should thrown an exception`() {
+        val tokenDto = AuthorizationTokenDtoSampler.samplePassword()
+
+        every { userService.findByEmailAndType(any(), any()) } returns UserSampler.sample()
+        every { passwordEncoder.matches(any(), any()) } returns false
 
         val exception = assertThrows<DomainException> {
             authenticationService.getTokens(tokenDto)
         }
 
-        assertEquals(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS, exception.type)
+        assertEquals(ErrorType.INVALID_CREDENTIALS, exception.type)
+
+        verify { userService.findByEmailAndType(any(), any()) }
+        verify { passwordEncoder.matches(any(), any()) }
     }
+
+    @Test
+    fun `given a email and password when user exist and password does match should authenticate successfully`() {
+        val tokenDto = AuthorizationTokenDtoSampler.samplePassword()
+
+        every { userService.findByEmailAndType(any(), any()) } returns UserSampler.sample()
+        every { passwordEncoder.matches(any(), any()) } returns true
+        every { sessionService.save(any(), any(), any()) } returns SessionSampler.sample()
+        every { tokenService.issueTokens(any(), any()) } returns AuthenticationDtoSampler.sample()
+
+        authenticationService.getTokens(tokenDto)
+
+        verify { userService.findByEmailAndType(any(), any()) }
+        verify { passwordEncoder.matches(any(), any()) }
+        verify { sessionService.save(any(), any(), any()) }
+        verify { tokenService.issueTokens(any(), any()) }
+    }
+
 }

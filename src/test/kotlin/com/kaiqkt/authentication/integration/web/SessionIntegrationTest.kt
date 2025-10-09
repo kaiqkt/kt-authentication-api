@@ -1,6 +1,7 @@
 package com.kaiqkt.authentication.integration.web
 
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
+import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
@@ -19,23 +20,35 @@ class SessionIntegrationTest : IntegrationTest(){
 
         given()
             .header("X-User-Id", user.id)
-            .delete("/v1/session/${session.id}")
+            .delete("/v1/sessions/${session.id}")
             .then()
             .statusCode(204)
     }
 
     @Test
-    fun `given a session id and a user id whe session not exists should thrown an exception`(){
+    fun `given a session id and a user id when session not exists should thrown an exception`(){
         val user = userRepository.save(UserSampler.sample())
 
        val response = given()
             .header("X-User-Id", user.id)
-            .delete("/v1/session/${ULID.random()}")
+            .delete("/v1/sessions/${ULID.random()}")
             .then()
             .statusCode(404)
            .extract()
            .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.SESSION_NOT_FOUND, response.type)
+    }
+
+    @Test
+    fun `given a session id when user id is not given should thrown an exception`(){
+        val response = given()
+            .delete("/v1/sessions/${ULID.random()}")
+            .then()
+            .statusCode(400)
+            .extract()
+            .`as`(InvalidArgumentErrorV1::class.java)
+
+        assertEquals("required header", response.errors["X-User-Id"])
     }
 }

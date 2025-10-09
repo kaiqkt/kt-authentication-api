@@ -1,0 +1,1 @@
+-- Criar resource server para a kt-authentication

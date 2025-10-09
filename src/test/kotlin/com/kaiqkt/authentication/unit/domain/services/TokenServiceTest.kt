@@ -19,7 +19,7 @@ class TokenServiceTest {
         val subjectId = ULID.random()
         val sidId = ULID.random()
 
-        val tokens = tokenService.issueTokens(subjectId, sidId, listOf())
+        val tokens = tokenService.issueTokens(subjectId, sidId)
 
         val claims = tokenService.getClaims(tokens.accessToken)
 
@@ -30,7 +30,7 @@ class TokenServiceTest {
 
     @Test
     fun `given a token when signature is invalid thrown an DomainException`() {
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), listOf())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random())
 
         tokenService::class.java.getDeclaredField("accessTokenSecret").apply {
             isAccessible = true
@@ -51,7 +51,7 @@ class TokenServiceTest {
             set(tokenService, 1L)
         }
 
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), listOf())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random())
 
         Thread.sleep(1001)
 

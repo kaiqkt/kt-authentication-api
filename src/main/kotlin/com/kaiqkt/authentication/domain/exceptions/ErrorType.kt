@@ -1,11 +1,16 @@
 package com.kaiqkt.authentication.domain.exceptions
 
 enum class ErrorType(val message: String) {
-    INVALID_TOKEN("Invalid token"),
+    INVALID_TOKEN("Token sign or parsed are invalid"),
     EXPIRED_TOKEN("Expired token"),
-    EMAIL_IN_USE("Email in use"),
+    EMAIL_ALREADY_IN_USE("Email already in use"),
     USER_NOT_FOUND("User not found"),
-    INVALID_PASSWORD("Invalid password"),
-    INVALID_GRANT_TYPE_ARGUMENTS("Invalid grant type arguments"),
-    SESSION_NOT_FOUND("Session not found")
+    INVALID_CREDENTIALS("Invalid credentials"),
+    SESSION_NOT_FOUND("Session not found"),
+    INVALID_SORT_FIELD("Sort field are not valid or does not exist"),
+    RESOURCE_SERVER_NOT_FOUND("Resource not found"),
+    PERMISSION_ALREADY_EXISTS("Permission with resource and verb already exists"),
+    PERMISSION_NOT_FOUND("Permission not found"),
+    ROLE_NOT_FOUND("Role not found"),
+    ROLE_ALREADY_EXISTS("Role already exists")
 }

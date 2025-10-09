@@ -1,14 +1,14 @@
 package com.kaiqkt.authentication.unit.domain.dtos
 
 import com.kaiqkt.authentication.domain.dtos.AuthorizationTokenDto
-import com.kaiqkt.authentication.domain.dtos.enums.GrantType
 
 object AuthorizationTokenDtoSampler {
-    fun sampleCreate(
-        refreshToken: String? = "refresh-token",
-        grantType: GrantType = GrantType.REFRESH_TOKEN
-    ) = AuthorizationTokenDto.Create(
-        refreshToken = refreshToken,
-        grantType = grantType
+    fun sampleRefresh() = AuthorizationTokenDto.Refresh(
+        refreshToken = "refresh-token"
+    )
+
+    fun samplePassword() = AuthorizationTokenDto.Password(
+        email = "email",
+        password = "strong-password"
     )
 }

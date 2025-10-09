@@ -1,5 +1,6 @@
 package com.kaiqkt.authentication.unit.application.web.handler
 
+import com.kaiqkt.authentication.application.exceptions.InvalidRequestException
 import com.kaiqkt.authentication.application.web.handler.ErrorHandler
 import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.domain.exceptions.DomainException
@@ -23,6 +24,61 @@ class ErrorHandlerTest {
     private val errorHandler = ErrorHandler()
 
     @Test
+    fun `given an DomainException when is PERMISSION_NOT_FOUND should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.PERMISSION_NOT_FOUND)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+        assertEquals(ErrorType.PERMISSION_NOT_FOUND, response.body?.type)
+        assertEquals("Permission not found", response.body?.message)
+    }
+
+    @Test
+    fun `given an DomainException when is ROLE_NOT_FOUND should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.ROLE_NOT_FOUND)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+        assertEquals(ErrorType.ROLE_NOT_FOUND, response.body?.type)
+        assertEquals("Role not found", response.body?.message)
+    }
+
+    @Test
+    fun `given an DomainException when is ROLE_ALREADY_EXISTS should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.ROLE_ALREADY_EXISTS)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.CONFLICT, response.statusCode)
+        assertEquals(ErrorType.ROLE_ALREADY_EXISTS, response.body?.type)
+        assertEquals("Role already exists", response.body?.message)
+    }
+
+    @Test
+    fun `given an DomainException when is PERMISSION_ALREADY_EXISTS should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.PERMISSION_ALREADY_EXISTS)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.CONFLICT, response.statusCode)
+        assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS, response.body?.type)
+        assertEquals("Permission with resource and verb already exists", response.body?.message)
+    }
+
+    @Test
+    fun `given an DomainException when is INVALID_SORT_FIELD should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.INVALID_SORT_FIELD)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertEquals(ErrorType.INVALID_SORT_FIELD, response.body?.type)
+        assertEquals("Sort field are not valid or does not exist", response.body?.message)
+    }
+
+    @Test
     fun `given an DomainException when is EXPIRED_TOKEN should return the message based on the error type`() {
         val domainException = DomainException(ErrorType.EXPIRED_TOKEN)
 
@@ -41,18 +97,18 @@ class ErrorHandlerTest {
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
         assertEquals(ErrorType.INVALID_TOKEN, response.body?.type)
-        assertEquals("Invalid token", response.body?.message)
+        assertEquals("Token sign or parsed are invalid", response.body?.message)
     }
 
     @Test
-    fun `given an DomainException when is EMAIL_IN_USE should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.EMAIL_IN_USE)
+    fun `given an DomainException when is EMAIL_ALREADY_IN_USE should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.EMAIL_ALREADY_IN_USE)
 
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
-        assertEquals(ErrorType.EMAIL_IN_USE, response.body?.type)
-        assertEquals("Email in use", response.body?.message)
+        assertEquals(ErrorType.EMAIL_ALREADY_IN_USE, response.body?.type)
+        assertEquals("Email already in use", response.body?.message)
     }
 
     @Test
@@ -68,24 +124,13 @@ class ErrorHandlerTest {
 
     @Test
     fun `given an DomainException when is INVALID_PASSWORD should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.INVALID_PASSWORD)
+        val domainException = DomainException(ErrorType.INVALID_CREDENTIALS)
 
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
-        assertEquals(ErrorType.INVALID_PASSWORD, response.body?.type)
-        assertEquals("Invalid password", response.body?.message)
-    }
-
-    @Test
-    fun `given an DomainException when is INVALID_GRANT_TYPE_ARGUMENTS should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS)
-
-        val response = errorHandler.handleDomainException(domainException)
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals(ErrorType.INVALID_GRANT_TYPE_ARGUMENTS, response.body?.type)
-        assertEquals("Invalid grant type arguments", response.body?.message)
+        assertEquals(ErrorType.INVALID_CREDENTIALS, response.body?.type)
+        assertEquals("Invalid credentials", response.body?.message)
     }
 
     @Test
@@ -99,9 +144,19 @@ class ErrorHandlerTest {
         assertEquals("Session not found", response.body?.message)
     }
 
+    @Test
+    fun `given an InvalidRequestException when handling should return all fields errors with his associated message`() {
+        val invalidRequestException = InvalidRequestException(mapOf("field" to "invalid"))
+
+        val response = errorHandler.handleInvalidRequestException(invalidRequestException)
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertEquals("invalid", response.body?.errors?.get("field"))
+    }
+
     @Suppress("UNCHECKED_CAST")
     @Test
-    fun `given an MethodArgumentNotValid when handling should return all fields errors with his associated default message`() {
+    fun `given an MethodArgumentNotValid when handling should return all fields errors with his associated message`() {
         val methodArgumentNotValidException = mockk<MethodArgumentNotValidException>()
         val fieldError = mockk<FieldError>()
 
@@ -122,7 +177,7 @@ class ErrorHandlerTest {
 
     @Suppress("UNCHECKED_CAST")
     @Test
-    fun `given an MethodArgumentNotValid when handling if field error default message is null should return all fields errors with invalid message`() {
+    fun `given an MethodArgumentNotValid when handling if field error message is null should return all fields errors with invalid message`() {
         val methodArgumentNotValidException = mockk<MethodArgumentNotValidException>()
         val fieldError = mockk<FieldError>()
 

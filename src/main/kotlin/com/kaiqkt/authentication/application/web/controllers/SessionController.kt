@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/session")
+@RequestMapping("/v1/sessions")
 class SessionController(
     private val sessionService: SessionService
 ) {
@@ -22,4 +22,6 @@ class SessionController(
 
         return ResponseEntity.noContent().build()
     }
+
+    //listar sessoes
 }

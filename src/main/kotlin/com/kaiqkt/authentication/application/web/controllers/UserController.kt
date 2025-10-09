@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/user")
-@Validated
+@RequestMapping("/v1/users")
 class UserController(
     private val userService: UserService
 ) {
@@ -26,4 +25,6 @@ class UserController(
 
         return ResponseEntity.ok(user.toResponseV1())
     }
+
+    //associate permission/role
 }

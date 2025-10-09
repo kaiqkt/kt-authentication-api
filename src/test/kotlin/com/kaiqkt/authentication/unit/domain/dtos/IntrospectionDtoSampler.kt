@@ -8,7 +8,6 @@ object IntrospectionDtoSampler {
         active = true,
         sid = ULID.random(),
         sub = ULID.random(),
-        scope = " ",
         iss = "kt-authentication-api",
         exp = 300L,
         iat = 300L

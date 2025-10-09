@@ -20,9 +20,9 @@ class SessionService(
 ) {
     private val log = LoggerFactory.getLogger(SessionService::class.java)
 
-    fun save(id: String, refreshToken: String, user: User): Session {
+    fun save(sessionId: String, refreshToken: String, user: User): Session {
         val session = Session(
-            id = id,
+            id = sessionId,
             user = user,
             refreshToken = refreshToken,
             expireAt = LocalDateTime.now().plusSeconds(sessionTtl)
@@ -30,7 +30,7 @@ class SessionService(
 
         sessionRepository.save(session)
 
-        log.info("Session ${session.id} persisted for user ${user.id} successfully")
+        log.info("Session ${session.id} of user ${user.id} persisted")
 
         return session
     }
@@ -40,17 +40,17 @@ class SessionService(
             ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)
     }
 
-    fun findById(id: String): Session? {
-        return sessionRepository.findById(id).getOrNull()
+    fun findById(sessionId: String): Session? {
+        return sessionRepository.findById(sessionId).getOrNull()
     }
 
     @Transactional
-    fun revoke(id: String, userId: String) {
-        val session = sessionRepository.findByIdAndUserId(id, userId)
+    fun revoke(sessionId: String, userId: String) {
+        val session = sessionRepository.findByIdAndUserId(sessionId, userId)
             ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)
 
         session.revokedAt = LocalDateTime.now()
 
-        log.info("Session $id revoked successfully")
+        log.info("Session $sessionId revoked")
     }
 }

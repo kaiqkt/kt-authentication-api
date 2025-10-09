@@ -7,6 +7,6 @@ object UserSampler {
     fun sample() = User(
         email = "kt@kt.com",
     ).apply {
-        password = BCrypt.hashpw("@Admin12345#", BCrypt.gensalt())
+        password = BCrypt.hashpw("strong-password", BCrypt.gensalt())
     }
 }
