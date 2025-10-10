@@ -17,8 +17,7 @@ import kotlin.test.assertEquals
 
 class ResourceServerControllerTest {
     private val resourceServerService = mockk<ResourceServerService>()
-    private val permissionService = mockk<PermissionService>()
-    private val controller = ResourceServerController(resourceServerService, permissionService)
+    private val controller = ResourceServerController(resourceServerService)
 
     @Test
     fun `given a resource server should create successfully`() {
@@ -57,7 +56,7 @@ class ResourceServerControllerTest {
     fun `given a request to find a resource server should return successfully`() {
         every { resourceServerService.findById(any()) } returns ResourceServerSampler.sample()
 
-        controller.find(ULID.random())
+        controller.findById(ULID.random())
 
         verify { resourceServerService.findById(any()) }
     }

@@ -24,6 +24,28 @@ class ErrorHandlerTest {
     private val errorHandler = ErrorHandler()
 
     @Test
+    fun `given an DomainException when is POLICY_ALREADY_EXISTS should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.POLICY_ALREADY_EXISTS)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.CONFLICT, response.statusCode)
+        assertEquals(ErrorType.POLICY_ALREADY_EXISTS, response.body?.type)
+        assertEquals("Policy already exists with uri and method for the given resource server", response.body?.message)
+    }
+
+    @Test
+    fun `given an DomainException when is POLICY_NOT_FOUND should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.POLICY_NOT_FOUND)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+        assertEquals(ErrorType.POLICY_NOT_FOUND, response.body?.type)
+        assertEquals("Policy not found", response.body?.message)
+    }
+
+    @Test
     fun `given an DomainException when is PERMISSION_NOT_FOUND should return the message based on the error type`() {
         val domainException = DomainException(ErrorType.PERMISSION_NOT_FOUND)
 
@@ -53,7 +75,7 @@ class ErrorHandlerTest {
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
         assertEquals(ErrorType.ROLE_ALREADY_EXISTS, response.body?.type)
-        assertEquals("Role already exists", response.body?.message)
+        assertEquals("Role already exists with the given name", response.body?.message)
     }
 
     @Test

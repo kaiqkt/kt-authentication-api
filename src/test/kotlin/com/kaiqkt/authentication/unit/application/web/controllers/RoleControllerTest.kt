@@ -52,12 +52,23 @@ class RoleControllerTest {
     }
 
     @Test
-    fun `given a request should return all roles with pagination successfully`(){
+    fun `given a request should return roles with pagination successfully`(){
         every { roleService.findAll(any()) } returns PageImpl(listOf(RoleSampler.sample()))
 
         val response = roleController.findAll(0, 0, "DESC", null)
 
         verify {  roleService.findAll(any()) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+    }
+
+    @Test
+    fun `given a role id should return a role successfully`(){
+        every { roleService.findById(any()) } returns RoleSampler.sample()
+
+        val response = roleController.findById(ULID.random())
+
+        verify { roleService.findById(any()) }
 
         assertEquals(HttpStatus.OK, response.statusCode)
     }

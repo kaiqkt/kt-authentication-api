@@ -1,14 +1,18 @@
 package com.kaiqkt.authentication.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.kaiqkt.authentication.domain.models.Permission
+import com.kaiqkt.authentication.domain.models.Role
 import com.kaiqkt.authentication.domain.repositories.PermissionRepository
 import com.kaiqkt.authentication.domain.repositories.ResourceServerRepository
 import com.kaiqkt.authentication.domain.repositories.RoleRepository
 import com.kaiqkt.authentication.domain.repositories.SessionRepository
 import com.kaiqkt.authentication.domain.repositories.UserRepository
+import com.kaiqkt.authentication.domain.repositories.PolicyRepository
 import io.restassured.RestAssured
 import io.restassured.config.ObjectMapperConfig
 import io.restassured.mapper.ObjectMapperType
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
@@ -52,6 +56,9 @@ class IntegrationTest {
     @Autowired
     lateinit var roleRepository: RoleRepository
 
+    @Autowired
+    lateinit var policyRepository: PolicyRepository
+
     @BeforeAll
     fun before() {
         RestAssured.config = RestAssured.config()
@@ -64,8 +71,10 @@ class IntegrationTest {
 
     @BeforeEach
     fun beforeEach() {
-        resourceServerRepository.deleteAll()
-        roleRepository.deleteAll()
         userRepository.deleteAll()
+        policyRepository.deleteAll()
+        roleRepository.deleteAll()
+        permissionRepository.deleteAll()
+        resourceServerRepository.deleteAll()
     }
 }

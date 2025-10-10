@@ -42,6 +42,15 @@ class PermissionController(
         return ResponseEntity.noContent().build()
     }
 
+    @GetMapping("/{permission_id}")
+    fun findById(
+        @PathVariable("permission_id") permissionId: String
+    ): ResponseEntity<PermissionResponseV1?> {
+        val response = permissionService.findById(permissionId).toResponseV1()
+
+        return ResponseEntity.ok(response)
+    }
+
     @GetMapping
     fun findAll(
         @RequestParam(value = "page", required = false, defaultValue = "0")
@@ -65,12 +74,8 @@ class PermissionController(
         sortBy: String?,
         @RequestParam(value = "resource_server_id", required = false) resourceServerId: String?
     ): ResponseEntity<Page<PermissionResponseV1>> {
-        val request = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
-        val response = if (resourceServerId != null) {
-            permissionService.findAllByResourceServerId(resourceServerId, request).map { it.toResponseV1() }
-        } else {
-            permissionService.findAll(request).map { it.toResponseV1() }
-        }
+        val pageRequest = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
+        val response = permissionService.findAll(resourceServerId, pageRequest).map { it.toResponseV1() }
 
         return ResponseEntity.ok(response)
     }

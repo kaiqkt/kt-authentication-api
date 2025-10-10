@@ -10,7 +10,7 @@ data class UserResponseV1(
     val authenticationType: AuthenticationType
 )
 
-fun User.toResponseV1() = UserResponseV1(
+fun User.toResponseV1(): UserResponseV1 = UserResponseV1(
     id = this.id,
     email = this.email,
     isVerified = this.isVerified,

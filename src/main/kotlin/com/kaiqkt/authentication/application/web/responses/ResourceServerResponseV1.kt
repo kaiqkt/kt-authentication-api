@@ -8,7 +8,7 @@ data class ResourceServerResponseV1(
     val description: String? = null
 )
 
-fun ResourceServer.toResponseV1() = ResourceServerResponseV1(
+fun ResourceServer.toResponseV1(): ResourceServerResponseV1 = ResourceServerResponseV1(
     id = this.id,
     name = this.name,
     description = this.description

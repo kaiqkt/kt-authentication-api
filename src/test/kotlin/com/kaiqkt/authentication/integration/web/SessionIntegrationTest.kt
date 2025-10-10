@@ -4,6 +4,7 @@ import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.integration.IntegrationTest
+import com.kaiqkt.authentication.unit.application.web.responses.PageResponse
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import io.azam.ulidj.ULID
@@ -50,5 +51,36 @@ class SessionIntegrationTest : IntegrationTest(){
             .`as`(InvalidArgumentErrorV1::class.java)
 
         assertEquals("required header", response.errors["X-User-Id"])
+    }
+
+    @Test
+    fun `given a user id and parameters should return sessions paginated successfully`(){
+        val user = userRepository.save(UserSampler.sample())
+        sessionRepository.save(SessionSampler.sample(user))
+
+        val response = given()
+            .header("X-User-Id", user.id)
+            .get("/v1/sessions")
+            .then()
+            .statusCode(200)
+            .extract()
+            .response()
+            .`as`(PageResponse::class.java)
+
+        assertEquals(1, response.totalElements)
+    }
+
+    @Test
+    fun `given a user id and parameters when sort by is invalid should thrown an exception`(){
+        val response = given()
+            .header("X-User-Id", ULID.random())
+            .get("/v1/sessions?sort_by=invalid")
+            .then()
+            .statusCode(400)
+            .extract()
+            .response()
+            .`as`(ErrorV1::class.java)
+
+        assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
     }
 }

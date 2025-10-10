@@ -20,25 +20,22 @@ class PermissionControllerTest {
 
     @Test
     fun `given a request should find all permissions paginated successfully`() {
-        every { permissionService.findAll(any()) } returns PageImpl(listOf(PermissionSampler.sample()))
+        every { permissionService.findAll(any(), any()) } returns PageImpl(listOf(PermissionSampler.sample()))
 
         permissionController.findAll(0, 0, "ASC", null, null)
 
-        verify { permissionService.findAll(any()) }
+        verify { permissionService.findAll(any(), any()) }
     }
 
     @Test
     fun `given a request to find all a permissions by resource id with pagination when found should return successfully`() {
         every {
-            permissionService.findAllByResourceServerId(
-                any(),
-                any()
-            )
+            permissionService.findAll(any(), any())
         } returns PageImpl(listOf(PermissionSampler.sample()))
 
         val response = permissionController.findAll( 0, 0, "ASC", null, ULID.random())
 
-        verify { permissionService.findAllByResourceServerId(any(), any()) }
+        verify { permissionService.findAll(any(), any()) }
 
         assertEquals(HttpStatus.OK, response.statusCode)
     }
@@ -61,5 +58,14 @@ class PermissionControllerTest {
         permissionController.delete(ULID.random())
 
         verify { permissionService.delete(any()) }
+    }
+
+    @Test
+    fun `given a permission id should return a permission successfully`(){
+        every { permissionService.findById(any()) } returns PermissionSampler.sample()
+
+        permissionController.findById(ULID.random())
+
+        verify { permissionService.findById(any()) }
     }
 }

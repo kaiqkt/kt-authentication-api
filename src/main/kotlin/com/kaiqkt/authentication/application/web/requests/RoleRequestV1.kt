@@ -16,7 +16,7 @@ data class RoleRequestV1(
     val description: String? = null
 )
 
-fun RoleRequestV1.toDto() = RoleDto(
+fun RoleRequestV1.toDto(): RoleDto = RoleDto(
     name = this.name,
     description = this.description
 )

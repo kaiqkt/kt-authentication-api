@@ -12,7 +12,7 @@ data class ResourceServerRequestV1(
     val description: String? = null
 )
 
-fun ResourceServerRequestV1.toDto() = ResourceServerDto(
+fun ResourceServerRequestV1.toDto(): ResourceServerDto = ResourceServerDto(
     name = this.name,
     description = this.description
 )

@@ -11,7 +11,7 @@ data class IntrospectResponseV1(
     val iat: Long
 )
 
-fun IntrospectDto.toResponseV1() = IntrospectResponseV1(
+fun IntrospectDto.toResponseV1(): IntrospectResponseV1 = IntrospectResponseV1(
     active = this.active,
     sid = this.sid,
     sub = this.sub,

@@ -3,6 +3,8 @@ package com.kaiqkt.authentication.domain.services
 import com.kaiqkt.authentication.domain.dtos.AuthenticationDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
+import com.kaiqkt.authentication.domain.models.Permission
+import com.kaiqkt.authentication.domain.models.Role
 import com.kaiqkt.authentication.domain.utils.Constants
 import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jose.JWSAlgorithm
@@ -31,9 +33,10 @@ class TokenService(
 
     fun issueTokens(
         subject: String,
-        sid: String
+        sid: String,
+        roles: Set<Role>
     ): AuthenticationDto {
-        val accessToken = signToken(subject, accessTokenTll, sid)
+        val accessToken = signToken(subject, accessTokenTll, sid, roles)
         val refreshToken = opaqueToken()
 
         return AuthenticationDto(
@@ -67,17 +70,21 @@ class TokenService(
         subject: String,
         ttl: Long,
         sid: String,
-        //roles
-        //permissions
+        roles: Set<Role>
     ): String {
         val now = Instant.now()
+        val permissions = roles
+            .flatMap(Role::permissions)
+            .map(Permission::getResourceVerb)
 
         val claims = JWTClaimsSet.Builder()
             .issuer(issuer)
             .subject(subject)
             .issueTime(Date.from(now))
             .expirationTime(Date.from(now.plusSeconds(ttl)))
-            .claim(Constants.Keys.SID_KEY, sid)
+            .claim(Constants.Keys.SID, sid)
+            .claim(Constants.Keys.ROLES, roles.map(Role::name))
+            .claim(Constants.Keys.PERMISSIONS, permissions)
             .build()
 
         val header = JWSHeader.Builder(JWSAlgorithm.HS256)

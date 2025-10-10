@@ -7,7 +7,9 @@ import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.models.enums.AuthenticationType
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.requests.UserRequestV1Sampler
+import com.kaiqkt.authentication.unit.domain.models.RoleSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
+import io.azam.ulidj.ULID
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import kotlin.test.Test
@@ -66,5 +68,42 @@ class UserIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.EMAIL_ALREADY_IN_USE, response.type)
+    }
+
+    @Test
+    fun `given a user id and role id should assign user a role successfully`(){
+       val user = userRepository.save(UserSampler.sample())
+        val role = roleRepository.save(RoleSampler.sample())
+
+        given()
+            .patch("/v1/users/${user.id}/role/${role.id}")
+            .then()
+            .statusCode(204)
+    }
+
+    @Test
+    fun `given a user id and role id when user does not found should thrown an exception`(){
+        val role = roleRepository.save(RoleSampler.sample())
+
+        val response = given()
+            .patch("/v1/users/${ULID.random()}/role/${role.id}")
+            .then()
+            .statusCode(404)
+            .extract()
+            .`as`(ErrorV1::class.java)
+
+        assertEquals(ErrorType.USER_NOT_FOUND, response.type)
+    }
+
+    @Test
+    fun `given a user id and role id when role does not found should thrown an exception`(){
+        val response = given()
+            .patch("/v1/users/${ULID.random()}/role/${ULID.random()}")
+            .then()
+            .statusCode(404)
+            .extract()
+            .`as`(ErrorV1::class.java)
+
+        assertEquals(ErrorType.ROLE_NOT_FOUND, response.type)
     }
 }

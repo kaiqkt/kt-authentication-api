@@ -2,7 +2,11 @@ package com.kaiqkt.authentication.unit.domain.services
 
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
+import com.kaiqkt.authentication.domain.models.Permission
+import com.kaiqkt.authentication.domain.models.Role
 import com.kaiqkt.authentication.domain.services.TokenService
+import com.kaiqkt.authentication.unit.domain.models.PermissionSampler
+import com.kaiqkt.authentication.unit.domain.models.RoleSampler
 import io.azam.ulidj.ULID
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -18,19 +22,24 @@ class TokenServiceTest {
     fun `given a token should return JWTClaimsSet`() {
         val subjectId = ULID.random()
         val sidId = ULID.random()
+        val permissions = setOf(PermissionSampler.sample())
+        val roles = setOf(RoleSampler.sample().apply { this.permissions.addAll(permissions) })
+        val resourceVerbs = roles.flatMap(Role::permissions).map { "${it.resource}.${it.verb}" }
 
-        val tokens = tokenService.issueTokens(subjectId, sidId)
+        val tokens = tokenService.issueTokens(subjectId, sidId, roles)
 
         val claims = tokenService.getClaims(tokens.accessToken)
 
         assertEquals(issuer, claims.issuer)
         assertEquals(subjectId, claims.subject)
         assertEquals(sidId, claims.getClaim("sid"))
+        assertEquals(roles.map(Role::name), claims.getClaim("roles"))
+        assertEquals(resourceVerbs, claims.getClaim("permissions"))
     }
 
     @Test
     fun `given a token when signature is invalid thrown an DomainException`() {
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), setOf())
 
         tokenService::class.java.getDeclaredField("accessTokenSecret").apply {
             isAccessible = true
@@ -51,7 +60,7 @@ class TokenServiceTest {
             set(tokenService, 1L)
         }
 
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), setOf())
 
         Thread.sleep(1001)
 

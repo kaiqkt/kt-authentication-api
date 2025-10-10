@@ -12,5 +12,7 @@ enum class ErrorType(val message: String) {
     PERMISSION_ALREADY_EXISTS("Permission with resource and verb already exists"),
     PERMISSION_NOT_FOUND("Permission not found"),
     ROLE_NOT_FOUND("Role not found"),
-    ROLE_ALREADY_EXISTS("Role already exists")
+    ROLE_ALREADY_EXISTS("Role already exists with the given name"),
+    POLICY_ALREADY_EXISTS("Policy already exists with uri and method for the given resource server"),
+    POLICY_NOT_FOUND("Policy not found")
 }

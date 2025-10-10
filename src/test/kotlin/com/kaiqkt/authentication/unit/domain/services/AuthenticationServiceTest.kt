@@ -83,13 +83,13 @@ class AuthenticationServiceTest {
         val tokenDto = AuthorizationTokenDtoSampler.sampleRefresh()
 
         every { sessionService.findByRefreshToken(any()) } returns SessionSampler.sample()
-        every { tokenService.issueTokens(any(), any()) } returns AuthenticationDtoSampler.sample()
+        every { tokenService.issueTokens(any(), any(), any()) } returns AuthenticationDtoSampler.sample()
         every { sessionService.save(any(), any(), any()) } returns SessionSampler.sample()
 
         authenticationService.getTokens(tokenDto)
 
         verify { sessionService.findByRefreshToken(any()) }
-        verify { tokenService.issueTokens(any(), any()) }
+        verify { tokenService.issueTokens(any(), any(), any()) }
         verify { sessionService.save(any(), any(), any()) }
     }
 
@@ -117,14 +117,14 @@ class AuthenticationServiceTest {
         every { userService.findByEmailAndType(any(), any()) } returns UserSampler.sample()
         every { passwordEncoder.matches(any(), any()) } returns true
         every { sessionService.save(any(), any(), any()) } returns SessionSampler.sample()
-        every { tokenService.issueTokens(any(), any()) } returns AuthenticationDtoSampler.sample()
+        every { tokenService.issueTokens(any(), any(), any()) } returns AuthenticationDtoSampler.sample()
 
         authenticationService.getTokens(tokenDto)
 
         verify { userService.findByEmailAndType(any(), any()) }
         verify { passwordEncoder.matches(any(), any()) }
         verify { sessionService.save(any(), any(), any()) }
-        verify { tokenService.issueTokens(any(), any()) }
+        verify { tokenService.issueTokens(any(), any(), any()) }
     }
 
 }

@@ -55,7 +55,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    fun `given a resource id and page request when is valid should return all permissions paginated successfully`() {
+    fun `given a resource id and page request when is valid should return permissions paginated successfully`() {
         every {
             permissionRepository.findAllByResourceServerId(
                 any(),
@@ -63,7 +63,7 @@ class PermissionServiceTest {
             )
         } returns PageImpl(listOf(PermissionSampler.sample()))
 
-        permissionService.findAllByResourceServerId(ULID.random(), PageRequestDtoSampler.sample())
+        permissionService.findAll(ULID.random(), PageRequestDtoSampler.sample())
 
         verify { permissionRepository.findAllByResourceServerId(any(), any()) }
     }
@@ -71,19 +71,19 @@ class PermissionServiceTest {
     @Test
     fun `given a resource id and page request when has invalid sort by field should thrown exception`() {
         val exception = assertThrows<DomainException> {
-            permissionService.findAllByResourceServerId(ULID.random(), PageRequestDtoSampler.sample("name"))
+            permissionService.findAll(ULID.random(), PageRequestDtoSampler.sample("name"))
         }
 
         assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)
     }
 
     @Test
-    fun `given a page request when is valid should return all permissions paginated successfully`() {
+    fun `given a page request when is valid should return permissions paginated successfully`() {
         every {
             permissionRepository.findAll(any<PageRequest>())
         } returns PageImpl(listOf(PermissionSampler.sample()))
 
-        permissionService.findAll(PageRequestDtoSampler.sample())
+        permissionService.findAll(null, PageRequestDtoSampler.sample())
 
         verify { permissionRepository.findAll(any<PageRequest>()) }
     }
@@ -91,7 +91,7 @@ class PermissionServiceTest {
     @Test
     fun `given a page request when has invalid sort by field should thrown exception`() {
         val exception = assertThrows<DomainException> {
-            permissionService.findAll(PageRequestDtoSampler.sample("name"))
+            permissionService.findAll(null, PageRequestDtoSampler.sample("name"))
         }
 
         assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)

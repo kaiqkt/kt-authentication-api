@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v1/resources")
 @Validated
 class ResourceServerController(
-    private val resourceServerService: ResourceServerService,
-    private val permissionService: PermissionService
+    private val resourceServerService: ResourceServerService
 ) {
 
     @PostMapping
@@ -66,14 +65,14 @@ class ResourceServerController(
         @RequestParam(value = "sort_by", required = false)
         sortBy: String?
     ): ResponseEntity<Page<ResourceServerResponseV1>> {
-        val request = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
-        val response = resourceServerService.findAll(request).map { it.toResponseV1() }
+        val pageRequest = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
+        val response = resourceServerService.findAll(pageRequest).map { it.toResponseV1() }
 
         return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{resource_server_id}")
-    fun find(
+    fun findById(
         @PathVariable("resource_server_id") resourceId: String
     ): ResponseEntity<ResourceServerResponseV1> {
         val response = resourceServerService.findById(resourceId).toResponseV1()

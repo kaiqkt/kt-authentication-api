@@ -27,7 +27,7 @@ class RoleService(
         }
 
         val role = Role(
-            name = roleDto.name,
+            name = roleDto.name.uppercase(),
             description = roleDto.description
         )
 
@@ -36,6 +36,11 @@ class RoleService(
         log.info("Role ${role.id} created")
 
         return role
+    }
+
+    fun findById(roleId: String): Role {
+        return roleRepository.findById(roleId).getOrNull()
+            ?: throw DomainException(ErrorType.ROLE_NOT_FOUND)
     }
 
     fun delete(roleId: String) {
@@ -55,8 +60,14 @@ class RoleService(
     @Transactional
     fun associate(roleId: String, permissionId: String) {
         val permission = permissionService.findById(permissionId)
-        val role = roleRepository.findById(roleId).getOrNull()
-            ?: throw DomainException(ErrorType.ROLE_NOT_FOUND)
+        val role = findById(roleId)
+
+        if (role.permissions.contains(permission)) {
+            role.permissions.removeIf { it.id == permissionId }
+            log.info("Role $roleId disassociate from permission $permissionId")
+
+            return
+        }
 
         role.permissions.add(permission)
 

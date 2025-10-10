@@ -170,4 +170,33 @@ class PermissionIntegrationTest : IntegrationTest(){
             .then()
             .statusCode(204)
     }
+
+    @Test
+    fun `given a permission id when permission exists should return successfully`(){
+        val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
+        val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
+
+        val response = given()
+            .get("/v1/permissions/${permission.id}")
+            .then()
+            .statusCode(200)
+            .extract()
+            .response()
+            .`as`(PermissionResponseV1::class.java)
+
+        assertEquals(permission.id, response.id)
+    }
+
+    @Test
+    fun `given a permission id when permission does exists should thrown a exception`(){
+        val response = given()
+            .get("/v1/permissions/${ ULID.random()}")
+            .then()
+            .statusCode(404)
+            .extract()
+            .response()
+            .`as`(ErrorV1::class.java)
+
+        assertEquals(ErrorType.PERMISSION_NOT_FOUND, response.type)
+    }
 }

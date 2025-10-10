@@ -282,7 +282,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .subject(subject)
             .issueTime(Date.from(exp))
             .expirationTime(Date.from(exp))
-            .claim(Constants.Keys.SID_KEY, sid)
+            .claim(Constants.Keys.SID, sid)
             .build()
 
         val header = JWSHeader.Builder(JWSAlgorithm.HS256)

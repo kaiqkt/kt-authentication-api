@@ -27,4 +27,6 @@ class Permission(
 
     @LastModifiedDate
     var updatedAt: LocalDateTime? = null
+
+    fun getResourceVerb(): String = "${this.resource}.${this.verb}"
 }

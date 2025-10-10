@@ -23,7 +23,7 @@ data class PermissionRequestV1(
     val description: String? = null
 )
 
-fun PermissionRequestV1.toDto() = PermissionDto(
+fun PermissionRequestV1.toDto(): PermissionDto = PermissionDto(
     resource = this.resource,
     verb = this.verb,
     description = this.description

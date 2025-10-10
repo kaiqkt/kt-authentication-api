@@ -1,5 +1,6 @@
 package com.kaiqkt.authentication.domain.services
 
+import com.kaiqkt.authentication.application.web.responses.toResponseV1
 import com.kaiqkt.authentication.domain.dtos.PageRequestDto
 import com.kaiqkt.authentication.domain.dtos.PermissionDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
@@ -53,17 +54,13 @@ class PermissionService(
             ?: throw DomainException(ErrorType.PERMISSION_NOT_FOUND)
     }
 
-    fun findAllByResourceServerId(resourceId: String, pageRequestDto: PageRequestDto): Page<Permission> {
+    fun findAll(resourceServerId: String?, pageRequestDto: PageRequestDto): Page<Permission> {
         if (!pageRequestDto.isValid(allowedSortFields)) {
             throw DomainException(ErrorType.INVALID_SORT_FIELD)
         }
 
-        return permissionRepository.findAllByResourceServerId(resourceId, pageRequestDto.toDomain())
-    }
-
-    fun findAll(pageRequestDto: PageRequestDto): Page<Permission> {
-        if (!pageRequestDto.isValid(allowedSortFields)) {
-            throw DomainException(ErrorType.INVALID_SORT_FIELD)
+        if (resourceServerId != null) {
+            return permissionRepository.findAllByResourceServerId(resourceServerId, pageRequestDto.toDomain())
         }
 
         return permissionRepository.findAll(pageRequestDto.toDomain())

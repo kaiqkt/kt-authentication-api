@@ -2,7 +2,9 @@ package com.kaiqkt.authentication.domain.utils
 
 object Constants {
     object Keys {
-        const val SID_KEY = "sid"
+        const val SID = "sid"
+        const val ROLES = "roles"
+        const val PERMISSIONS = "permissions"
     }
 
     object Headers {

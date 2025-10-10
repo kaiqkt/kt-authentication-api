@@ -27,7 +27,7 @@ class RoleServiceTest {
     private val roleService = RoleService(roleRepository, permissionService)
 
     @Test
-    fun `given a role dto should create successfully`(){
+    fun `given a role dto should create successfully`() {
         every { roleRepository.existsByName(any()) } returns false
         every { roleRepository.save(any()) } returns RoleSampler.sample()
 
@@ -38,7 +38,7 @@ class RoleServiceTest {
     }
 
     @Test
-    fun `given a role dto when already exists a role with same name should thrown an exception`(){
+    fun `given a role dto when already exists a role with same name should thrown an exception`() {
         every { roleRepository.existsByName(any()) } returns true
 
         val exception = assertThrows<DomainException> {
@@ -51,7 +51,7 @@ class RoleServiceTest {
     }
 
     @Test
-    fun `given a role id should delete successfully`(){
+    fun `given a role id should delete successfully`() {
         justRun { roleRepository.deleteById(any()) }
 
         roleService.delete(ULID.random())
@@ -60,7 +60,7 @@ class RoleServiceTest {
     }
 
     @Test
-    fun `given a request to find all roles should return paginated successfully`(){
+    fun `given a request to find all roles should return paginated successfully`() {
         every { roleRepository.findAll(any<Pageable>()) } returns PageImpl(listOf(RoleSampler.sample()))
 
         roleService.findAll(PageRequestDtoSampler.sample())
@@ -69,7 +69,7 @@ class RoleServiceTest {
     }
 
     @Test
-    fun `given a request to find all roles when sort by field is invalid should thrown an exception`(){
+    fun `given a request to find all roles when sort by field is invalid should thrown an exception`() {
         val exception = assertThrows<DomainException> {
             roleService.findAll(PageRequestDtoSampler.sample(sortBy = "invalid"))
         }
@@ -78,7 +78,7 @@ class RoleServiceTest {
     }
 
     @Test
-    fun `given a role id and a permission id should associate successfully`(){
+    fun `given a role id and a permission id should associate successfully`() {
         every { permissionService.findById(any()) } returns PermissionSampler.sample()
         every { roleRepository.findById(any()) } returns Optional.of(RoleSampler.sample())
 
@@ -89,7 +89,7 @@ class RoleServiceTest {
     }
 
     @Test
-    fun `given a role id and a permission id when role does not exists should thrown an exception`(){
+    fun `given a role id and a permission id to associate when role does not exists should thrown an exception`() {
         every { permissionService.findById(any()) } returns PermissionSampler.sample()
         every { roleRepository.findById(any()) } returns Optional.empty()
 
@@ -99,7 +99,43 @@ class RoleServiceTest {
 
         verify { permissionService.findById(any()) }
 
-        assertEquals(ErrorType.ROLE_NOT_FOUND,exception.type)
+        assertEquals(ErrorType.ROLE_NOT_FOUND, exception.type)
     }
 
+    @Test
+    fun `given a role when found should return successfully`() {
+        every { roleRepository.findById(any()) } returns Optional.of(RoleSampler.sample())
+
+        roleService.findById(ULID.random())
+
+        verify { roleRepository.findById(any()) }
+    }
+
+    @Test
+    fun `given a role when not found should thrown an exception`() {
+        every { roleRepository.findById(any()) } returns Optional.empty()
+
+        val exception = assertThrows<DomainException> {
+            roleService.findById(ULID.random())
+        }
+
+        verify { roleRepository.findById(any()) }
+
+        assertEquals(ErrorType.ROLE_NOT_FOUND, exception.type)
+    }
+
+    @Test
+    fun `given a role id and a permission id should disassociate successfully`() {
+        val permission = PermissionSampler.sample()
+        val role = RoleSampler.sample()
+            .apply { permissions.add(permission) }
+
+        every { roleRepository.findById(any()) } returns Optional.of(role)
+        every { permissionService.findById(any()) } returns permission
+
+        roleService.associate(ULID.random(), permission.id)
+
+        verify { roleRepository.findById(any()) }
+        verify { permissionService.findById(any()) }
+    }
 }

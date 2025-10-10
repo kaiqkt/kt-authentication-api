@@ -21,7 +21,7 @@ data class UserRequestV1(
     val password: String
 )
 
-fun UserRequestV1.toDto() = UserDto.Create(
+fun UserRequestV1.toDto(): UserDto.Create = UserDto.Create(
     email = this.email,
     password = this.password
 )

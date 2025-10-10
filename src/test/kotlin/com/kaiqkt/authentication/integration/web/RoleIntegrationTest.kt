@@ -125,7 +125,7 @@ class RoleIntegrationTest : IntegrationTest() {
     }
 
     @Test
-    fun `given a role id and a permission id when role does not exists should thrown an exception`() {
+    fun `given a role id and a permission id to associate when role does not exists should thrown an exception`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
@@ -141,7 +141,7 @@ class RoleIntegrationTest : IntegrationTest() {
     }
 
     @Test
-    fun `given a role id and a permission id when permission does not exists should thrown an exception`() {
+    fun `given a role id and a permission id to associate when permission does not exists should thrown an exception`() {
         val response = given()
             .patch("/v1/roles/${ULID.random()}/associate/${ULID.random()}")
             .then()
@@ -151,5 +151,33 @@ class RoleIntegrationTest : IntegrationTest() {
             .`as`(DomainException::class.java)
 
         assertEquals(ErrorType.PERMISSION_NOT_FOUND, response.type)
+    }
+
+    @Test
+    fun `given a role id when exists should return a role successfully`(){
+        val role = roleRepository.save(RoleSampler.sample())
+
+        val response = given()
+            .get("/v1/roles/${role.id}")
+            .then()
+            .statusCode(200)
+            .extract()
+            .response()
+            .`as`(RoleResponseV1::class.java)
+
+        assertEquals(role.id, response.id)
+    }
+
+
+    @Test
+    fun `given a role id and a permission id should disassociate successfully`() {
+        val role = roleRepository.save(RoleSampler.sample())
+        val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
+        val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
+
+        given()
+            .patch("/v1/roles/${role.id}/associate/${permission.id}")
+            .then()
+            .statusCode(204)
     }
 }

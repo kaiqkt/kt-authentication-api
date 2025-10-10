@@ -4,8 +4,10 @@ import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.models.enums.AuthenticationType
 import com.kaiqkt.authentication.domain.repositories.UserRepository
+import com.kaiqkt.authentication.domain.services.RoleService
 import com.kaiqkt.authentication.domain.services.UserService
 import com.kaiqkt.authentication.unit.domain.dtos.UserDtoSampler
+import com.kaiqkt.authentication.unit.domain.models.RoleSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import io.azam.ulidj.ULID
 import io.mockk.every
@@ -20,7 +22,8 @@ import kotlin.test.assertEquals
 class UserServiceTest {
     private val userRepository = mockk<UserRepository>()
     private val passwordEncoder = mockk<PasswordEncoder>()
-    private val userService = UserService(userRepository, passwordEncoder)
+    private val roleService = mockk<RoleService>()
+    private val userService = UserService(userRepository, passwordEncoder, roleService)
 
     @Test
     fun `given a user dto when is valid should create successfully`(){
@@ -88,6 +91,32 @@ class UserServiceTest {
         }
 
         verify { userRepository.findById(any()) }
+
+        assertEquals(ErrorType.USER_NOT_FOUND, exception.type)
+    }
+
+    @Test
+    fun `given a user id and role id should assign user a role successfully`(){
+        every { roleService.findById(any()) } returns RoleSampler.sample()
+        every { userRepository.findById(any()) } returns Optional.of(UserSampler.sample())
+
+        userService.assignRole(ULID.random(), ULID.random())
+
+        verify { userRepository.findById(any()) }
+        verify { roleService.findById(any()) }
+    }
+
+    @Test
+    fun `given a user id and role id when user does not found should thrown an exception`(){
+        every { roleService.findById(any()) } returns RoleSampler.sample()
+        every { userRepository.findById(any()) } returns Optional.empty()
+
+        val exception = assertThrows<DomainException> {
+            userService.assignRole(ULID.random(), ULID.random())
+        }
+
+        verify { userRepository.findById(any()) }
+        verify { roleService.findById(any()) }
 
         assertEquals(ErrorType.USER_NOT_FOUND, exception.type)
     }

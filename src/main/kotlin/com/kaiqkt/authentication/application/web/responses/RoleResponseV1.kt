@@ -9,7 +9,7 @@ data class RoleResponseV1(
     val permissions: List<PermissionResponseV1>
 )
 
-fun Role.toResponseV1() = RoleResponseV1(
+fun Role.toResponseV1(): RoleResponseV1 = RoleResponseV1(
     id = this.id,
     name = this.name,
     description = this.description,
