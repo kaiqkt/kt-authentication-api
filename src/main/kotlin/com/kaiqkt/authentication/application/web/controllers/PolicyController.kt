@@ -26,24 +26,32 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@RequestMapping("/v1/policies")
 @RestController
 @Validated
 class PolicyController(
     private val policyService: PolicyService
 ) {
 
-    @PostMapping
+    @PostMapping("/v1/resources/{resource_server_id}/policies")
     fun create(
-        @RequestParam("resource_server_id") resourceServerId: String,
+        @PathVariable("resource_server_id") resourceServerId: String,
         @Valid @RequestBody requestV1: PolicyRequestV1
-    ): ResponseEntity<PolicyResponseV1?> {
+    ): ResponseEntity<PolicyResponseV1> {
         val response = policyService.create(resourceServerId, requestV1.toDto()).toResponseV1()
 
         return ResponseEntity.ok(response)
     }
 
-    @DeleteMapping("/{policy_id}")
+    @GetMapping("/v1/resources/{resource_server_id}/policies")
+    fun findAllByResourceServerId(
+        @PathVariable("resource_server_id") resourceServerId: String
+    ): ResponseEntity<List<PolicyResponseV1>> {
+        val response = policyService.findAllByResourceId(resourceServerId).map { it.toResponseV1() }
+
+        return ResponseEntity.ok(response)
+    }
+
+    @DeleteMapping("/v1/policies/{policy_id}")
     fun delete(
         @PathVariable("policy_id") policyId: String
     ): ResponseEntity<Unit> {
@@ -52,7 +60,7 @@ class PolicyController(
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping
+    @GetMapping("/v1/policies")
     fun findAll(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero
@@ -82,16 +90,23 @@ class PolicyController(
         return ResponseEntity.ok(response)
     }
 
-    @PatchMapping("/{policy_id}/associate")
-    fun associate(
+
+    @PatchMapping("/v1/policies/{policy_id}/permissions/{permission_id}")
+    fun associatePermission(
         @PathVariable("policy_id") policyId: String,
-        @RequestParam("permissionId", required = false) permissionId: String?,
-        @RequestParam("role_id", required = false) roleId: String?
+        @PathVariable("permission_id") permissionId: String
     ): ResponseEntity<Unit> {
-        when {
-            permissionId != null -> policyService.associatePermission(policyId, permissionId)
-            roleId != null  -> policyService.associateRole(policyId, roleId)
-        }
+        policyService.associatePermission(policyId, permissionId)
+
+        return ResponseEntity.noContent().build()
+    }
+
+    @PatchMapping("/v1/policies/{policy_id}/roles/{role_id}")
+    fun associateRole(
+        @PathVariable("policy_id") policyId: String,
+        @PathVariable("role_id") roleId: String
+    ): ResponseEntity<Unit> {
+        policyService.associateRole(policyId, roleId)
 
         return ResponseEntity.noContent().build()
     }

@@ -63,7 +63,7 @@ class RoleService(
         val role = findById(roleId)
 
         if (role.permissions.contains(permission)) {
-            role.permissions.removeIf { it.id == permissionId }
+            role.permissions.remove(permission)
             log.info("Role $roleId disassociate from permission $permissionId")
 
             return

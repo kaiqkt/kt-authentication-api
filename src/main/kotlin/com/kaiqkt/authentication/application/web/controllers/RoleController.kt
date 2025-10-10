@@ -18,13 +18,12 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/roles")
 @Validated
 class RoleController(
     private val roleService: RoleService
 ) {
 
-    @PostMapping
+    @PostMapping("/v1/roles")
     fun create(
         @Valid @RequestBody requestV1: RoleRequestV1
     ): ResponseEntity<RoleResponseV1> {
@@ -33,21 +32,21 @@ class RoleController(
         return ResponseEntity.ok(response)
     }
 
-    @DeleteMapping("/{role_id}")
+    @DeleteMapping("/v1/roles/{role_id}")
     fun delete(@PathVariable("role_id") roleId: String): ResponseEntity<Unit> {
         roleService.delete(roleId)
 
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("/{role_id}")
+    @GetMapping("/v1/roles/{role_id}")
     fun findById(@PathVariable("role_id") roleId: String): ResponseEntity<RoleResponseV1?> {
         val response = roleService.findById(roleId).toResponseV1()
 
         return ResponseEntity.ok(response)
     }
 
-    @PatchMapping("/{role_id}/associate/{permission_id}")
+    @PatchMapping("/v1/roles/{role_id}/associate/{permission_id}")
     fun associate(
         @PathVariable("role_id") roleId: String,
         @PathVariable("permission_id") permissionId: String
@@ -57,7 +56,7 @@ class RoleController(
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping
+    @GetMapping("/v1/roles")
     fun findAll(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero

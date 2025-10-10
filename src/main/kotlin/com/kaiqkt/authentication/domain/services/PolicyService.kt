@@ -57,7 +57,6 @@ class PolicyService(
         log.info("Policy $policyId deleted")
     }
 
-    //fazer na controller do resources
     fun findAllByResourceId(resourceServerId: String): List<Policy> {
         return policyRepository.findAllByResourceServerId(resourceServerId)
     }
@@ -85,7 +84,7 @@ class PolicyService(
         val policy = findById(policyId)
 
         if (policy.permissions.contains(permission)) {
-            policy.permissions.removeIf { it.id == permissionId }
+            policy.permissions.remove(permission)
             log.info("Permission $permissionId dissociate of policy $policyId")
 
             return
@@ -102,7 +101,7 @@ class PolicyService(
         val policy = findById(policyId)
 
         if (policy.roles.contains(role)) {
-            policy.roles.removeIf { it.id == roleId }
+            policy.roles.remove(role)
             log.info("Role $roleId dissociate of policy $policyId")
 
             return

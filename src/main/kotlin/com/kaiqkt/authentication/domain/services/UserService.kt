@@ -42,6 +42,13 @@ class UserService(
         val role = roleService.findById(roleId)
         val user = findById(userId)
 
+        if (user.roles.contains(role)) {
+            user.roles.remove(role)
+            log.info("User $userId reassigned of role $roleId")
+
+            return
+        }
+
         user.roles.add(role)
 
         log.info("User $userId assigned to role $roleId")

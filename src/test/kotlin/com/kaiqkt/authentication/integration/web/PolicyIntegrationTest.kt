@@ -13,9 +13,11 @@ import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler
 import com.kaiqkt.authentication.unit.domain.models.RoleSampler
 import io.azam.ulidj.ULID
 import io.restassured.RestAssured.given
+import io.restassured.common.mapper.TypeRef
 import io.restassured.http.ContentType
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+
 
 class PolicyIntegrationTest : IntegrationTest() {
 
@@ -27,7 +29,7 @@ class PolicyIntegrationTest : IntegrationTest() {
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/policies?resource_server_id=${resourceServer.id}")
+            .post("/v1/resources/${resourceServer.id}/policies")
             .then()
             .statusCode(200)
             .extract()
@@ -49,7 +51,7 @@ class PolicyIntegrationTest : IntegrationTest() {
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/policies?resource_server_id=${ULID.random()}")
+            .post("/v1/resources/${ULID.random()}/policies")
             .then()
             .statusCode(400)
             .extract()
@@ -69,7 +71,7 @@ class PolicyIntegrationTest : IntegrationTest() {
         val response = given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post("/v1/policies?resource_server_id=${resourceServer.id}")
+            .post("/v1/resources/${resourceServer.id}/policies")
             .then()
             .statusCode(409)
             .extract()
@@ -77,6 +79,22 @@ class PolicyIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.POLICY_ALREADY_EXISTS.name, response.type.name)
+    }
+
+    @Test
+    fun `given a resource server id should return all policies successfully`(){
+        val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
+        policyRepository.save(PolicySampler.sample(resourceServer))
+
+        val response = given()
+            .get("/v1/resources/${resourceServer.id}/policies")
+            .then()
+            .statusCode(200)
+            .extract()
+            .response()
+            .`as`(object : TypeRef<List<PolicyResponseV1>>(){})
+
+        assertEquals(1, response.size)
     }
 
     @Test
@@ -123,7 +141,7 @@ class PolicyIntegrationTest : IntegrationTest() {
         val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
         given()
-            .patch("/v1/policies/${policy.id}/associate?permission_id=${permission.id}")
+            .patch("/v1/policies/${policy.id}/permissions/${permission.id}")
             .then()
             .statusCode(204)
     }
@@ -135,7 +153,7 @@ class PolicyIntegrationTest : IntegrationTest() {
         val role = roleRepository.save(RoleSampler.sample())
 
         given()
-            .patch("/v1/policies/${policy.id}/associate?role_id=${role.id}")
+            .patch("/v1/policies/${policy.id}/roles/${role.id}")
             .then()
             .statusCode(204)
     }
@@ -147,7 +165,7 @@ class PolicyIntegrationTest : IntegrationTest() {
         val policy = policyRepository.save(PolicySampler.sample(resourceServer).apply { permissions.add(permission) })
 
         given()
-            .patch("/v1/policies/${policy.id}/associate?permission_id=${permission.id}")
+            .patch("/v1/policies/${policy.id}/permissions/${permission.id}")
             .then()
             .statusCode(204)
     }
@@ -159,7 +177,7 @@ class PolicyIntegrationTest : IntegrationTest() {
         val policy = policyRepository.save(PolicySampler.sample(resourceServer).apply { roles.add(role) })
 
         given()
-            .patch("/v1/policies/${policy.id}/associate?role_id=${role.id}")
+            .patch("/v1/policies/${policy.id}/roles/${role.id}")
             .then()
             .statusCode(204)
     }

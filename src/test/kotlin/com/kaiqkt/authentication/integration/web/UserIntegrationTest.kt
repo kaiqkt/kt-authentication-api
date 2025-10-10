@@ -76,17 +76,29 @@ class UserIntegrationTest : IntegrationTest() {
         val role = roleRepository.save(RoleSampler.sample())
 
         given()
-            .patch("/v1/users/${user.id}/role/${role.id}")
+            .patch("/v1/users/${user.id}/roles/${role.id}")
             .then()
             .statusCode(204)
     }
+
+    @Test
+    fun `given a user id and role id when user already assigned should reassign successfully`(){
+        val role = roleRepository.save(RoleSampler.sample())
+        val user = userRepository.save(UserSampler.sample(roles = mutableSetOf(role)))
+
+        given()
+            .patch("/v1/users/${user.id}/roles/${role.id}")
+            .then()
+            .statusCode(204)
+    }
+
 
     @Test
     fun `given a user id and role id when user does not found should thrown an exception`(){
         val role = roleRepository.save(RoleSampler.sample())
 
         val response = given()
-            .patch("/v1/users/${ULID.random()}/role/${role.id}")
+            .patch("/v1/users/${ULID.random()}/roles/${role.id}")
             .then()
             .statusCode(404)
             .extract()
@@ -98,7 +110,7 @@ class UserIntegrationTest : IntegrationTest() {
     @Test
     fun `given a user id and role id when role does not found should thrown an exception`(){
         val response = given()
-            .patch("/v1/users/${ULID.random()}/role/${ULID.random()}")
+            .patch("/v1/users/${ULID.random()}/roles/${ULID.random()}")
             .then()
             .statusCode(404)
             .extract()

@@ -18,14 +18,14 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/permissions")
 @Validated
 class PermissionController(
     private val permissionService: PermissionService
 ) {
-    @PostMapping
+
+    @PostMapping("/v1/resources/{resource_server_id}/permissions")
     fun create(
-        @RequestParam("resource_server_id") resourceId: String,
+        @PathVariable("resource_server_id") resourceId: String,
         @Valid @RequestBody requestV1: PermissionRequestV1
     ): ResponseEntity<PermissionResponseV1> {
         val response = permissionService.create(resourceId, requestV1.toDto()).toResponseV1()
@@ -33,7 +33,7 @@ class PermissionController(
         return ResponseEntity.ok(response)
     }
 
-    @DeleteMapping("/{permission_id}")
+    @DeleteMapping("/v1/permissions/{permission_id}")
     fun delete(
         @PathVariable("permission_id") permissionId: String
     ): ResponseEntity<PermissionResponseV1> {
@@ -42,7 +42,7 @@ class PermissionController(
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("/{permission_id}")
+    @GetMapping("/v1/permissions/{permission_id}")
     fun findById(
         @PathVariable("permission_id") permissionId: String
     ): ResponseEntity<PermissionResponseV1?> {
@@ -51,7 +51,7 @@ class PermissionController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping
+    @GetMapping("/v1/permissions")
     fun findAll(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero

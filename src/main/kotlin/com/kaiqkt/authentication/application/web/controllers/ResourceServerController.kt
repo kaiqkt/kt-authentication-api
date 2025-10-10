@@ -6,6 +6,7 @@ import com.kaiqkt.authentication.application.web.responses.ResourceServerRespons
 import com.kaiqkt.authentication.application.web.responses.toResponseV1
 import com.kaiqkt.authentication.domain.dtos.PageRequestDto
 import com.kaiqkt.authentication.domain.services.PermissionService
+import com.kaiqkt.authentication.domain.services.PolicyService
 import com.kaiqkt.authentication.domain.services.ResourceServerService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Max
@@ -19,13 +20,12 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/resources")
 @Validated
 class ResourceServerController(
     private val resourceServerService: ResourceServerService
 ) {
 
-    @PostMapping
+    @PostMapping("/v1/resources")
     fun create(
         @Valid @RequestBody requestV1: ResourceServerRequestV1
     ): ResponseEntity<ResourceServerResponseV1> {
@@ -34,7 +34,7 @@ class ResourceServerController(
         return ResponseEntity.ok(resourceServer.toResponseV1())
     }
 
-    @DeleteMapping("/{resource_server_id}")
+    @DeleteMapping("/v1/resources/{resource_server_id}")
     fun delete(
         @PathVariable("resource_server_id") resourceId: String
     ): ResponseEntity<Unit> {
@@ -43,7 +43,7 @@ class ResourceServerController(
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping
+    @GetMapping("/v1/resources")
     fun findAll(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero
@@ -71,7 +71,7 @@ class ResourceServerController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/{resource_server_id}")
+    @GetMapping("/v1/resources/{resource_server_id}")
     fun findById(
         @PathVariable("resource_server_id") resourceId: String
     ): ResponseEntity<ResourceServerResponseV1> {

@@ -12,19 +12,18 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/oauth")
 class AuthController(
     private val authenticationService: AuthenticationService
 ) {
 
-    @PostMapping("/token")
+    @PostMapping("/v1/oauth/token")
     fun token(@Valid @RequestBody requestV1: AuthenticationTokenRequestV1): ResponseEntity<AuthenticationTokenResponseV1?> {
         val tokens = authenticationService.getTokens(requestV1.toDto())
 
         return ResponseEntity.ok(tokens.toResponseV1())
     }
 
-    @GetMapping("/introspect")
+    @GetMapping("/v1/oauth/introspect")
     fun introspect(@RequestHeader(value = "Authorization") accessToken: String): ResponseEntity<IntrospectResponseV1> {
         val introspection = authenticationService.introspect(accessToken.substringAfter(Constants.Headers.BEARER))
 

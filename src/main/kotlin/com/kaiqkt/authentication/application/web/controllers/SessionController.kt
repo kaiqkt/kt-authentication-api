@@ -21,12 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/sessions")
 @Validated
 class SessionController(
     private val sessionService: SessionService
 ) {
-    @DeleteMapping("/{session_id}")
+    @DeleteMapping("/v1/sessions/{session_id}")
     fun revokeById(
         @RequestHeader("X-User-Id") userId: String,
         @PathVariable("session_id") sessionId: String
@@ -36,7 +35,7 @@ class SessionController(
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping
+    @GetMapping("/v1/sessions")
     fun findAllByUserId(
         @RequestHeader("X-User-Id") userId: String,
 

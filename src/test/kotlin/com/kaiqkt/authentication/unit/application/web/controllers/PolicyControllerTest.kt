@@ -30,6 +30,15 @@ class PolicyControllerTest {
     }
 
     @Test
+    fun `given a resource server id should return all policies successfully`(){
+        every { policyService.findAllByResourceId(any()) } returns listOf()
+
+        policyController.findAllByResourceServerId(ULID.random())
+
+        verify { policyService.findAllByResourceId(any()) }
+    }
+
+    @Test
     fun `given a policy id should delete successfully`(){
         justRun { policyService.delete(any()) }
 
@@ -55,7 +64,7 @@ class PolicyControllerTest {
     fun `given a policy id and a permission id should associate successfully`(){
         justRun { policyService.associatePermission(any(), any()) }
 
-        val response = policyController.associate(ULID.random(), ULID.random(), null)
+        val response = policyController.associatePermission(ULID.random(), ULID.random())
 
         verify { policyService.associatePermission(any(), any()) }
 
@@ -66,7 +75,7 @@ class PolicyControllerTest {
     fun `given a policy id and a role id should associate successfully`(){
         justRun { policyService.associateRole(any(), any()) }
 
-        val response = policyController.associate(ULID.random(), null, ULID.random())
+        val response = policyController.associateRole(ULID.random(), ULID.random())
 
         verify { policyService.associateRole(any(), any()) }
 

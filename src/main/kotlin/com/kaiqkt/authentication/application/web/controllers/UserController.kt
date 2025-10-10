@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/users")
 class UserController(
     private val userService: UserService
 ) {
 
-    @PostMapping
+    @PostMapping("/v1/users")
     fun create(@Valid @RequestBody userRequestV1: UserRequestV1): ResponseEntity<UserResponseV1> {
         val user = userService.create(userRequestV1.toDto())
 
         return ResponseEntity.ok(user.toResponseV1())
     }
 
-    @PatchMapping("/{user_id}/role/{role_id}")
+    @PatchMapping("/v1/users/{user_id}/roles/{role_id}")
     fun assignRole(
         @PathVariable("user_id") userId: String,
         @PathVariable("role_id") roleId: String
@@ -37,6 +36,4 @@ class UserController(
 
         return ResponseEntity.noContent().build()
     }
-
-    //deassignRole
 }

@@ -107,6 +107,20 @@ class UserServiceTest {
     }
 
     @Test
+    fun `given a user id and role id when user already assigned should reassign successfully`(){
+        val role = RoleSampler.sample()
+        val user = UserSampler.sample(mutableSetOf(role))
+
+        every { roleService.findById(any()) } returns role
+        every { userRepository.findById(any()) } returns Optional.of(user)
+
+        userService.assignRole(ULID.random(), ULID.random())
+
+        verify { userRepository.findById(any()) }
+        verify { roleService.findById(any()) }
+    }
+
+    @Test
     fun `given a user id and role id when user does not found should thrown an exception`(){
         every { roleService.findById(any()) } returns RoleSampler.sample()
         every { userRepository.findById(any()) } returns Optional.empty()
