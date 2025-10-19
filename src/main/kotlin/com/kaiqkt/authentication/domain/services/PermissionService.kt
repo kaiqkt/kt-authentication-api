@@ -20,7 +20,7 @@ class PermissionService(
 ) {
     private val log = LoggerFactory.getLogger(PermissionService::class.java)
 
-    private val allowedSortFields = Constants.Sort.COMMON_FIELDS.plus(listOf("resource", "verb"))
+    private val allowedSortFields = Constants.Sort.getAllowedFiled("resource", "verb")
 
     fun create(resourceId: String, permissionDto: PermissionDto): Permission {
         val resourceServer = resourceServerService.findById(resourceId)
@@ -55,14 +55,16 @@ class PermissionService(
     }
 
     fun findAll(resourceServerId: String?, pageRequestDto: PageRequestDto): Page<Permission> {
-        if (!pageRequestDto.isValid(allowedSortFields)) {
+        try {
+            val pageable = pageRequestDto.toDomain(allowedSortFields)
+
+            if (resourceServerId != null) {
+                return permissionRepository.findAllByResourceServerId(resourceServerId, pageable)
+            }
+
+            return permissionRepository.findAll(pageable)
+        } catch (_: IllegalArgumentException) {
             throw DomainException(ErrorType.INVALID_SORT_FIELD)
         }
-
-        if (resourceServerId != null) {
-            return permissionRepository.findAllByResourceServerId(resourceServerId, pageRequestDto.toDomain())
-        }
-
-        return permissionRepository.findAll(pageRequestDto.toDomain())
     }
 }

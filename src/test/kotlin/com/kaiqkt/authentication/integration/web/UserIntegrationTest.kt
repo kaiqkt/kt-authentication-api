@@ -68,6 +68,7 @@ class UserIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.EMAIL_ALREADY_IN_USE, response.type)
+        assertEquals(ErrorType.EMAIL_ALREADY_IN_USE.message, response.message)
     }
 
     @Test
@@ -105,6 +106,7 @@ class UserIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.USER_NOT_FOUND, response.type)
+        assertEquals(ErrorType.USER_NOT_FOUND.message, response.message)
     }
 
     @Test
@@ -117,5 +119,6 @@ class UserIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.ROLE_NOT_FOUND, response.type)
+        assertEquals(ErrorType.ROLE_NOT_FOUND.message, response.message)
     }
 }

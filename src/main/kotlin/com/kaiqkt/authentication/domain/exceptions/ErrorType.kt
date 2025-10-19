@@ -14,5 +14,6 @@ enum class ErrorType(val message: String) {
     ROLE_NOT_FOUND("Role not found"),
     ROLE_ALREADY_EXISTS("Role already exists with the given name"),
     POLICY_ALREADY_EXISTS("Policy already exists with uri and method for the given resource server"),
-    POLICY_NOT_FOUND("Policy not found")
+    POLICY_NOT_FOUND("Policy not found"),
+    CLIENT_NOT_FOUND("Client not found"),
 }

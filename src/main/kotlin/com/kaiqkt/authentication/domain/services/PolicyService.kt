@@ -22,7 +22,7 @@ class PolicyService(
 ) {
     private val log = LoggerFactory.getLogger(PolicyService::class.java)
 
-    private val allowedSortFields = Constants.Sort.COMMON_FIELDS
+    private val allowedSortFields = Constants.Sort.getAllowedFiled()
 
     fun create(resourceServerId: String, policyDto: PolicyDto): Policy {
         val alreadyExists = policyRepository.existsByUriAndMethodAndResourceServerId(
@@ -67,15 +67,17 @@ class PolicyService(
     }
 
     fun findAll(resourceServerId: String?, pageRequestDto: PageRequestDto): Page<Policy> {
-        if (!pageRequestDto.isValid(allowedSortFields)) {
+        try {
+            val pageable = pageRequestDto.toDomain(allowedSortFields)
+
+            if (resourceServerId != null) {
+                return policyRepository.findAllByResourceServerId(resourceServerId, pageable)
+            }
+
+            return policyRepository.findAll(pageable)
+        } catch (_: IllegalArgumentException) {
             throw DomainException(ErrorType.INVALID_SORT_FIELD)
         }
-
-        if (resourceServerId != null) {
-            return policyRepository.findAllByResourceServerId(resourceServerId, pageRequestDto.toDomain())
-        }
-
-        return policyRepository.findAll(pageRequestDto.toDomain())
     }
 
     @Transactional

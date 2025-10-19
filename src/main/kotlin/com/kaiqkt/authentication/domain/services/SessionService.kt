@@ -3,7 +3,7 @@ package com.kaiqkt.authentication.domain.services
 import com.kaiqkt.authentication.domain.dtos.PageRequestDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
-import com.kaiqkt.authentication.domain.models.Role
+import com.kaiqkt.authentication.domain.models.Client
 import com.kaiqkt.authentication.domain.models.Session
 import com.kaiqkt.authentication.domain.models.User
 import com.kaiqkt.authentication.domain.repositories.SessionRepository
@@ -23,11 +23,17 @@ class SessionService(
     private val sessionTtl: Long
 ) {
     private val log = LoggerFactory.getLogger(SessionService::class.java)
-    private val allowedSortFields = Constants.Sort.COMMON_FIELDS
+    private val allowedSortFields = Constants.Sort.getAllowedFiled()
 
-    fun save(sessionId: String, refreshToken: String, user: User): Session {
+    fun save(
+        sessionId: String,
+        client: Client,
+        refreshToken: String,
+        user: User
+    ): Session {
         val session = Session(
             id = sessionId,
+            client = client,
             user = user,
             refreshToken = refreshToken,
             expireAt = LocalDateTime.now().plusSeconds(sessionTtl)
@@ -40,8 +46,9 @@ class SessionService(
         return session
     }
 
-    fun findByRefreshToken(refreshToken: String): Session {
-        return sessionRepository.findByRefreshToken(refreshToken)
+    //autalizar nome de testes
+    fun findByClientIdAndRefreshToken(clientId: String, refreshToken: String): Session {
+        return sessionRepository.findByRefreshToken(clientId, refreshToken)
             ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)
     }
 
@@ -60,10 +67,12 @@ class SessionService(
     }
 
     fun findAllByUserId(userId: String, pageRequestDto: PageRequestDto): Page<Session> {
-        if (!pageRequestDto.isValid(allowedSortFields)) {
+        try {
+            val pageable = pageRequestDto.toDomain(allowedSortFields)
+
+            return sessionRepository.findAll(pageable)
+        } catch (_: IllegalArgumentException) {
             throw DomainException(ErrorType.INVALID_SORT_FIELD)
         }
-
-        return sessionRepository.findAll(pageRequestDto.toDomain())
     }
 }

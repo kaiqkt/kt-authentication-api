@@ -33,10 +33,12 @@ class TokenService(
 
     fun issueTokens(
         subject: String,
+        audience: String,
         sid: String,
-        roles: Set<Role>
+        roles: Set<Role>,
+        permissions: Set<Permission>
     ): AuthenticationDto {
-        val accessToken = signToken(subject, accessTokenTll, sid, roles)
+        val accessToken = signToken(subject, audience,accessTokenTll, sid, roles, permissions)
         val refreshToken = opaqueToken()
 
         return AuthenticationDto(
@@ -68,23 +70,23 @@ class TokenService(
 
     private fun signToken(
         subject: String,
+        audience: String,
         ttl: Long,
         sid: String,
-        roles: Set<Role>
+        roles: Set<Role>,
+        permissions: Set<Permission>
     ): String {
         val now = Instant.now()
-        val permissions = roles
-            .flatMap(Role::permissions)
-            .map(Permission::getResourceVerb)
 
         val claims = JWTClaimsSet.Builder()
             .issuer(issuer)
             .subject(subject)
+            .audience(audience)
             .issueTime(Date.from(now))
             .expirationTime(Date.from(now.plusSeconds(ttl)))
             .claim(Constants.Keys.SID, sid)
             .claim(Constants.Keys.ROLES, roles.map(Role::name))
-            .claim(Constants.Keys.PERMISSIONS, permissions)
+            .claim(Constants.Keys.PERMISSIONS, permissions.map(Permission::getResourceVerb))
             .build()
 
         val header = JWSHeader.Builder(JWSAlgorithm.HS256)
@@ -98,7 +100,7 @@ class TokenService(
         return signedJWT.serialize()
     }
 
-    private fun opaqueToken(): String {
+     fun opaqueToken(): String {
         val bytes = ByteArray(32)
         secureRandom.nextBytes(bytes)
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)

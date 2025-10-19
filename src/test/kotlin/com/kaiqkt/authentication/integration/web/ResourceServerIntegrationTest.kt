@@ -93,6 +93,7 @@ class ResourceServerIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
+        assertEquals(ErrorType.INVALID_SORT_FIELD.message, response.message)
     }
 
     @Test
@@ -138,5 +139,6 @@ class ResourceServerIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND, response.type)
+        assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND.message, response.message)
     }
 }

@@ -18,7 +18,7 @@ class ResourceServerService(
 ) {
     private val log = LoggerFactory.getLogger(ResourceServerService::class.java)
 
-    private val allowedSortFields = Constants.Sort.COMMON_FIELDS.plus("name")
+    private val allowedSortFields = Constants.Sort.getAllowedFiled("name")
 
     fun create(resourceServerDto: ResourceServerDto): ResourceServer {
         val resourceServer = ResourceServer(
@@ -34,11 +34,17 @@ class ResourceServerService(
     }
 
     fun findAll(pageRequestDto: PageRequestDto): Page<ResourceServer> {
-        if (!pageRequestDto.isValid(allowedSortFields)) {
+        try {
+            val pageable = pageRequestDto.toDomain(allowedSortFields)
+
+            return resourceServerRepository.findAll(pageable)
+        } catch (_: IllegalArgumentException) {
             throw DomainException(ErrorType.INVALID_SORT_FIELD)
         }
+    }
 
-        return resourceServerRepository.findAll(pageRequestDto.toDomain())
+    fun findAllById(ids: List<String>): List<ResourceServer> {
+        return resourceServerRepository.findAllById(ids)
     }
 
     fun findById(id: String): ResourceServer {

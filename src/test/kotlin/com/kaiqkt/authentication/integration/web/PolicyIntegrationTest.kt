@@ -78,7 +78,8 @@ class PolicyIntegrationTest : IntegrationTest() {
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.POLICY_ALREADY_EXISTS.name, response.type.name)
+        assertEquals(ErrorType.POLICY_ALREADY_EXISTS, response.type)
+        assertEquals(ErrorType.POLICY_ALREADY_EXISTS.message, response.message)
     }
 
     @Test
@@ -131,7 +132,8 @@ class PolicyIntegrationTest : IntegrationTest() {
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD.name, response.type.name)
+        assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
+        assertEquals(ErrorType.INVALID_SORT_FIELD.message, response.message)
     }
 
     @Test

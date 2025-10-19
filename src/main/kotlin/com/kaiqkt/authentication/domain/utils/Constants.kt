@@ -12,6 +12,8 @@ object Constants {
     }
 
     object Sort {
-        val COMMON_FIELDS = setOf("created_at", "updated_at")
+        fun getAllowedFiled(vararg fields: String): Set<String> {
+            return setOf("created_at", "updated_at").plus(fields)
+        }
     }
 }

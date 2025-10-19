@@ -9,10 +9,10 @@ data class PageRequestDto(
     val sort: Sort.Direction,
     val sortBy: String?
 ) {
-    fun isValid(allowedSortFields: Set<String>): Boolean = this.sortBy == null || allowedSortFields.contains(this.sortBy)
-
-    fun toDomain(): PageRequest {
+    fun toDomain(allowedFields: Set<String>): PageRequest {
         if (this.sortBy != null) {
+            require(allowedFields.contains(this.sortBy))
+
             return PageRequest.of(
                 this.page,
                 this.size,

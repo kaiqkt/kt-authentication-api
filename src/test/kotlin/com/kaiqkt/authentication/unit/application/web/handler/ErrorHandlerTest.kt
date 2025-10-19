@@ -16,12 +16,24 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingRequestHeaderException
 import org.springframework.web.context.request.WebRequest
 import kotlin.test.assertEquals
 
 class ErrorHandlerTest {
     private val webRequest: WebRequest = mockk()
     private val errorHandler = ErrorHandler()
+
+    @Test
+    fun `given an DomainException when is CLIENT_NOT_FOUND should return the message based on the error type`() {
+        val domainException = DomainException(ErrorType.CLIENT_NOT_FOUND)
+
+        val response = errorHandler.handleDomainException(domainException)
+
+        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+        assertEquals(ErrorType.CLIENT_NOT_FOUND, response.body?.type)
+        assertEquals("Client not found", response.body?.message)
+    }
 
     @Test
     fun `given an DomainException when is POLICY_ALREADY_EXISTS should return the message based on the error type`() {
@@ -233,5 +245,17 @@ class ErrorHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
         assertEquals("message", response.body?.errors?.get("object.field"))
+    }
+
+    @Test
+    fun `given an MissingRequestHeaderException should return the missing headers`(){
+        val exception = mockk<MissingRequestHeaderException>()
+
+        every { exception.headerName } returns "header_name"
+
+        val response = errorHandler.handleMissingRequestHeaderException(exception)
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertEquals("required header", response.body?.errors?.get("header_name"))
     }
 }

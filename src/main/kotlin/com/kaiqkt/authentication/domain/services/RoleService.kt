@@ -19,7 +19,7 @@ class RoleService(
     private val permissionService: PermissionService
 ) {
     private val log = LoggerFactory.getLogger(PermissionService::class.java)
-    private val allowedSortFields = Constants.Sort.COMMON_FIELDS.plus("name")
+    private val allowedSortFields = Constants.Sort.getAllowedFiled("name")
 
     fun create(roleDto: RoleDto): Role {
         if (roleRepository.existsByName(roleDto.name)) {
@@ -50,11 +50,13 @@ class RoleService(
     }
 
     fun findAll(pageRequestDto: PageRequestDto): Page<Role> {
-        if (!pageRequestDto.isValid(allowedSortFields)) {
+        try {
+            val pageable = pageRequestDto.toDomain(allowedSortFields)
+
+            return roleRepository.findAll(pageable)
+        } catch (_: IllegalArgumentException) {
             throw DomainException(ErrorType.INVALID_SORT_FIELD)
         }
-
-        return roleRepository.findAll(pageRequestDto.toDomain())
     }
 
     @Transactional

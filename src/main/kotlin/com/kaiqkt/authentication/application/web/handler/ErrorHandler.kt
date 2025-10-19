@@ -83,6 +83,7 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
             ErrorType.ROLE_ALREADY_EXISTS -> HttpStatus.CONFLICT
             ErrorType.POLICY_ALREADY_EXISTS -> HttpStatus.CONFLICT
             ErrorType.POLICY_NOT_FOUND -> HttpStatus.NOT_FOUND
+            ErrorType.CLIENT_NOT_FOUND -> HttpStatus.NOT_FOUND
         }
     }
 }

@@ -74,6 +74,7 @@ class RoleIntegrationTest : IntegrationTest() {
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.ROLE_ALREADY_EXISTS, response.type)
+        assertEquals(ErrorType.ROLE_ALREADY_EXISTS.message, response.message)
     }
 
     @Test
@@ -110,6 +111,7 @@ class RoleIntegrationTest : IntegrationTest() {
             .`as`(DomainException::class.java)
 
         assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
+        assertEquals(ErrorType.INVALID_SORT_FIELD.message, response.message)
     }
 
     @Test
@@ -138,6 +140,7 @@ class RoleIntegrationTest : IntegrationTest() {
             .`as`(DomainException::class.java)
 
         assertEquals(ErrorType.ROLE_NOT_FOUND, response.type)
+        assertEquals(ErrorType.ROLE_NOT_FOUND.message, response.message)
     }
 
     @Test
@@ -151,6 +154,7 @@ class RoleIntegrationTest : IntegrationTest() {
             .`as`(DomainException::class.java)
 
         assertEquals(ErrorType.PERMISSION_NOT_FOUND, response.type)
+        assertEquals(ErrorType.PERMISSION_NOT_FOUND.message, response.message)
     }
 
     @Test

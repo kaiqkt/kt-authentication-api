@@ -3,6 +3,7 @@ package com.kaiqkt.authentication.integration
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kaiqkt.authentication.domain.models.Permission
 import com.kaiqkt.authentication.domain.models.Role
+import com.kaiqkt.authentication.domain.repositories.ClientRepository
 import com.kaiqkt.authentication.domain.repositories.PermissionRepository
 import com.kaiqkt.authentication.domain.repositories.ResourceServerRepository
 import com.kaiqkt.authentication.domain.repositories.RoleRepository
@@ -59,6 +60,9 @@ class IntegrationTest {
     @Autowired
     lateinit var policyRepository: PolicyRepository
 
+    @Autowired
+    lateinit var clientRepository: ClientRepository
+
     @BeforeAll
     fun before() {
         RestAssured.config = RestAssured.config()
@@ -75,6 +79,7 @@ class IntegrationTest {
         policyRepository.deleteAll()
         roleRepository.deleteAll()
         permissionRepository.deleteAll()
+        clientRepository.deleteAll()
         resourceServerRepository.deleteAll()
     }
 }

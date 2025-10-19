@@ -5,6 +5,7 @@ import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.responses.PageResponse
+import com.kaiqkt.authentication.unit.domain.models.ClientSampler
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import io.azam.ulidj.ULID
@@ -17,7 +18,8 @@ class SessionIntegrationTest : IntegrationTest(){
     @Test
     fun `given a session id and a user id when session exist should revoke successfully`(){
         val user = userRepository.save(UserSampler.sample())
-        val session = sessionRepository.save(SessionSampler.sample(user))
+        val client = clientRepository.save(ClientSampler.sample())
+        val session = sessionRepository.save(SessionSampler.sample(client, user))
 
         given()
             .header("X-User-Id", user.id)
@@ -39,6 +41,7 @@ class SessionIntegrationTest : IntegrationTest(){
            .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.SESSION_NOT_FOUND, response.type)
+        assertEquals(ErrorType.SESSION_NOT_FOUND.message, response.message)
     }
 
     @Test
@@ -56,7 +59,8 @@ class SessionIntegrationTest : IntegrationTest(){
     @Test
     fun `given a user id and parameters should return sessions paginated successfully`(){
         val user = userRepository.save(UserSampler.sample())
-        sessionRepository.save(SessionSampler.sample(user))
+        val client = clientRepository.save(ClientSampler.sample())
+        sessionRepository.save(SessionSampler.sample(client, user))
 
         val response = given()
             .header("X-User-Id", user.id)
@@ -82,5 +86,6 @@ class SessionIntegrationTest : IntegrationTest(){
             .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
+        assertEquals(ErrorType.INVALID_SORT_FIELD.message, response.message)
     }
 }

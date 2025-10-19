@@ -5,7 +5,6 @@ import com.kaiqkt.authentication.domain.dtos.AuthorizationTokenDto
 import com.kaiqkt.authentication.domain.dtos.IntrospectDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
-import com.kaiqkt.authentication.domain.models.Role
 import com.kaiqkt.authentication.domain.models.enums.AuthenticationType
 import com.kaiqkt.authentication.domain.utils.Constants
 import io.azam.ulidj.ULID
@@ -19,7 +18,8 @@ class AuthenticationService(
     private val sessionService: SessionService,
     private val passwordEncoder: PasswordEncoder,
     private val tokenService: TokenService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val clientService: ClientService
 ) {
     private val log = LoggerFactory.getLogger(AuthenticationService::class.java)
 
@@ -39,7 +39,7 @@ class AuthenticationService(
     }
 
     fun getTokens(tokenDto: AuthorizationTokenDto): AuthenticationDto {
-       return when(tokenDto) {
+        return when (tokenDto) {
             is AuthorizationTokenDto.Password -> login(tokenDto)
             is AuthorizationTokenDto.Refresh -> refreshToken(tokenDto)
         }
@@ -47,17 +47,23 @@ class AuthenticationService(
 
     @Transactional
     private fun login(tokenDto: AuthorizationTokenDto.Password): AuthenticationDto {
+        val client = clientService.findById(tokenDto.clientId)
         val user = userService.findByEmailAndType(tokenDto.email, AuthenticationType.PASSWORD)
-        val roles = user.roles
 
         if (!passwordEncoder.matches(tokenDto.password, user.password)) {
             throw DomainException(ErrorType.INVALID_CREDENTIALS)
         }
 
         val sessionId = ULID.random()
-        val tokens = tokenService.issueTokens(user.id, sessionId, roles)
+        val tokens = tokenService.issueTokens(
+            subject = user.id,
+            audience = tokenDto.clientId,
+            sid = sessionId,
+            roles = user.roles,
+            permissions = setOf()
+        )
 
-        sessionService.save(sessionId, tokens.refreshToken, user)
+        sessionService.save(sessionId, client, tokens.refreshToken, user)
 
         log.info("User ${user.id} authenticated")
 
@@ -65,13 +71,18 @@ class AuthenticationService(
     }
 
     private fun refreshToken(tokenDto: AuthorizationTokenDto.Refresh): AuthenticationDto {
-        val session = sessionService.findByRefreshToken(tokenDto.refreshToken)
+        val session = sessionService.findByClientIdAndRefreshToken(tokenDto.clientId, tokenDto.refreshToken)
         val user = session.user
-        val roles = user.roles
 
-        val tokens = tokenService.issueTokens(user.id, session.id, roles)
+        val tokens = tokenService.issueTokens(
+            subject = user.id,
+            audience = session.client.id,
+            sid = session.id,
+            roles = user.roles,
+            permissions = setOf()
+        )
 
-        sessionService.save(session.id, tokens.refreshToken, user)
+        sessionService.save(session.id, session.client, tokens.refreshToken, user)
 
         log.info("Refresh authentication for session ${session.id} of user ${user.id}")
 

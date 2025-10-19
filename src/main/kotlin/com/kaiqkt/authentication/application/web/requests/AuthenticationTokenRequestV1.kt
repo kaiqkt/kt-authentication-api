@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 
 data class AuthenticationTokenRequestV1(
+    val clientId: String?,
     val email: String?,
     val password: String?,
     val refreshToken: String?,
@@ -24,10 +25,12 @@ fun AuthenticationTokenRequestV1.toDto(): AuthorizationTokenDto {
 }
 
 private fun AuthenticationTokenRequestV1.toRefreshDto(): AuthorizationTokenDto.Refresh = AuthorizationTokenDto.Refresh(
-    refreshToken = this.refreshToken ?: throw InvalidRequestException(mapOf("refresh_token" to "must not be null"))
+    refreshToken = this.refreshToken ?: throw InvalidRequestException(mapOf("refresh_token" to "must not be null")),
+    clientId = clientId.takeUnless { it.isNullOrBlank() } ?: throw InvalidRequestException(mapOf("client_id" to "must not be null"))
 )
 
 private fun AuthenticationTokenRequestV1.toPasswordDto(): AuthorizationTokenDto.Password = AuthorizationTokenDto.Password(
     email = email.takeUnless { it.isNullOrBlank() } ?: throw InvalidRequestException(mapOf("email" to "must not be null")),
-    password = password.takeUnless { it.isNullOrBlank() } ?: throw InvalidRequestException(mapOf("password" to "must not be null"))
+    password = password.takeUnless { it.isNullOrBlank() } ?: throw InvalidRequestException(mapOf("password" to "must not be null")),
+    clientId = clientId.takeUnless { it.isNullOrBlank() } ?: throw InvalidRequestException(mapOf("client_id" to "must not be null"))
 )
