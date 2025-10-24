@@ -3,9 +3,7 @@ package com.kaiqkt.authentication.integration.web
 import com.kaiqkt.authentication.application.web.responses.AuthenticationTokenResponseV1
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.application.web.responses.IntrospectResponseV1
-import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
-import com.kaiqkt.authentication.domain.models.Client
 import com.kaiqkt.authentication.domain.utils.Constants
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.requests.AuthenticationTokenRequestV1Sampler
@@ -44,7 +42,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.CLIENT_NOT_FOUND, response.type)
+        assertEquals(ErrorType.CLIENT_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.CLIENT_NOT_FOUND.message, response.message)
     }
 
@@ -62,7 +60,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.USER_NOT_FOUND, response.type)
+        assertEquals(ErrorType.USER_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.USER_NOT_FOUND.message, response.message)
     }
 
@@ -81,7 +79,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.INVALID_CREDENTIALS, response.type)
+        assertEquals(ErrorType.INVALID_CREDENTIALS.name, response.type)
         assertEquals(ErrorType.INVALID_CREDENTIALS.message, response.message)
     }
 
@@ -145,7 +143,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.SESSION_NOT_FOUND, response.type)
+        assertEquals(ErrorType.SESSION_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.SESSION_NOT_FOUND.message, response.message)
     }
 
@@ -163,9 +161,11 @@ class AuthIntegrationTest : IntegrationTest() {
             .then()
             .statusCode(400)
             .extract()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("must not be null", response.errors["password"])
+        assertEquals("must not be null or blank", response.details["password"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
     }
 
     @Test
@@ -182,15 +182,18 @@ class AuthIntegrationTest : IntegrationTest() {
             .then()
             .statusCode(400)
             .extract()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("must not be null", response.errors["email"])
+        assertEquals("must not be null or blank", response.details["email"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
     }
 
 
     @Test
     fun `given a request to access token using refresh token when request is invalid thrown an exception`() {
         val request = AuthenticationTokenRequestV1Sampler.sample(
+            clientId = null,
             refreshToken = null
         )
 
@@ -201,9 +204,14 @@ class AuthIntegrationTest : IntegrationTest() {
             .then()
             .statusCode(400)
             .extract()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("must not be null", response.errors["refresh_token"])
+        println(response)
+
+        assertEquals("must not be null or blank", response.details["refresh_token"])
+        assertEquals("must not be null or blank", response.details["client_id"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
     }
 
     @Test
@@ -264,7 +272,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.INVALID_TOKEN, response.type)
+        assertEquals(ErrorType.INVALID_TOKEN.name, response.type)
         assertEquals(ErrorType.INVALID_TOKEN.message, response.message)
     }
 
@@ -279,7 +287,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.INVALID_TOKEN, response.type)
+        assertEquals(ErrorType.INVALID_TOKEN.name, response.type)
         assertEquals(ErrorType.INVALID_TOKEN.message, response.message)
     }
 
@@ -299,7 +307,7 @@ class AuthIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.EXPIRED_TOKEN, response.type)
+        assertEquals(ErrorType.EXPIRED_TOKEN.name, response.type)
         assertEquals(ErrorType.EXPIRED_TOKEN.message, response.message)
     }
 

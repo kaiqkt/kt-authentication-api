@@ -1,6 +1,6 @@
 package com.kaiqkt.authentication.domain.services
 
-import com.kaiqkt.authentication.domain.dtos.AuthenticationDto
+import com.kaiqkt.authentication.domain.dtos.TokensDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.models.Permission
@@ -37,11 +37,11 @@ class TokenService(
         sid: String,
         roles: Set<Role>,
         permissions: Set<Permission>
-    ): AuthenticationDto {
+    ): TokensDto {
         val accessToken = signToken(subject, audience,accessTokenTll, sid, roles, permissions)
         val refreshToken = opaqueToken()
 
-        return AuthenticationDto(
+        return TokensDto(
             accessToken = accessToken,
             refreshToken = refreshToken,
             expiresIn = accessTokenTll

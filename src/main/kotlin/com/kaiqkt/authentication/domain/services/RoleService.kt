@@ -55,7 +55,7 @@ class RoleService(
 
             return roleRepository.findAll(pageable)
         } catch (_: IllegalArgumentException) {
-            throw DomainException(ErrorType.INVALID_SORT_FIELD)
+            throw DomainException(ErrorType.INVALID_FIELD)
         }
     }
 

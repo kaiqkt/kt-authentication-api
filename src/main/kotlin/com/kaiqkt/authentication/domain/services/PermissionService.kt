@@ -1,6 +1,5 @@
 package com.kaiqkt.authentication.domain.services
 
-import com.kaiqkt.authentication.application.web.responses.toResponseV1
 import com.kaiqkt.authentication.domain.dtos.PageRequestDto
 import com.kaiqkt.authentication.domain.dtos.PermissionDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
@@ -64,7 +63,7 @@ class PermissionService(
 
             return permissionRepository.findAll(pageable)
         } catch (_: IllegalArgumentException) {
-            throw DomainException(ErrorType.INVALID_SORT_FIELD)
+            throw DomainException(ErrorType.INVALID_FIELD)
         }
     }
 }

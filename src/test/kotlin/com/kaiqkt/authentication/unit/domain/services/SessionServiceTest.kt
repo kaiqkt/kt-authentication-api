@@ -118,6 +118,6 @@ class SessionServiceTest {
             sessionService.findAllByUserId(ULID.random(), PageRequestDtoSampler.sample(sortBy = "invalid"))
         }
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)
+        assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 }

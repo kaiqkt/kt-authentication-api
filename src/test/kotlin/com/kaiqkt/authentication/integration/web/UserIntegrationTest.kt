@@ -1,7 +1,6 @@
 package com.kaiqkt.authentication.integration.web
 
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
-import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.application.web.responses.UserResponseV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.models.enums.AuthenticationType
@@ -47,10 +46,12 @@ class UserIntegrationTest : IntegrationTest() {
             .then()
             .statusCode(400)
             .extract()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("must be a valid email", response.errors["email"])
-        assertEquals("must be at least 8 characters long and include at least one letter, one special character, and one number", response.errors["password"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
+        assertEquals("must be a valid email", response.details["email"])
+        assertEquals("must be at least 8 characters long and include at least one letter, one special character, and one number", response.details["password"])
     }
 
     @Test
@@ -67,7 +68,7 @@ class UserIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.EMAIL_ALREADY_IN_USE, response.type)
+        assertEquals(ErrorType.EMAIL_ALREADY_IN_USE.name, response.type)
         assertEquals(ErrorType.EMAIL_ALREADY_IN_USE.message, response.message)
     }
 
@@ -105,7 +106,7 @@ class UserIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.USER_NOT_FOUND, response.type)
+        assertEquals(ErrorType.USER_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.USER_NOT_FOUND.message, response.message)
     }
 
@@ -118,7 +119,7 @@ class UserIntegrationTest : IntegrationTest() {
             .extract()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.ROLE_NOT_FOUND, response.type)
+        assertEquals(ErrorType.ROLE_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.ROLE_NOT_FOUND.message, response.message)
     }
 }

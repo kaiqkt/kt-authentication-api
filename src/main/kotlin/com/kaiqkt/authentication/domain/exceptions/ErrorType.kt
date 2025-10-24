@@ -7,7 +7,7 @@ enum class ErrorType(val message: String) {
     USER_NOT_FOUND("User not found"),
     INVALID_CREDENTIALS("Invalid credentials"),
     SESSION_NOT_FOUND("Session not found"),
-    INVALID_SORT_FIELD("Sort field are not valid or does not exist"),
+    INVALID_FIELD("Field are not valid or does not exist"),
     RESOURCE_SERVER_NOT_FOUND("Resource not found"),
     PERMISSION_ALREADY_EXISTS("Permission with resource and verb already exists"),
     PERMISSION_NOT_FOUND("Permission not found"),

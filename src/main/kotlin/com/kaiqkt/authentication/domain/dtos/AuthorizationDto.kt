@@ -1,14 +1,14 @@
 package com.kaiqkt.authentication.domain.dtos
 
-sealed class AuthorizationTokenDto {
+sealed class AuthorizationDto {
     data class Refresh(
         val clientId: String,
         val refreshToken: String
-    ): AuthorizationTokenDto()
+    ): AuthorizationDto()
 
     data class Password(
         val clientId: String,
         val email: String,
         val password: String
-    ): AuthorizationTokenDto()
+    ): AuthorizationDto()
 }

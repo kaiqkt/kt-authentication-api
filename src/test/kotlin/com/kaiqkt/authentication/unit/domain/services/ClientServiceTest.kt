@@ -101,7 +101,7 @@ class ClientServiceTest {
             clientService.findAll(pageRequest)
         }
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)
+        assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 
     @Test

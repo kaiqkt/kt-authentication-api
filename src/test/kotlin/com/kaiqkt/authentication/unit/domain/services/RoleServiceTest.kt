@@ -74,7 +74,7 @@ class RoleServiceTest {
             roleService.findAll(PageRequestDtoSampler.sample(sortBy = "invalid"))
         }
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)
+        assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 
     @Test

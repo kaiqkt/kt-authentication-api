@@ -1,7 +1,6 @@
 package com.kaiqkt.authentication.integration.web
 
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
-import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.application.web.responses.PermissionResponseV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.integration.IntegrationTest
@@ -9,7 +8,6 @@ import com.kaiqkt.authentication.unit.application.web.requests.PermissionRequest
 import com.kaiqkt.authentication.unit.application.web.responses.PageResponse
 import com.kaiqkt.authentication.unit.domain.models.PermissionSampler
 import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler
-import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import io.azam.ulidj.ULID
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
@@ -54,11 +52,13 @@ class PermissionIntegrationTest : IntegrationTest(){
             .statusCode(400)
             .extract()
             .response()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("must contains letter or underlines", response.errors["resource"])
-        assertEquals("must contains letter or underlines", response.errors["verb"])
-        assertEquals("must not exceed 255 characters", response.errors["description"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
+        assertEquals("must contains letter or underlines", response.details["resource"])
+        assertEquals("must contains letter or underlines", response.details["verb"])
+        assertEquals("must not exceed 255 characters", response.details["description"])
     }
 
     @Test
@@ -78,7 +78,7 @@ class PermissionIntegrationTest : IntegrationTest(){
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS, response.type)
+        assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS.name, response.type)
         assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS.message, response.message)
     }
 
@@ -96,7 +96,7 @@ class PermissionIntegrationTest : IntegrationTest(){
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND, response.type)
+        assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND.message, response.message)
     }
 
@@ -144,8 +144,8 @@ class PermissionIntegrationTest : IntegrationTest(){
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
-        assertEquals(ErrorType.INVALID_SORT_FIELD.message, response.message)
+        assertEquals(ErrorType.INVALID_FIELD.name, response.type)
+        assertEquals(ErrorType.INVALID_FIELD.message, response.message)
     }
 
     @Test
@@ -158,9 +158,11 @@ class PermissionIntegrationTest : IntegrationTest(){
             .statusCode(400)
             .extract()
             .response()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("sort should be ASC or DESC", response.errors["findAll.sort"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
+        assertEquals("sort should be ASC or DESC", response.details["findAll.sort"])
     }
 
     @Test
@@ -200,7 +202,7 @@ class PermissionIntegrationTest : IntegrationTest(){
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.PERMISSION_NOT_FOUND, response.type)
+        assertEquals(ErrorType.PERMISSION_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.PERMISSION_NOT_FOUND.message, response.message)
     }
 }

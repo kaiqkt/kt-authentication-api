@@ -4,11 +4,9 @@ import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.repositories.ResourceServerRepository
 import com.kaiqkt.authentication.domain.services.ResourceServerService
-import com.kaiqkt.authentication.domain.services.UserService
 import com.kaiqkt.authentication.unit.domain.dtos.PageRequestDtoSampler
 import com.kaiqkt.authentication.unit.domain.dtos.ResourceServerDtoSampler
 import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler
-import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import io.azam.ulidj.ULID
 import io.mockk.every
 import io.mockk.justRun
@@ -50,7 +48,7 @@ class ResourceServerServiceTest {
             service.findAll(PageRequestDtoSampler.sample(sortBy = "desc"))
         }
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)
+        assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 
     @Test

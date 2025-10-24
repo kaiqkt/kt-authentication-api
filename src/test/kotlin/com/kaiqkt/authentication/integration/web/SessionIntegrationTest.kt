@@ -1,7 +1,6 @@
 package com.kaiqkt.authentication.integration.web
 
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
-import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.responses.PageResponse
@@ -40,7 +39,7 @@ class SessionIntegrationTest : IntegrationTest(){
            .extract()
            .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.SESSION_NOT_FOUND, response.type)
+        assertEquals(ErrorType.SESSION_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.SESSION_NOT_FOUND.message, response.message)
     }
 
@@ -51,9 +50,11 @@ class SessionIntegrationTest : IntegrationTest(){
             .then()
             .statusCode(400)
             .extract()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("required header", response.errors["X-User-Id"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
+        assertEquals("required header", response.details["X-User-Id"])
     }
 
     @Test
@@ -85,7 +86,7 @@ class SessionIntegrationTest : IntegrationTest(){
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
-        assertEquals(ErrorType.INVALID_SORT_FIELD.message, response.message)
+        assertEquals(ErrorType.INVALID_FIELD.name, response.type)
+        assertEquals(ErrorType.INVALID_FIELD.message, response.message)
     }
 }

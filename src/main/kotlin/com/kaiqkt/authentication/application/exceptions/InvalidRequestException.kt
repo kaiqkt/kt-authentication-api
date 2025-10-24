@@ -1,3 +1,3 @@
 package com.kaiqkt.authentication.application.exceptions
 
-class InvalidRequestException(val errors: Map<String, String>): Exception()
+class InvalidRequestException(val errors: Map<String, Any>): Exception()

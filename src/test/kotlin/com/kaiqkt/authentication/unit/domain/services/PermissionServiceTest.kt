@@ -74,7 +74,7 @@ class PermissionServiceTest {
             permissionService.findAll(ULID.random(), PageRequestDtoSampler.sample("name"))
         }
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)
+        assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 
     @Test
@@ -94,7 +94,7 @@ class PermissionServiceTest {
             permissionService.findAll(null, PageRequestDtoSampler.sample("name"))
         }
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, exception.type)
+        assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 
     @Test

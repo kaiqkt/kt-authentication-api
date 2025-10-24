@@ -2,6 +2,7 @@ package com.kaiqkt.authentication.unit.application.web.controllers
 
 import com.kaiqkt.authentication.application.web.controllers.AuthController
 import com.kaiqkt.authentication.domain.services.AuthenticationService
+import com.kaiqkt.authentication.domain.services.AuthorizationService
 import com.kaiqkt.authentication.unit.application.web.requests.AuthenticationTokenRequestV1Sampler
 import com.kaiqkt.authentication.unit.domain.dtos.AuthenticationDtoSampler
 import com.kaiqkt.authentication.unit.domain.dtos.IntrospectionDtoSampler
@@ -11,19 +12,20 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 
 class AuthControllerTest {
+    private val authorizationService = mockk<AuthorizationService>()
     private val authenticationService = mockk<AuthenticationService>()
-    private val authController = AuthController(authenticationService)
+    private val authController = AuthController(authorizationService, authenticationService)
 
 
     @Test
     fun `given a request should issue and return the tokens successfully`(){
         val request = AuthenticationTokenRequestV1Sampler.sample()
 
-        every { authenticationService.getTokens(any()) } returns AuthenticationDtoSampler.sample()
+        every { authorizationService.getTokens(any()) } returns AuthenticationDtoSampler.sample()
 
         authController.token(request)
 
-        verify { authenticationService.getTokens(any()) }
+        verify { authorizationService.getTokens(any()) }
     }
 
     @Test

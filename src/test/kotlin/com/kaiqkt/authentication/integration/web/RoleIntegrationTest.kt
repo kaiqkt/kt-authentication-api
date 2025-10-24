@@ -1,7 +1,6 @@
 package com.kaiqkt.authentication.integration.web
 
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
-import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.application.web.responses.RoleResponseV1
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
@@ -51,10 +50,12 @@ class RoleIntegrationTest : IntegrationTest() {
             .statusCode(400)
             .extract()
             .response()
-            .`as`(InvalidArgumentErrorV1::class.java)
+            .`as`(ErrorV1::class.java)
 
-        assertEquals("must contains letter or underlines", response.errors["name"])
-        assertEquals("must not exceed 255 characters", response.errors["description"])
+        assertEquals("INVALID_REQUEST", response.type)
+        assertEquals("Invalid request", response.message)
+        assertEquals("must contains letter or underlines", response.details["name"])
+        assertEquals("must not exceed 255 characters", response.details["description"])
     }
 
 
@@ -73,7 +74,7 @@ class RoleIntegrationTest : IntegrationTest() {
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.ROLE_ALREADY_EXISTS, response.type)
+        assertEquals(ErrorType.ROLE_ALREADY_EXISTS.name, response.type)
         assertEquals(ErrorType.ROLE_ALREADY_EXISTS.message, response.message)
     }
 
@@ -110,8 +111,8 @@ class RoleIntegrationTest : IntegrationTest() {
             .response()
             .`as`(DomainException::class.java)
 
-        assertEquals(ErrorType.INVALID_SORT_FIELD, response.type)
-        assertEquals(ErrorType.INVALID_SORT_FIELD.message, response.message)
+        assertEquals(ErrorType.INVALID_FIELD, response.type)
+        assertEquals(ErrorType.INVALID_FIELD.message, response.message)
     }
 
     @Test

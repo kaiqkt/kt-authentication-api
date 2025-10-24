@@ -2,7 +2,6 @@ package com.kaiqkt.authentication.application.web.handler
 
 import com.kaiqkt.authentication.application.exceptions.InvalidRequestException
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
-import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import jakarta.validation.ConstraintViolationException
@@ -17,27 +16,31 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
-
 @ControllerAdvice
 class ErrorHandler : ResponseEntityExceptionHandler() {
 
+    companion object {
+        private const val INVALID_REQUEST = "INVALID_REQUEST"
+        private const val INVALID_REQUEST_MESSAGE = "Invalid request"
+    }
+
     @ExceptionHandler(DomainException::class)
     fun handleDomainException(ex: DomainException): ResponseEntity<ErrorV1> {
-        val error = ErrorV1(ex.type, ex.message)
+        val error = ErrorV1(ex.type.name, ex.message, mapOf())
 
         return ResponseEntity(error, getStatusCode(ex.type))
     }
 
     @ExceptionHandler(MissingRequestHeaderException::class)
-    fun handleMissingRequestHeaderException(ex: MissingRequestHeaderException): ResponseEntity<InvalidArgumentErrorV1> {
-        val error = InvalidArgumentErrorV1(errors = mapOf(ex.headerName to "required header"))
+    fun handleMissingRequestHeaderException(ex: MissingRequestHeaderException): ResponseEntity<ErrorV1> {
+        val error = ErrorV1(INVALID_REQUEST, INVALID_REQUEST_MESSAGE, mapOf(ex.headerName to "required header"))
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }
 
     @ExceptionHandler(InvalidRequestException::class)
-    fun handleInvalidRequestException(ex: InvalidRequestException): ResponseEntity<InvalidArgumentErrorV1> {
-        val error = InvalidArgumentErrorV1(errors = ex.errors)
+    fun handleInvalidRequestException(ex: InvalidRequestException): ResponseEntity<ErrorV1> {
+        val error = ErrorV1(INVALID_REQUEST, INVALID_REQUEST_MESSAGE, ex.errors)
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }
@@ -48,21 +51,21 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any> {
-        val fieldErrs = ex.bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "invalid") }
+        val details = ex.bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "invalid") }
 
-        val error = InvalidArgumentErrorV1(errors = fieldErrs)
+        val error = ErrorV1(INVALID_REQUEST, INVALID_REQUEST_MESSAGE, details)
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
-    fun handleConstraintViolationException(ex: ConstraintViolationException): ResponseEntity<InvalidArgumentErrorV1> {
-        val errors = ex.constraintViolations.associate { v ->
+    fun handleConstraintViolationException(ex: ConstraintViolationException): ResponseEntity<ErrorV1> {
+        val details = ex.constraintViolations.associate { v ->
             val path = v.propertyPath.joinToString(".") { it.name }
             path to v.message
         }
 
-        val error = InvalidArgumentErrorV1(errors = errors)
+        val error = ErrorV1(INVALID_REQUEST, INVALID_REQUEST_MESSAGE, details)
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }
@@ -75,7 +78,7 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
             ErrorType.INVALID_CREDENTIALS -> HttpStatus.UNAUTHORIZED
             ErrorType.USER_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.SESSION_NOT_FOUND -> HttpStatus.NOT_FOUND
-            ErrorType.INVALID_SORT_FIELD -> HttpStatus.BAD_REQUEST
+            ErrorType.INVALID_FIELD -> HttpStatus.BAD_REQUEST
             ErrorType.RESOURCE_SERVER_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.PERMISSION_ALREADY_EXISTS -> HttpStatus.CONFLICT
             ErrorType.PERMISSION_NOT_FOUND -> HttpStatus.NOT_FOUND

@@ -1,6 +1,6 @@
 package com.kaiqkt.authentication.application.web.responses
 
-import com.kaiqkt.authentication.domain.dtos.AuthenticationDto
+import com.kaiqkt.authentication.domain.dtos.TokensDto
 
 data class AuthenticationTokenResponseV1(
     val accessToken: String,
@@ -9,7 +9,7 @@ data class AuthenticationTokenResponseV1(
     val expiresIn: Long
 )
 
-fun AuthenticationDto.toResponseV1() = AuthenticationTokenResponseV1(
+fun TokensDto.toResponseV1() = AuthenticationTokenResponseV1(
     accessToken = this.accessToken,
     refreshToken = this.refreshToken,
     expiresIn = this.expiresIn,

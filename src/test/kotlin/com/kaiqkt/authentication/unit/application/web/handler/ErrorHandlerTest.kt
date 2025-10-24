@@ -2,7 +2,7 @@ package com.kaiqkt.authentication.unit.application.web.handler
 
 import com.kaiqkt.authentication.application.exceptions.InvalidRequestException
 import com.kaiqkt.authentication.application.web.handler.ErrorHandler
-import com.kaiqkt.authentication.application.web.responses.InvalidArgumentErrorV1
+import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import io.mockk.every
@@ -31,7 +31,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.CLIENT_NOT_FOUND, response.body?.type)
+        assertEquals(ErrorType.CLIENT_NOT_FOUND.name, response.body?.type)
         assertEquals("Client not found", response.body?.message)
     }
 
@@ -42,7 +42,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
-        assertEquals(ErrorType.POLICY_ALREADY_EXISTS, response.body?.type)
+        assertEquals(ErrorType.POLICY_ALREADY_EXISTS.name, response.body?.type)
         assertEquals("Policy already exists with uri and method for the given resource server", response.body?.message)
     }
 
@@ -53,7 +53,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.POLICY_NOT_FOUND, response.body?.type)
+        assertEquals(ErrorType.POLICY_NOT_FOUND.name, response.body?.type)
         assertEquals("Policy not found", response.body?.message)
     }
 
@@ -64,7 +64,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.PERMISSION_NOT_FOUND, response.body?.type)
+        assertEquals(ErrorType.PERMISSION_NOT_FOUND.name, response.body?.type)
         assertEquals("Permission not found", response.body?.message)
     }
 
@@ -75,7 +75,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.ROLE_NOT_FOUND, response.body?.type)
+        assertEquals(ErrorType.ROLE_NOT_FOUND.name, response.body?.type)
         assertEquals("Role not found", response.body?.message)
     }
 
@@ -86,7 +86,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
-        assertEquals(ErrorType.ROLE_ALREADY_EXISTS, response.body?.type)
+        assertEquals(ErrorType.ROLE_ALREADY_EXISTS.name, response.body?.type)
         assertEquals("Role already exists with the given name", response.body?.message)
     }
 
@@ -97,19 +97,19 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
-        assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS, response.body?.type)
+        assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS.name, response.body?.type)
         assertEquals("Permission with resource and verb already exists", response.body?.message)
     }
 
     @Test
     fun `given an DomainException when is INVALID_SORT_FIELD should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.INVALID_SORT_FIELD)
+        val domainException = DomainException(ErrorType.INVALID_FIELD)
 
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals(ErrorType.INVALID_SORT_FIELD, response.body?.type)
-        assertEquals("Sort field are not valid or does not exist", response.body?.message)
+        assertEquals(ErrorType.INVALID_FIELD.name, response.body?.type)
+        assertEquals("Field are not valid or does not exist", response.body?.message)
     }
 
     @Test
@@ -119,7 +119,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
-        assertEquals(ErrorType.EXPIRED_TOKEN, response.body?.type)
+        assertEquals(ErrorType.EXPIRED_TOKEN.name, response.body?.type)
         assertEquals("Expired token", response.body?.message)
     }
 
@@ -130,7 +130,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
-        assertEquals(ErrorType.INVALID_TOKEN, response.body?.type)
+        assertEquals(ErrorType.INVALID_TOKEN.name, response.body?.type)
         assertEquals("Token sign or parsed are invalid", response.body?.message)
     }
 
@@ -141,7 +141,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
-        assertEquals(ErrorType.EMAIL_ALREADY_IN_USE, response.body?.type)
+        assertEquals(ErrorType.EMAIL_ALREADY_IN_USE.name, response.body?.type)
         assertEquals("Email already in use", response.body?.message)
     }
 
@@ -152,7 +152,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.USER_NOT_FOUND, response.body?.type)
+        assertEquals(ErrorType.USER_NOT_FOUND.name, response.body?.type)
         assertEquals("User not found", response.body?.message)
     }
 
@@ -163,7 +163,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
-        assertEquals(ErrorType.INVALID_CREDENTIALS, response.body?.type)
+        assertEquals(ErrorType.INVALID_CREDENTIALS.name, response.body?.type)
         assertEquals("Invalid credentials", response.body?.message)
     }
 
@@ -174,7 +174,7 @@ class ErrorHandlerTest {
         val response = errorHandler.handleDomainException(domainException)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.SESSION_NOT_FOUND, response.body?.type)
+        assertEquals(ErrorType.SESSION_NOT_FOUND.name, response.body?.type)
         assertEquals("Session not found", response.body?.message)
     }
 
@@ -185,7 +185,9 @@ class ErrorHandlerTest {
         val response = errorHandler.handleInvalidRequestException(invalidRequestException)
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals("invalid", response.body?.errors?.get("field"))
+        assertEquals("invalid", response.body?.details?.get("field"))
+        assertEquals("Invalid request", response.body?.message)
+        assertEquals("INVALID_REQUEST", response.body?.type)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -203,10 +205,12 @@ class ErrorHandlerTest {
             HttpHeaders(),
             HttpStatus.BAD_REQUEST,
             webRequest
-        ) as ResponseEntity<InvalidArgumentErrorV1>
+        ) as ResponseEntity<ErrorV1>
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals("defaultMessage", response.body?.errors?.get("field"))
+        assertEquals("defaultMessage", response.body?.details?.get("field"))
+        assertEquals("Invalid request", response.body?.message)
+        assertEquals("INVALID_REQUEST", response.body?.type)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -224,10 +228,12 @@ class ErrorHandlerTest {
             HttpHeaders(),
             HttpStatus.BAD_REQUEST,
             webRequest
-        ) as ResponseEntity<InvalidArgumentErrorV1>
+        ) as ResponseEntity<ErrorV1>
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals("invalid", response.body?.errors?.get("field"))
+        assertEquals("invalid", response.body?.details?.get("field"))
+        assertEquals("Invalid request", response.body?.message)
+        assertEquals("INVALID_REQUEST", response.body?.type)
     }
 
     @Test
@@ -244,18 +250,22 @@ class ErrorHandlerTest {
         val response = errorHandler.handleConstraintViolationException(ex)
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals("message", response.body?.errors?.get("object.field"))
+        assertEquals("message", response.body?.details?.get("object.field"))
+        assertEquals("Invalid request", response.body?.message)
+        assertEquals("INVALID_REQUEST", response.body?.type)
     }
 
     @Test
-    fun `given an MissingRequestHeaderException should return the missing headers`(){
-        val exception = mockk<MissingRequestHeaderException>()
+    fun `given an MissingRequestHeaderException should return the missing headers`() {
+        val ex = mockk<MissingRequestHeaderException>()
 
-        every { exception.headerName } returns "header_name"
+        every { ex.headerName } returns "header_name"
 
-        val response = errorHandler.handleMissingRequestHeaderException(exception)
+        val response = errorHandler.handleMissingRequestHeaderException(ex)
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals("required header", response.body?.errors?.get("header_name"))
+        assertEquals("required header", response.body?.details?.get("header_name"))
+        assertEquals("Invalid request", response.body?.message)
+        assertEquals("INVALID_REQUEST", response.body?.type)
     }
 }
