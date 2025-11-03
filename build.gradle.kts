@@ -1,7 +1,7 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
-	id("org.springframework.boot") version "3.5.5"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.spring") version "2.2.21"
+    id("org.springframework.boot") version "3.5.7"
 	id("io.spring.dependency-management") version "1.1.7"
     id("jacoco")
 }
@@ -13,10 +13,6 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
-}
-
-springBoot {
-    buildInfo()
 }
 
 jacoco {
@@ -39,11 +35,15 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.azam.ulidj:ulidj:1.0.1")
     implementation("com.nimbusds:nimbus-jose-jwt:10.5")
+    implementation("ch.qos.logback:logback-classic:1.5.20")
 
-    testImplementation("org.testcontainers:testcontainers:1.21.3")
+    testImplementation("org.mock-server:mockserver-netty-no-dependencies:5.15.0")
+    testImplementation("org.mock-server:mockserver-client-java-no-dependencies:5.15.0") {
+        exclude("org.sl4j", "slf4j-jdk14")
+    }
     testImplementation("io.rest-assured:rest-assured")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.6")
-    testImplementation("org.testcontainers:postgresql:1.20.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.3")
+    testImplementation("org.testcontainers:postgresql")
     testImplementation("io.mockk:mockk:1.13.14")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

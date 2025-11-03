@@ -215,7 +215,7 @@ class AuthIntegrationTest : IntegrationTest() {
     }
 
     @Test
-    fun `iven a request to introspect when session is not expired and not revoked should return the introspection data with active true`() {
+    fun `given a request to introspect when session is not expired and not revoked should return the introspection data with active true`() {
         val user = userRepository.save(UserSampler.sample())
         val client = clientRepository.save(ClientSampler.sample())
         val session = sessionRepository.save(SessionSampler.sample(client, user))

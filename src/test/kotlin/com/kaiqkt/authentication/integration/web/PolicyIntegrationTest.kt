@@ -1,6 +1,5 @@
 package com.kaiqkt.authentication.integration.web
 
-import com.kaiqkt.authentication.application.web.handler.ErrorHandler
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.application.web.responses.PolicyResponseV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType

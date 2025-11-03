@@ -46,7 +46,6 @@ class SessionService(
         return session
     }
 
-    //autalizar nome de testes
     fun findByClientIdAndRefreshToken(clientId: String, refreshToken: String): Session {
         return sessionRepository.findByRefreshToken(clientId, refreshToken)
             ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)

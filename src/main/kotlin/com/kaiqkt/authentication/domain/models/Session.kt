@@ -33,6 +33,3 @@ class Session(
     @LastModifiedDate
     var updatedAt: LocalDateTime? = null
 }
-
-//user agent
-//ip

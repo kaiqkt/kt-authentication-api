@@ -31,6 +31,8 @@ class TokenServiceTest {
 
         val claims = tokenService.getClaims(tokens.accessToken)
 
+        println(tokens.accessToken)
+
         assertEquals(issuer, claims.issuer)
         assertEquals(subjectId, claims.subject)
         assertEquals(sidId, claims.getClaim("sid"))

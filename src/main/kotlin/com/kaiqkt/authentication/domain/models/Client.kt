@@ -38,5 +38,4 @@ class Client(
 
     @LastModifiedDate
     var updatedAt: LocalDateTime? = null
-
 }

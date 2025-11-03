@@ -5,8 +5,17 @@ server:
 spring:
   application:
     name: kt-authentication-api
-  profiles:
-    active: ${PROFILE:local}
   web:
     locale: en_US
     locale-resolver: fixed
+  datasource:
+    url: ${POSTGRESQL_URL}
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+authentication:
+  session-ttl: ${AUTHENTICATION_SESSION_TTL}
+  issuer: ${AUTHENTICATION_ISSUER}
+  access-token-ttl: ${AUTHENTICATION_ACCESS_TOKEN_TTL}
+  access-token-secret: ${AUTHENTICATION_ACCESS_TOKEN_SECRET}

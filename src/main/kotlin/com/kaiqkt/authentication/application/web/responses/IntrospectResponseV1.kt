@@ -8,7 +8,9 @@ data class IntrospectResponseV1(
     val sub: String,
     val iss: String,
     val exp: Long,
-    val iat: Long
+    val iat: Long,
+    val roles: List<String>?,
+    val permissions: List<String>?
 )
 
 fun IntrospectDto.toResponseV1(): IntrospectResponseV1 = IntrospectResponseV1(
@@ -17,5 +19,7 @@ fun IntrospectDto.toResponseV1(): IntrospectResponseV1 = IntrospectResponseV1(
     sub = this.sub,
     iss = this.iss,
     exp = this.exp,
-    iat = this.iat
+    iat = this.iat,
+    roles = this.roles,
+    permissions = this.permissions
 )

@@ -70,7 +70,7 @@ CREATE TABLE sessions (
     CONSTRAINT fk_sessions_client FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
 );
 
-CREATE TABLE user_roles (
+CREATE TABLE users_roles (
     user_id VARCHAR(26),
     role_id VARCHAR(26),
     PRIMARY KEY (user_id, role_id),
@@ -78,7 +78,7 @@ CREATE TABLE user_roles (
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
-CREATE TABLE role_permissions (
+CREATE TABLE roles_permissions (
     role_id       VARCHAR(26),
     permission_id VARCHAR(26),
     PRIMARY KEY (role_id, permission_id),

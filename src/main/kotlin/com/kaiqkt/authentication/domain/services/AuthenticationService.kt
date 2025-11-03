@@ -23,7 +23,9 @@ class AuthenticationService (
             iss = claims.issuer,
             sub = claims.subject,
             exp = claims.expirationTime.time,
-            iat = claims.issueTime.time
+            iat = claims.issueTime.time,
+            roles = claims.getStringListClaim(Constants.Keys.ROLES),
+            permissions = claims.getStringListClaim(Constants.Keys.PERMISSIONS),
         )
     }
 }

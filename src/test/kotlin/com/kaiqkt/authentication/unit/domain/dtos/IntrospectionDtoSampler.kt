@@ -10,6 +10,8 @@ object IntrospectionDtoSampler {
         sub = ULID.random(),
         iss = "kt-authentication-api",
         exp = 300L,
-        iat = 300L
+        iat = 300L,
+        roles = emptyList(),
+        permissions = emptyList()
     )
 }
