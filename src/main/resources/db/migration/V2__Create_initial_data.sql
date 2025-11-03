@@ -29,9 +29,23 @@ VALUES ('01K94W6MAV906W5EPR63RB7K77', 'sessions', 'read', 'Permissions to read a
 INSERT INTO roles (id, name, description, created_at)
 VALUES ('01K94W96M6KN86HKV7FAA2CGNH', 'USER', 'Role that encompasses user permissions', CURRENT_TIMESTAMP);
 
----- Roles <> Permissions
+-- Roles <> Permissions
 INSERT INTO roles_permissions (role_id, permission_id)
 VALUES ('01K94W96M6KN86HKV7FAA2CGNH', '01K94V2FM7165A762YR3V29M84');
 
 INSERT INTO roles_permissions (role_id, permission_id)
 VALUES ('01K94W96M6KN86HKV7FAA2CGNH', '01K94W6MAV906W5EPR63RB7K77');
+
+-- Policies <> Permissions
+INSERT INTO policies_permissions (policy_id, permission_id)
+VALUES ('01K94SXQAF3J1BADBCXFQ29WXR', '01K94V2FM7165A762YR3V29M84');
+
+INSERT INTO policies_permissions (policy_id, permission_id)
+VALUES ('01K94SPYCSRY5H3VZ7TA9YTZPR', '01K94W6MAV906W5EPR63RB7K77');
+
+-- Policies <> Roles
+INSERT INTO policies_roles (policy_id, role_id)
+VALUES ('01K94SXQAF3J1BADBCXFQ29WXR', '01K94W96M6KN86HKV7FAA2CGNH');
+
+INSERT INTO policies_roles (policy_id, role_id)
+VALUES ('01K94SPYCSRY5H3VZ7TA9YTZPR', '01K94W96M6KN86HKV7FAA2CGNH');
