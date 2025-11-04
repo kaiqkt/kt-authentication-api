@@ -35,6 +35,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.azam.ulidj:ulidj:1.0.1")
     implementation("com.nimbusds:nimbus-jose-jwt:10.5")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
     implementation("ch.qos.logback:logback-classic:1.5.20")
 
     testImplementation("org.mock-server:mockserver-netty-no-dependencies:5.15.0")
