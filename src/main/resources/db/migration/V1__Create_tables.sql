@@ -74,38 +74,38 @@ CREATE TABLE users_roles (
     user_id VARCHAR(26),
     role_id VARCHAR(26),
     PRIMARY KEY (user_id, role_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (role_id) REFERENCES roles(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
 CREATE TABLE roles_permissions (
     role_id       VARCHAR(26),
     permission_id VARCHAR(26),
     PRIMARY KEY (role_id, permission_id),
-    FOREIGN KEY (role_id)       REFERENCES roles(id),
-    FOREIGN KEY (permission_id) REFERENCES permissions(id)
+    FOREIGN KEY (role_id)       REFERENCES roles(id)       ON DELETE CASCADE,
+    FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
 );
 
 CREATE TABLE policies_roles (
     policy_id VARCHAR(26),
     role_id   VARCHAR(26),
     PRIMARY KEY (policy_id, role_id),
-    FOREIGN KEY (policy_id) REFERENCES policies(id),
-    FOREIGN KEY (role_id)   REFERENCES roles(id)
+    FOREIGN KEY (policy_id) REFERENCES policies(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id)   REFERENCES roles(id)    ON DELETE CASCADE
 );
 
 CREATE TABLE policies_permissions (
     policy_id     VARCHAR(26),
     permission_id VARCHAR(26),
     PRIMARY KEY (policy_id, permission_id),
-    FOREIGN KEY (policy_id)     REFERENCES policies(id),
-    FOREIGN KEY (permission_id) REFERENCES permissions(id)
+    FOREIGN KEY (policy_id)     REFERENCES policies(id)    ON DELETE CASCADE,
+    FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
 );
 
-CREATE TABLE clients_resource_servers (
-    client_id          VARCHAR(26),
-    resource_server_id VARCHAR(26),
-    PRIMARY KEY (client_id, resource_server_id),
-    FOREIGN KEY (client_id)          REFERENCES clients(id),
-    FOREIGN KEY (resource_server_id) REFERENCES resource_servers(id)
+CREATE TABLE clients_policies (
+    client_id VARCHAR(26),
+    policy_id VARCHAR(26),
+    PRIMARY KEY (client_id, policy_id),
+    FOREIGN KEY (client_id) REFERENCES clients(id)  ON DELETE CASCADE,
+    FOREIGN KEY (policy_id) REFERENCES policies(id) ON DELETE CASCADE
 );

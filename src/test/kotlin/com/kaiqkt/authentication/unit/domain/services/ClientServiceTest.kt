@@ -4,10 +4,12 @@ import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.repositories.ClientRepository
 import com.kaiqkt.authentication.domain.services.ClientService
+import com.kaiqkt.authentication.domain.services.PolicyService
 import com.kaiqkt.authentication.domain.services.ResourceServerService
 import com.kaiqkt.authentication.domain.services.TokenService
 import com.kaiqkt.authentication.unit.domain.dtos.ClientDtoSampler
 import com.kaiqkt.authentication.unit.domain.dtos.PageRequestDtoSampler
+import com.kaiqkt.authentication.unit.domain.dtos.PolicySampler
 import com.kaiqkt.authentication.unit.domain.models.ClientSampler
 import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler
 import io.mockk.every
@@ -23,30 +25,30 @@ import kotlin.test.assertEquals
 
 class ClientServiceTest {
     private val clientRepository = mockk<ClientRepository>()
-    private val resourceServerService = mockk<ResourceServerService>()
+    private val policyService = mockk<PolicyService>()
     private val tokenService = mockk<TokenService>()
-    private val clientService = ClientService(clientRepository, resourceServerService, tokenService)
+    private val clientService = ClientService(clientRepository, policyService, tokenService)
 
     @Test
-    fun `given a client to create, when resource server is not found, should throw a domain exception`() {
+    fun `given a client to create, when policy is not found, should throw a domain exception`() {
         val clientDto = ClientDtoSampler.sample()
 
-        every { resourceServerService.findAllById(any()) } returns emptyList()
+        every { policyService.findAllById(any()) } returns emptyList()
 
         val exception = assertThrows<DomainException> {
             clientService.create(clientDto)
         }
 
-        assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND, exception.type)
+        assertEquals(ErrorType.POLICY_NOT_FOUND, exception.type)
     }
 
     @Test
     fun `given a client to create, should create successfully and return a client`() {
         val clientDto = ClientDtoSampler.sample()
-        val resourceServer = ResourceServerSampler.sample()
+        val policy = PolicySampler.sample()
         val client = ClientSampler.sample()
 
-        every { resourceServerService.findAllById(any()) } returns listOf(resourceServer)
+        every { policyService.findAllById(any()) } returns listOf(policy)
         every { tokenService.opaqueToken() } returns "secret"
         every { clientRepository.save(any()) } returns client
 

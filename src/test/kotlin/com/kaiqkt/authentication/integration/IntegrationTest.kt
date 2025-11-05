@@ -75,7 +75,7 @@ class IntegrationTest {
         policyRepository.deleteAll()
         roleRepository.deleteAll()
         permissionRepository.deleteAll()
-        clientRepository.deleteAll()
         resourceServerRepository.deleteAll()
+        clientRepository.deleteAll()
     }
 }

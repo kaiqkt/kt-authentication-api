@@ -14,11 +14,11 @@ data class ClientRequestV1(
     val description: String?,
 
     @field:NotEmpty(message = "must not be empty")
-    val resourceServers: Set<String>
+    val policies: Set<String>
 )
 
 fun ClientRequestV1.toDto(): ClientDto = ClientDto(
     name = this.name,
     description = this.description,
-    resourceServer = this.resourceServers.toList()
+    policies = this.policies.toList()
 )

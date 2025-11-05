@@ -43,10 +43,6 @@ class ResourceServerService(
         }
     }
 
-    fun findAllById(ids: List<String>): List<ResourceServer> {
-        return resourceServerRepository.findAllById(ids)
-    }
-
     fun findById(id: String): ResourceServer {
         return resourceServerRepository.findById(id).getOrNull()
             ?: throw DomainException(ErrorType.RESOURCE_SERVER_NOT_FOUND)

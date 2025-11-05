@@ -7,10 +7,10 @@ object ClientRequestV1Sampler {
     fun sample(
         name: String = "name",
         description: String? = null,
-        resourceServers: Set<String> = setOf()
+        policies: Set<String> = setOf()
     ) = ClientRequestV1(
         name = name,
         description = description,
-        resourceServers = resourceServers
+        policies = policies
     )
 }

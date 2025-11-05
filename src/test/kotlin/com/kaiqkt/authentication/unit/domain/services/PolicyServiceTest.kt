@@ -208,4 +208,13 @@ class PolicyServiceTest {
         verify { policyRepository.findById(any()) }
         verify { roleService.findById(any()) }
     }
+
+    @Test
+    fun `given a list of ids should return a list of policies`(){
+        every { policyRepository.findAllById(any()) } returns listOf()
+
+        policyService.findAllById(listOf())
+
+        verify { policyRepository.findAllById(any()) }
+    }
 }

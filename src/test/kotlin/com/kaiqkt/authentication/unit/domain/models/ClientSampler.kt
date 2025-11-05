@@ -1,6 +1,7 @@
 package com.kaiqkt.authentication.unit.domain.models
 
 import com.kaiqkt.authentication.domain.models.Client
+import com.kaiqkt.authentication.domain.models.Policy
 import com.kaiqkt.authentication.domain.models.ResourceServer
 
 object ClientSampler {
@@ -8,11 +9,11 @@ object ClientSampler {
         name: String = "client-name",
         description: String? = null,
         secret: String = "secret",
-        resourceServers: MutableSet<ResourceServer> = mutableSetOf()
+        policies: MutableSet<Policy> = mutableSetOf()
     ) = Client(
         name = name,
         description = description,
         secret = secret,
-        resourceServers = resourceServers
+        policies = policies
     )
 }

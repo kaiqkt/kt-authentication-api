@@ -5,6 +5,7 @@ import com.kaiqkt.authentication.domain.dtos.PolicyDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.models.Policy
+import com.kaiqkt.authentication.domain.models.ResourceServer
 import com.kaiqkt.authentication.domain.repositories.PolicyRepository
 import com.kaiqkt.authentication.domain.utils.Constants
 import jakarta.transaction.Transactional
@@ -55,6 +56,10 @@ class PolicyService(
         policyRepository.deleteById(policyId)
 
         log.info("Policy $policyId deleted")
+    }
+
+    fun findAllById(ids: List<String>): List<Policy> {
+        return policyRepository.findAllById(ids)
     }
 
     fun findAllByResourceId(resourceServerId: String): List<Policy> {

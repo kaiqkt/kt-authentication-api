@@ -81,13 +81,4 @@ class ResourceServerServiceTest {
 
         assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND, exception.type)
     }
-
-    @Test
-    fun `given a list of ids should return all existent resource servers`(){
-        every { resourceServerRepository.findAllById(any()) } returns listOf()
-
-        service.findAllById(listOf())
-
-        verify { resourceServerRepository.findAllById(any()) }
-    }
 }

@@ -1,5 +1,5 @@
 ## ToDo
-
+- [ ] OAuth com google
 - [ ] Update password
 - [ ] Forgot password
 - [ ] Verify email

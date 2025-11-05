@@ -29,13 +29,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.security:spring-security-crypto")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.postgresql:postgresql:42.7.3")
-    implementation("org.flywaydb:flyway-core:11.1.0")
+    implementation("org.postgresql:postgresql:42.7.8")
+    implementation("org.flywaydb:flyway-core:11.15.0")
     implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.azam.ulidj:ulidj:1.0.1")
     implementation("com.nimbusds:nimbus-jose-jwt:10.5")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
     implementation("ch.qos.logback:logback-classic:1.5.20")
 
     testImplementation("org.mock-server:mockserver-netty-no-dependencies:5.15.0")
@@ -45,7 +45,7 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("org.testcontainers:junit-jupiter:1.21.3")
     testImplementation("org.testcontainers:postgresql")
-    testImplementation("io.mockk:mockk:1.13.14")
+    testImplementation("io.mockk:mockk:1.14.6")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -68,7 +68,8 @@ val excludePackages: List<String> by extra {
         "com/kaiqkt/authentication/application/web/requests/*",
         "com/kaiqkt/authentication/application/web/responses/*",
         "com/kaiqkt/authentication/domain/models/*",
-        "com/kaiqkt/authentication/domain/dtos/*"
+        "com/kaiqkt/authentication/domain/dtos/*",
+        "com/kaiqkt/authentication/domain/utils/Constants*"
     )
 }
 

@@ -6,6 +6,6 @@ object ClientDtoSampler {
     fun sample() = ClientDto(
         name = "client-name",
         description = "client-description",
-        resourceServer = listOf("resource-server-id")
+        policies = listOf("policy-id")
     )
 }

@@ -6,6 +6,7 @@ import com.kaiqkt.authentication.domain.models.Role
 import com.kaiqkt.authentication.domain.models.enums.Method
 
 data class PolicyResponseV1(
+    val id: String,
     val uri: String,
     val method: Method,
     val isPublic: Boolean,
@@ -14,6 +15,7 @@ data class PolicyResponseV1(
 )
 
 fun Policy.toResponseV1(): PolicyResponseV1 = PolicyResponseV1(
+    id = this.id,
     uri = this.uri,
     method = this.method,
     isPublic =this.isPublic,

@@ -15,7 +15,7 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class ClientService(
     private val clientRepository: ClientRepository,
-    private val resourceServerService: ResourceServerService,
+    private val policyService: PolicyService,
     private val tokenService: TokenService
 ) {
     private val allowedSortFields = Constants.Sort.getAllowedFiled("name")
@@ -23,17 +23,17 @@ class ClientService(
     private val log = LoggerFactory.getLogger(ClientService::class.java)
 
     fun create(clientDto: ClientDto): Client {
-        val resourceServers = resourceServerService.findAllById(clientDto.resourceServer)
+        val policies = policyService.findAllById(clientDto.policies)
 
-        if (resourceServers.isEmpty()) {
-            throw DomainException(ErrorType.RESOURCE_SERVER_NOT_FOUND)
+        if (policies.isEmpty()) {
+            throw DomainException(ErrorType.POLICY_NOT_FOUND)
         }
 
         return Client(
             name = clientDto.name,
             description = clientDto.description,
             secret = tokenService.opaqueToken(),
-            resourceServers = resourceServers.toMutableSet()
+            policies = policies.toMutableSet()
         ).run(clientRepository::save)
             .also { log.info("Client ${it.id} created") }
     }

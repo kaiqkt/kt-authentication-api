@@ -1,6 +1,10 @@
--- Resource server
+-- Resources servers
 INSERT INTO resource_servers (id, name, description, created_at)
 VALUES ('01K94R96STA0H1677RDZ73QBT9', 'kt-authentication-api', 'Resource server for authorization and authentication', CURRENT_TIMESTAMP);
+
+-- Clients
+INSERT INTO clients (id, name, description, secret, created_at)
+VALUES ('01K97V58JAZ2F2C5BGEJQVJVT7', 'kt-external-gateway', 'Client for external calls from web and mobile', 'J9rRrOOj0YWwwMokjj15FenrBLbs0uqa2wN2yuLBd60', CURRENT_TIMESTAMP);
 
 -- External/Internal policies
 INSERT INTO policies (id, method, uri, is_public, resource_server_id, created_at)
@@ -49,3 +53,13 @@ VALUES ('01K94SXQAF3J1BADBCXFQ29WXR', '01K94W96M6KN86HKV7FAA2CGNH');
 
 INSERT INTO policies_roles (policy_id, role_id)
 VALUES ('01K94SPYCSRY5H3VZ7TA9YTZPR', '01K94W96M6KN86HKV7FAA2CGNH');
+
+-- Clients <> Policies
+INSERT INTO clients_policies (client_id, policy_id)
+VALUES ('01K97V58JAZ2F2C5BGEJQVJVT7', '01K94SXQAF3J1BADBCXFQ29WXR');
+
+INSERT INTO clients_policies (client_id, policy_id)
+VALUES ('01K97V58JAZ2F2C5BGEJQVJVT7', '01K94SPYCSRY5H3VZ7TA9YTZPR');
+
+INSERT INTO clients_policies (client_id, policy_id)
+VALUES ('01K97V58JAZ2F2C5BGEJQVJVT7', '01K94SZRR7Y71TGXEKQ4JE1HAH');

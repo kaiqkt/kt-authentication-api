@@ -1,6 +1,5 @@
 package com.kaiqkt.authentication.integration.web
 
-import com.kaiqkt.authentication.application.web.handler.ErrorHandler
 import com.kaiqkt.authentication.application.web.responses.ClientResponseV1
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
@@ -8,6 +7,7 @@ import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.requests.ClientRequestV1Sampler
 import com.kaiqkt.authentication.unit.application.web.responses.PageResponse
 import com.kaiqkt.authentication.unit.domain.models.ClientSampler
+import com.kaiqkt.authentication.unit.domain.models.PolicySampler
 import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler
 import io.azam.ulidj.ULID
 import io.restassured.RestAssured.given
@@ -19,7 +19,8 @@ class ClientIntegrationTest : IntegrationTest() {
     @Test
     fun `given a client should create successfully`(){
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
-        val request = ClientRequestV1Sampler.sample(resourceServers = setOf(resourceServer.id))
+        val policy = policyRepository.save(PolicySampler.sample(resourceServer))
+        val request = ClientRequestV1Sampler.sample(policies = setOf(policy.id))
 
         val response = given()
             .contentType(ContentType.JSON)
@@ -33,12 +34,12 @@ class ClientIntegrationTest : IntegrationTest() {
 
         assertEquals(request.name, response.name)
         assertEquals(request.description, response.description)
-        assertEquals(request.resourceServers, response.resourceServer.map { it.id }.toSet())
+        assertEquals(request.policies, response.policies.map { it.id }.toSet())
     }
 
     @Test
     fun `given a client when none of the associate resource servers exists should thrown an exception`(){
-        val request = ClientRequestV1Sampler.sample(resourceServers = setOf(ULID.random()))
+        val request = ClientRequestV1Sampler.sample(policies = setOf(ULID.random()))
 
         val response = given()
             .contentType(ContentType.JSON)
@@ -50,8 +51,8 @@ class ClientIntegrationTest : IntegrationTest() {
             .response()
             .`as`(ErrorV1::class.java)
 
-        assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND.name, response.type)
-        assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND.message, response.message)
+        assertEquals(ErrorType.POLICY_NOT_FOUND.name, response.type)
+        assertEquals(ErrorType.POLICY_NOT_FOUND.message, response.message)
     }
 
     @Test
@@ -59,7 +60,7 @@ class ClientIntegrationTest : IntegrationTest() {
         val request = ClientRequestV1Sampler.sample(
             name = "",
             description = "a".repeat(256),
-            resourceServers = setOf()
+            policies = setOf()
         )
 
         val response = given()
@@ -76,7 +77,7 @@ class ClientIntegrationTest : IntegrationTest() {
         assertEquals("Invalid request", response.message)
         assertEquals("must not be blank", response.details["name"])
         assertEquals("must not exceed 255 characters", response.details["description"])
-        assertEquals("must not be empty", response.details["resourceServers"])
+        assertEquals("must not be empty", response.details["policies"])
     }
 
     @Test
@@ -90,7 +91,7 @@ class ClientIntegrationTest : IntegrationTest() {
 
     @Test
     fun `given a client id when exist should return successfully`(){
-        val client = clientRepository.save(ClientSampler.sample(resourceServers = mutableSetOf()))
+        val client = clientRepository.save(ClientSampler.sample(policies = mutableSetOf()))
 
         val response = given()
             .contentType(ContentType.JSON)
@@ -121,7 +122,7 @@ class ClientIntegrationTest : IntegrationTest() {
 
     @Test
     fun `given parameters should return clients paginated`(){
-        clientRepository.save(ClientSampler.sample(resourceServers = mutableSetOf()))
+        clientRepository.save(ClientSampler.sample(policies = mutableSetOf()))
 
         val response = given()
             .contentType(ContentType.JSON)
