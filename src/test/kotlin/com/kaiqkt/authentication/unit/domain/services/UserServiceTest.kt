@@ -15,7 +15,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.assertThrows
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.util.*
+import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,7 +26,7 @@ class UserServiceTest {
     private val userService = UserService(userRepository, passwordEncoder, roleService)
 
     @Test
-    fun `given a user dto when is valid should create successfully`(){
+    fun `given a user dto when is valid should create successfully`() {
         every { userRepository.existsByEmail(any()) } returns false
         every { userRepository.save(any()) } returns UserSampler.sample()
         every { passwordEncoder.encode(any()) } returns "encrypted"
@@ -39,12 +39,13 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a user dto when email in use should throw a exception`(){
+    fun `given a user dto when email in use should throw a exception`() {
         every { userRepository.existsByEmail(any()) } returns true
 
-        val exception = assertThrows<DomainException> {
-            userService.create(UserDtoSampler.sampleCreate())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                userService.create(UserDtoSampler.sampleCreate())
+            }
 
         verify { userRepository.existsByEmail(any()) }
 
@@ -52,7 +53,7 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a email and a authentication type should when exists should return a user`(){
+    fun `given a email and a authentication type should when exists should return a user`() {
         every { userRepository.findByEmailAndAuthenticationType(any(), any()) } returns UserSampler.sample()
 
         userService.findByEmailAndType("kt@kt.com", AuthenticationType.PASSWORD)
@@ -61,12 +62,13 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a email and a authentication type should when not exists should throw a exception`(){
+    fun `given a email and a authentication type should when not exists should throw a exception`() {
         every { userRepository.findByEmailAndAuthenticationType(any(), any()) } returns null
 
-        val exception = assertThrows<DomainException> {
-            userService.findByEmailAndType("kt@kt.com", AuthenticationType.PASSWORD)
-        }
+        val exception =
+            assertThrows<DomainException> {
+                userService.findByEmailAndType("kt@kt.com", AuthenticationType.PASSWORD)
+            }
 
         verify { userRepository.findByEmailAndAuthenticationType(any(), any()) }
 
@@ -74,7 +76,7 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a id when user does exist should return successfully`(){
+    fun `given a id when user does exist should return successfully`() {
         every { userRepository.findById(any()) } returns Optional.of(UserSampler.sample())
 
         userService.findById(ULID.random())
@@ -83,12 +85,13 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a id when user does not exist should thrown an exception`(){
+    fun `given a id when user does not exist should thrown an exception`() {
         every { userRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            userService.findById(ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                userService.findById(ULID.random())
+            }
 
         verify { userRepository.findById(any()) }
 
@@ -96,7 +99,7 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a user id and role id should assign user a role successfully`(){
+    fun `given a user id and role id should assign user a role successfully`() {
         every { roleService.findById(any()) } returns RoleSampler.sample()
         every { userRepository.findById(any()) } returns Optional.of(UserSampler.sample())
 
@@ -107,7 +110,7 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a user id and role id when user already assigned should reassign successfully`(){
+    fun `given a user id and role id when user already assigned should reassign successfully`() {
         val role = RoleSampler.sample()
         val user = UserSampler.sample(mutableSetOf(role))
 
@@ -121,13 +124,14 @@ class UserServiceTest {
     }
 
     @Test
-    fun `given a user id and role id when user does not found should thrown an exception`(){
+    fun `given a user id and role id when user does not found should thrown an exception`() {
         every { roleService.findById(any()) } returns RoleSampler.sample()
         every { userRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            userService.assignRole(ULID.random(), ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                userService.assignRole(ULID.random(), ULID.random())
+            }
 
         verify { userRepository.findById(any()) }
         verify { roleService.findById(any()) }

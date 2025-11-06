@@ -1,7 +1,6 @@
 package com.kaiqkt.authentication.unit.application.web.controllers
 
 import com.kaiqkt.authentication.application.web.controllers.ResourceServerController
-import com.kaiqkt.authentication.domain.services.PermissionService
 import com.kaiqkt.authentication.domain.services.ResourceServerService
 import com.kaiqkt.authentication.unit.application.web.requests.ResourceServerRequestV1Sampler
 import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler

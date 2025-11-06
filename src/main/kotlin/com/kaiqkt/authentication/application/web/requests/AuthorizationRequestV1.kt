@@ -11,7 +11,7 @@ data class AuthorizationRequestV1(
     val password: String?,
     val refreshToken: String?,
     @field:Pattern(regexp = "password|refresh_token", message = "must be refresh_token or password")
-    val grantType: String
+    val grantType: String,
 )
 
 fun AuthorizationRequestV1.toDto(): AuthorizationDto {
@@ -22,36 +22,37 @@ fun AuthorizationRequestV1.toDto(): AuthorizationDto {
         GrantType.PASSWORD -> toPasswordDto()
     }
 }
+
 private fun AuthorizationRequestV1.toRefreshDto(): AuthorizationDto.Refresh {
     if (this.refreshToken.isNullOrBlank() || this.clientId.isNullOrBlank()) {
         val errors = mutableMapOf<String, Any>()
 
         this.refreshToken.takeUnless { it.isNullOrBlank() } ?: errors.put("refresh_token", "must not be null or blank")
-        this.clientId.takeUnless { it.isNullOrBlank() } ?:  errors.put("client_id", "must not be null or blank")
+        this.clientId.takeUnless { it.isNullOrBlank() } ?: errors.put("client_id", "must not be null or blank")
 
         throw InvalidRequestException(errors.toMap())
     }
 
     return AuthorizationDto.Refresh(
         refreshToken = this.refreshToken,
-        clientId = this.clientId
+        clientId = this.clientId,
     )
 }
 
 private fun AuthorizationRequestV1.toPasswordDto(): AuthorizationDto.Password {
-   if (email.isNullOrBlank() || password.isNullOrBlank() || clientId.isNullOrBlank()) {
-       val errors = mutableMapOf<String, Any>()
+    if (email.isNullOrBlank() || password.isNullOrBlank() || clientId.isNullOrBlank()) {
+        val errors = mutableMapOf<String, Any>()
 
-       this.email.takeUnless { it.isNullOrBlank() } ?: errors.put("email", "must not be null or blank")
-       this.clientId.takeUnless { it.isNullOrBlank() } ?: errors.put("client_id", "must not be null or blank")
-       this.password.takeUnless { it.isNullOrBlank() } ?: errors.put("password", "must not be null or blank")
+        this.email.takeUnless { it.isNullOrBlank() } ?: errors.put("email", "must not be null or blank")
+        this.clientId.takeUnless { it.isNullOrBlank() } ?: errors.put("client_id", "must not be null or blank")
+        this.password.takeUnless { it.isNullOrBlank() } ?: errors.put("password", "must not be null or blank")
 
-       throw InvalidRequestException(errors.toMap())
-   }
+        throw InvalidRequestException(errors.toMap())
+    }
 
     return AuthorizationDto.Password(
         email = this.email,
         password = this.password,
-        clientId = this.clientId
+        clientId = this.clientId,
     )
 }

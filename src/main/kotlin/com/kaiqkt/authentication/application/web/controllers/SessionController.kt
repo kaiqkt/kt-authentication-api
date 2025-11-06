@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Validated
 class SessionController(
-    private val sessionService: SessionService
+    private val sessionService: SessionService,
 ) {
     @DeleteMapping("/v1/sessions/{session_id}")
     fun revokeById(
         @RequestHeader("X-User-Id") userId: String,
-        @PathVariable("session_id") sessionId: String
+        @PathVariable("session_id") sessionId: String,
     ): ResponseEntity<Unit> {
         sessionService.revoke(sessionId, userId)
 
@@ -38,16 +37,13 @@ class SessionController(
     @GetMapping("/v1/sessions")
     fun findAllByUserId(
         @RequestHeader("X-User-Id") userId: String,
-
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero
         page: Int,
-
         @RequestParam(value = "size", required = false, defaultValue = "20")
         @Min(value = 1, message = "page size must be at least 1")
         @Max(value = 20, message = "page size should not be greater than 20")
         size: Int,
-
         @RequestParam(value = "sort", required = false, defaultValue = "DESC")
         @Pattern(
             regexp = "ASC|DESC",
@@ -55,9 +51,8 @@ class SessionController(
             message = "sort should be ASC or DESC",
         )
         sort: String,
-
         @RequestParam(value = "sort_by", required = false)
-        sortBy: String?
+        sortBy: String?,
     ): ResponseEntity<Page<SessionResponseV1>> {
         val pageRequest = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
         val response = sessionService.findAllByUserId(userId, pageRequest).map { it.toResponse() }

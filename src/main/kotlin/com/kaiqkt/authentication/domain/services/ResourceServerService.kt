@@ -14,17 +14,18 @@ import kotlin.jvm.optionals.getOrNull
 
 @Service
 class ResourceServerService(
-    private val resourceServerRepository: ResourceServerRepository
+    private val resourceServerRepository: ResourceServerRepository,
 ) {
     private val log = LoggerFactory.getLogger(ResourceServerService::class.java)
 
     private val allowedSortFields = Constants.Sort.getAllowedFiled("name")
 
     fun create(resourceServerDto: ResourceServerDto): ResourceServer {
-        val resourceServer = ResourceServer(
-            name = resourceServerDto.name,
-            description = resourceServerDto.description
-        )
+        val resourceServer =
+            ResourceServer(
+                name = resourceServerDto.name,
+                description = resourceServerDto.description,
+            )
 
         resourceServerRepository.save(resourceServer)
 
@@ -43,10 +44,9 @@ class ResourceServerService(
         }
     }
 
-    fun findById(id: String): ResourceServer {
-        return resourceServerRepository.findById(id).getOrNull()
+    fun findById(id: String): ResourceServer =
+        resourceServerRepository.findById(id).getOrNull()
             ?: throw DomainException(ErrorType.RESOURCE_SERVER_NOT_FOUND)
-    }
 
     fun delete(id: String) {
         resourceServerRepository.deleteById(id)

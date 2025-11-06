@@ -21,14 +21,13 @@ class Client(
     val name: String = "",
     val description: String? = null,
     val secret: String = "",
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "clients_policies",
         joinColumns = [JoinColumn(name = "client_id")],
-        inverseJoinColumns = [JoinColumn(name = "policy_id")]
+        inverseJoinColumns = [JoinColumn(name = "policy_id")],
     )
-    val policies: MutableSet<Policy> = mutableSetOf()
+    val policies: MutableSet<Policy> = mutableSetOf(),
 ) {
     @Id
     val id: String = ULID.random()

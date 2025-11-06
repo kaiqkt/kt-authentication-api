@@ -21,15 +21,16 @@ class RoleIntegrationTest : IntegrationTest() {
     fun `given a request should create successfully`() {
         val request = RoleRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/roles")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(RoleResponseV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/roles")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(RoleResponseV1::class.java)
 
         assertEquals(request.name, response.name)
         assertEquals(request.description, response.description)
@@ -37,20 +38,22 @@ class RoleIntegrationTest : IntegrationTest() {
 
     @Test
     fun `given a request when data is invalid should thrown an exception`() {
-        val request = RoleRequestV1Sampler.sample(
-            name = "",
-            description = "d".repeat(256)
-        )
+        val request =
+            RoleRequestV1Sampler.sample(
+                name = "",
+                description = "d".repeat(256),
+            )
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/roles")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/roles")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals("INVALID_REQUEST", response.type)
         assertEquals("Invalid request", response.message)
@@ -58,21 +61,21 @@ class RoleIntegrationTest : IntegrationTest() {
         assertEquals("must not exceed 255 characters", response.details["description"])
     }
 
-
     @Test
     fun `given a request when already exists a role with same name should thrown an exception`() {
         val request = RoleRequestV1Sampler.sample()
         roleRepository.save(RoleSampler.sample())
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/roles")
-            .then()
-            .statusCode(409)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/roles")
+                .then()
+                .statusCode(409)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.ROLE_ALREADY_EXISTS.name, response.type)
         assertEquals(ErrorType.ROLE_ALREADY_EXISTS.message, response.message)
@@ -90,26 +93,28 @@ class RoleIntegrationTest : IntegrationTest() {
     fun `given a request to find all roles should return paginated successfully`() {
         roleRepository.save(RoleSampler.sample())
 
-        val response = given()
-            .get("/v1/roles")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(PageResponse::class.java)
+        val response =
+            given()
+                .get("/v1/roles")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(PageResponse::class.java)
 
         assertEquals(1, response.totalElements)
     }
 
     @Test
     fun `given a request to find all roles when sort by field is invalid should thrown an exception`() {
-        val response = given()
-            .get("/v1/roles?sort_by=invalid")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response()
-            .`as`(DomainException::class.java)
+        val response =
+            given()
+                .get("/v1/roles?sort_by=invalid")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response()
+                .`as`(DomainException::class.java)
 
         assertEquals(ErrorType.INVALID_FIELD, response.type)
         assertEquals(ErrorType.INVALID_FIELD.message, response.message)
@@ -132,13 +137,14 @@ class RoleIntegrationTest : IntegrationTest() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
-        val response = given()
-            .patch("/v1/roles/${ULID.random()}/associate/${permission.id}")
-            .then()
-            .statusCode(404)
-            .extract()
-            .response()
-            .`as`(DomainException::class.java)
+        val response =
+            given()
+                .patch("/v1/roles/${ULID.random()}/associate/${permission.id}")
+                .then()
+                .statusCode(404)
+                .extract()
+                .response()
+                .`as`(DomainException::class.java)
 
         assertEquals(ErrorType.ROLE_NOT_FOUND, response.type)
         assertEquals(ErrorType.ROLE_NOT_FOUND.message, response.message)
@@ -146,33 +152,34 @@ class RoleIntegrationTest : IntegrationTest() {
 
     @Test
     fun `given a role id and a permission id to associate when permission does not exists should thrown an exception`() {
-        val response = given()
-            .patch("/v1/roles/${ULID.random()}/associate/${ULID.random()}")
-            .then()
-            .statusCode(404)
-            .extract()
-            .response()
-            .`as`(DomainException::class.java)
+        val response =
+            given()
+                .patch("/v1/roles/${ULID.random()}/associate/${ULID.random()}")
+                .then()
+                .statusCode(404)
+                .extract()
+                .response()
+                .`as`(DomainException::class.java)
 
         assertEquals(ErrorType.PERMISSION_NOT_FOUND, response.type)
         assertEquals(ErrorType.PERMISSION_NOT_FOUND.message, response.message)
     }
 
     @Test
-    fun `given a role id when exists should return a role successfully`(){
+    fun `given a role id when exists should return a role successfully`() {
         val role = roleRepository.save(RoleSampler.sample())
 
-        val response = given()
-            .get("/v1/roles/${role.id}")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(RoleResponseV1::class.java)
+        val response =
+            given()
+                .get("/v1/roles/${role.id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(RoleResponseV1::class.java)
 
         assertEquals(role.id, response.id)
     }
-
 
     @Test
     fun `given a role id and a permission id should disassociate successfully`() {

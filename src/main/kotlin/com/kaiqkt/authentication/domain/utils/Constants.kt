@@ -19,8 +19,6 @@ object Constants {
     }
 
     object Sort {
-        fun getAllowedFiled(vararg fields: String): Set<String> {
-            return setOf("created_at", "updated_at").plus(fields)
-        }
+        fun getAllowedFiled(vararg fields: String): Set<String> = setOf("created_at", "updated_at").plus(fields)
     }
 }

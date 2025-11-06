@@ -31,7 +31,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun `given a user id and a role id should assign user a role successfully`(){
+    fun `given a user id and a role id should assign user a role successfully`() {
         justRun { userService.assignRole(any(), any()) }
 
         val response = userController.assignRole(ULID.random(), ULID.random())

@@ -11,12 +11,11 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import java.time.Instant
-import java.util.*
+import java.util.Date
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AuthenticationServiceTest {
-
     private val sessionService = mockk<SessionService>()
     private val tokenService = mockk<TokenService>()
 
@@ -24,15 +23,16 @@ class AuthenticationServiceTest {
 
     @Test
     fun `given a introspection when session exists should return successfully with active true`() {
-        val jwtClaimsSet = JWTClaimsSet
-            .Builder()
-            .claim("sid", ULID.random())
-            .issuer("iss")
-            .subject("sub")
-            .claim("scope", "")
-            .expirationTime(Date.from(Instant.now()))
-            .issueTime(Date.from(Instant.now()))
-            .build()
+        val jwtClaimsSet =
+            JWTClaimsSet
+                .Builder()
+                .claim("sid", ULID.random())
+                .issuer("iss")
+                .subject("sub")
+                .claim("scope", "")
+                .expirationTime(Date.from(Instant.now()))
+                .issueTime(Date.from(Instant.now()))
+                .build()
 
         every { tokenService.getClaims(any()) } returns jwtClaimsSet
         every { sessionService.findById(any()) } returns SessionSampler.sample()
@@ -47,15 +47,16 @@ class AuthenticationServiceTest {
 
     @Test
     fun `given a introspection when session not exists should return successfully with active false`() {
-        val jwtClaimsSet = JWTClaimsSet
-            .Builder()
-            .claim("sid", ULID.random())
-            .issuer("iss")
-            .subject("sub")
-            .claim("scope", "")
-            .expirationTime(Date.from(Instant.now()))
-            .issueTime(Date.from(Instant.now()))
-            .build()
+        val jwtClaimsSet =
+            JWTClaimsSet
+                .Builder()
+                .claim("sid", ULID.random())
+                .issuer("iss")
+                .subject("sub")
+                .claim("scope", "")
+                .expirationTime(Date.from(Instant.now()))
+                .issueTime(Date.from(Instant.now()))
+                .build()
 
         every { tokenService.getClaims(any()) } returns jwtClaimsSet
         every { sessionService.findById(any()) } returns null

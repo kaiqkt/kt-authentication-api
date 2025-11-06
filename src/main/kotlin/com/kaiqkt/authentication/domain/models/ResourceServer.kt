@@ -1,7 +1,10 @@
 package com.kaiqkt.authentication.domain.models
 
 import io.azam.ulidj.ULID
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.EntityListeners
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -12,7 +15,7 @@ import java.time.LocalDateTime
 @EntityListeners(AuditingEntityListener::class)
 class ResourceServer(
     val name: String = "",
-    val description: String? = null
+    val description: String? = null,
 ) {
     @Id
     val id: String = ULID.random()

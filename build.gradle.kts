@@ -2,17 +2,18 @@ plugins {
     kotlin("jvm") version "2.2.21"
     kotlin("plugin.spring") version "2.2.21"
     id("org.springframework.boot") version "3.5.7"
-	id("io.spring.dependency-management") version "1.1.7"
+    id("io.spring.dependency-management") version "1.1.7"
     id("jacoco")
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
 }
 
 group = "com.trippy"
 version = "0.0.1-SNAPSHOT"
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 jacoco {
@@ -20,19 +21,19 @@ jacoco {
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.security:spring-security-crypto")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.postgresql:postgresql:42.7.8")
     implementation("org.flywaydb:flyway-core:11.15.0")
     implementation("org.flywaydb:flyway-database-postgresql")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.azam.ulidj:ulidj:1.0.1")
     implementation("com.nimbusds:nimbus-jose-jwt:10.5")
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
@@ -47,18 +48,18 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
     testImplementation("io.mockk:mockk:1.14.6")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
-	}
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict")
+    }
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 val excludePackages: List<String> by extra {
@@ -69,7 +70,7 @@ val excludePackages: List<String> by extra {
         "com/kaiqkt/authentication/application/web/responses/*",
         "com/kaiqkt/authentication/domain/models/*",
         "com/kaiqkt/authentication/domain/dtos/*",
-        "com/kaiqkt/authentication/domain/utils/Constants*"
+        "com/kaiqkt/authentication/domain/utils/Constants*",
     )
 }
 
@@ -78,7 +79,7 @@ fun ignorePackagesForReport(jacocoBase: JacocoReportBase) {
     jacocoBase.classDirectories.setFrom(
         sourceSets.main.get().output.asFileTree.matching {
             exclude(jacocoBase.project.extra.get("excludePackages") as List<String>)
-        }
+        },
     )
 }
 
@@ -88,7 +89,6 @@ tasks.withType<JacocoReport> {
     }
     ignorePackagesForReport(this)
 }
-
 
 tasks.withType<JacocoCoverageVerification> {
     violationRules {
@@ -109,4 +109,3 @@ tasks.withType<JacocoCoverageVerification> {
 tasks.test {
     finalizedBy(tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification)
 }
-

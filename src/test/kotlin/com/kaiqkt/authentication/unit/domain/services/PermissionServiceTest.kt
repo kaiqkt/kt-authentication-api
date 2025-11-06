@@ -44,9 +44,10 @@ class PermissionServiceTest {
         every { resourceServerService.findById(any()) } returns ResourceServerSampler.sample()
         every { permissionRepository.existsByResourceAndVerb(any(), any()) } returns true
 
-        val exception = assertThrows<DomainException> {
-            permissionService.create(ULID.random(), PermissionDtoSampler.sample())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                permissionService.create(ULID.random(), PermissionDtoSampler.sample())
+            }
 
         verify { resourceServerService.findById(any()) }
         verify { permissionRepository.existsByResourceAndVerb(any(), any()) }
@@ -59,7 +60,7 @@ class PermissionServiceTest {
         every {
             permissionRepository.findAllByResourceServerId(
                 any(),
-                any()
+                any(),
             )
         } returns PageImpl(listOf(PermissionSampler.sample()))
 
@@ -70,9 +71,10 @@ class PermissionServiceTest {
 
     @Test
     fun `given a resource id and page request when has invalid sort by field should thrown exception`() {
-        val exception = assertThrows<DomainException> {
-            permissionService.findAll(ULID.random(), PageRequestDtoSampler.sample("name"))
-        }
+        val exception =
+            assertThrows<DomainException> {
+                permissionService.findAll(ULID.random(), PageRequestDtoSampler.sample("name"))
+            }
 
         assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
@@ -90,15 +92,16 @@ class PermissionServiceTest {
 
     @Test
     fun `given a page request when has invalid sort by field should thrown exception`() {
-        val exception = assertThrows<DomainException> {
-            permissionService.findAll(null, PageRequestDtoSampler.sample("name"))
-        }
+        val exception =
+            assertThrows<DomainException> {
+                permissionService.findAll(null, PageRequestDtoSampler.sample("name"))
+            }
 
         assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 
     @Test
-    fun `given a permission id should delete successfully` (){
+    fun `given a permission id should delete successfully`() {
         justRun { permissionRepository.deleteById(any()) }
 
         permissionService.delete(ULID.random())
@@ -107,7 +110,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    fun `given a permission id when permission exists should return successfully`(){
+    fun `given a permission id when permission exists should return successfully`() {
         every { permissionRepository.findById(any()) } returns Optional.of(PermissionSampler.sample())
 
         permissionService.findById(ULID.random())
@@ -116,12 +119,13 @@ class PermissionServiceTest {
     }
 
     @Test
-    fun `given a permission id when permission does not exists should throw an exception`(){
+    fun `given a permission id when permission does not exists should throw an exception`() {
         every { permissionRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            permissionService.findById(ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                permissionService.findById(ULID.random())
+            }
 
         verify { permissionRepository.findById(any()) }
 

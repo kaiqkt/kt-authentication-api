@@ -33,7 +33,7 @@ class PermissionControllerTest {
             permissionService.findAll(any(), any())
         } returns PageImpl(listOf(PermissionSampler.sample()))
 
-        val response = permissionController.findAll( 0, 0, "ASC", null, ULID.random())
+        val response = permissionController.findAll(0, 0, "ASC", null, ULID.random())
 
         verify { permissionService.findAll(any(), any()) }
 
@@ -52,7 +52,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    fun `given a request should delete a permission successfully`(){
+    fun `given a request should delete a permission successfully`() {
         justRun { permissionService.delete(any()) }
 
         permissionController.delete(ULID.random())
@@ -61,7 +61,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    fun `given a permission id should return a permission successfully`(){
+    fun `given a permission id should return a permission successfully`() {
         every { permissionService.findById(any()) } returns PermissionSampler.sample()
 
         permissionController.findById(ULID.random())

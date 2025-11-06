@@ -5,13 +5,11 @@ import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.repositories.ClientRepository
 import com.kaiqkt.authentication.domain.services.ClientService
 import com.kaiqkt.authentication.domain.services.PolicyService
-import com.kaiqkt.authentication.domain.services.ResourceServerService
 import com.kaiqkt.authentication.domain.services.TokenService
 import com.kaiqkt.authentication.unit.domain.dtos.ClientDtoSampler
 import com.kaiqkt.authentication.unit.domain.dtos.PageRequestDtoSampler
 import com.kaiqkt.authentication.unit.domain.dtos.PolicySampler
 import com.kaiqkt.authentication.unit.domain.models.ClientSampler
-import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -35,9 +33,10 @@ class ClientServiceTest {
 
         every { policyService.findAllById(any()) } returns emptyList()
 
-        val exception = assertThrows<DomainException> {
-            clientService.create(clientDto)
-        }
+        val exception =
+            assertThrows<DomainException> {
+                clientService.create(clientDto)
+            }
 
         assertEquals(ErrorType.POLICY_NOT_FOUND, exception.type)
     }
@@ -76,9 +75,10 @@ class ClientServiceTest {
 
         every { clientRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            clientService.findById(clientId)
-        }
+        val exception =
+            assertThrows<DomainException> {
+                clientService.findById(clientId)
+            }
 
         assertEquals(ErrorType.CLIENT_NOT_FOUND, exception.type)
     }
@@ -99,9 +99,10 @@ class ClientServiceTest {
     fun `given a page request with invalid sort field, should throw a domain exception`() {
         val pageRequest = PageRequestDtoSampler.sample(sortBy = "invalid-field")
 
-        val exception = assertThrows<DomainException> {
-            clientService.findAll(pageRequest)
-        }
+        val exception =
+            assertThrows<DomainException> {
+                clientService.findAll(pageRequest)
+            }
 
         assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }

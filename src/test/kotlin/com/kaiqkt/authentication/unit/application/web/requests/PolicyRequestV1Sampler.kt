@@ -6,10 +6,10 @@ object PolicyRequestV1Sampler {
     fun sample(
         uri: String = "/users",
         method: String = "POST",
-        isPublic: Boolean = false
+        isPublic: Boolean = false,
     ) = PolicyRequestV1(
         uri = uri,
         method = method,
-        isPublic = isPublic
+        isPublic = isPublic,
     )
 }

@@ -7,21 +7,20 @@ import com.kaiqkt.authentication.application.web.responses.toResponseV1
 import com.kaiqkt.authentication.domain.services.UserService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
 ) {
-
     @PostMapping("/v1/users")
-    fun create(@Valid @RequestBody userRequestV1: UserRequestV1): ResponseEntity<UserResponseV1> {
+    fun create(
+        @Valid @RequestBody userRequestV1: UserRequestV1,
+    ): ResponseEntity<UserResponseV1> {
         val user = userService.create(userRequestV1.toDto())
 
         return ResponseEntity.ok(user.toResponseV1())
@@ -30,7 +29,7 @@ class UserController(
     @PatchMapping("/v1/users/{user_id}/roles/{role_id}")
     fun assignRole(
         @PathVariable("user_id") userId: String,
-        @PathVariable("role_id") roleId: String
+        @PathVariable("role_id") roleId: String,
     ): ResponseEntity<Unit> {
         userService.assignRole(userId, roleId)
 

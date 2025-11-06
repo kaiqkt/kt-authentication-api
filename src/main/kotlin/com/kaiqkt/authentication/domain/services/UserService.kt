@@ -16,7 +16,7 @@ import kotlin.jvm.optionals.getOrNull
 class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val roleService: RoleService
+    private val roleService: RoleService,
 ) {
     private val log = LoggerFactory.getLogger(UserService::class.java)
 
@@ -25,10 +25,11 @@ class UserService(
             throw DomainException(ErrorType.EMAIL_ALREADY_IN_USE)
         }
 
-        val user = User(
-            email =  userDto.email,
-            password = passwordEncoder.encode(userDto.password)
-        )
+        val user =
+            User(
+                email = userDto.email,
+                password = passwordEncoder.encode(userDto.password),
+            )
 
         userRepository.save(user)
 
@@ -38,7 +39,10 @@ class UserService(
     }
 
     @Transactional
-    fun assignRole(userId: String, roleId: String){
+    fun assignRole(
+        userId: String,
+        roleId: String,
+    ) {
         val role = roleService.findById(roleId)
         val user = findById(userId)
 
@@ -54,13 +58,14 @@ class UserService(
         log.info("User $userId assigned to role $roleId")
     }
 
-    fun findByEmailAndType(email: String, authType: AuthenticationType): User {
-        return userRepository.findByEmailAndAuthenticationType(email, authType)
+    fun findByEmailAndType(
+        email: String,
+        authType: AuthenticationType,
+    ): User =
+        userRepository.findByEmailAndAuthenticationType(email, authType)
             ?: throw DomainException(ErrorType.USER_NOT_FOUND)
-    }
 
-    fun findById(id: String): User {
-        return userRepository.findById(id).getOrNull()
+    fun findById(id: String): User =
+        userRepository.findById(id).getOrNull()
             ?: throw DomainException(ErrorType.USER_NOT_FOUND)
-    }
 }

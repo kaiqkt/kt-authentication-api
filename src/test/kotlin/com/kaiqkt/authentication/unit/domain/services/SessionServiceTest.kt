@@ -18,7 +18,7 @@ import org.junit.jupiter.api.assertNull
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import java.util.*
+import java.util.Optional
 import kotlin.test.assertEquals
 
 class SessionServiceTest {
@@ -30,7 +30,7 @@ class SessionServiceTest {
     fun `given a id, refresh token and a user should create a session`() {
         every { sessionRepository.save(any()) } returns SessionSampler.sample()
 
-        sessionService.save(ULID.random(), ClientSampler.sample(),"refreshToken", UserSampler.sample())
+        sessionService.save(ULID.random(), ClientSampler.sample(), "refreshToken", UserSampler.sample())
 
         verify { sessionRepository.save(any()) }
     }
@@ -39,27 +39,27 @@ class SessionServiceTest {
     fun `given a client id and refresh token when exist a session should return successfully`() {
         every { sessionRepository.findByRefreshToken(any(), any()) } returns SessionSampler.sample()
 
-        sessionService.findByClientIdAndRefreshToken(ULID.random(),"refreshToken")
+        sessionService.findByClientIdAndRefreshToken(ULID.random(), "refreshToken")
 
-        verify { sessionRepository.findByRefreshToken(any(),any()) }
+        verify { sessionRepository.findByRefreshToken(any(), any()) }
     }
 
     @Test
     fun `given a client id and refresh token when not exist a session should thrown a exception`() {
-        every { sessionRepository.findByRefreshToken(any(),any()) } returns null
+        every { sessionRepository.findByRefreshToken(any(), any()) } returns null
 
-        val exception = assertThrows<DomainException> {
-            sessionService.findByClientIdAndRefreshToken(ULID.random(),"refreshToken")
-        }
+        val exception =
+            assertThrows<DomainException> {
+                sessionService.findByClientIdAndRefreshToken(ULID.random(), "refreshToken")
+            }
 
-        verify { sessionRepository.findByRefreshToken(any(),any()) }
+        verify { sessionRepository.findByRefreshToken(any(), any()) }
 
         assertEquals(ErrorType.SESSION_NOT_FOUND, exception.type)
     }
 
     @Test
     fun `given a session id when session exist should return it`() {
-
         every { sessionRepository.findById(any()) } returns Optional.of(SessionSampler.sample())
 
         val session = sessionService.findById(ULID.random())
@@ -71,7 +71,6 @@ class SessionServiceTest {
 
     @Test
     fun `given a session id when session not exist should return null`() {
-
         every { sessionRepository.findById(any()) } returns Optional.empty()
 
         val session = sessionService.findById(ULID.random())
@@ -94,9 +93,10 @@ class SessionServiceTest {
     fun `given a id and a user id when session does not exist should throw a domain exception`() {
         every { sessionRepository.findByIdAndUserId(any(), any()) } returns null
 
-        val exception = assertThrows<DomainException> {
-            sessionService.revoke(ULID.random(), ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                sessionService.revoke(ULID.random(), ULID.random())
+            }
 
         verify { sessionRepository.findByIdAndUserId(any(), any()) }
 
@@ -114,9 +114,10 @@ class SessionServiceTest {
 
     @Test
     fun `given a user id and a page request when has a invalid sort by field should thrown an exception`() {
-        val exception = assertThrows<DomainException> {
-            sessionService.findAllByUserId(ULID.random(), PageRequestDtoSampler.sample(sortBy = "invalid"))
-        }
+        val exception =
+            assertThrows<DomainException> {
+                sessionService.findAllByUserId(ULID.random(), PageRequestDtoSampler.sample(sortBy = "invalid"))
+            }
 
         assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }

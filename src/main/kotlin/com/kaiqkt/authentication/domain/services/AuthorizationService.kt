@@ -17,16 +17,15 @@ class AuthorizationService(
     private val passwordEncoder: PasswordEncoder,
     private val tokenService: TokenService,
     private val userService: UserService,
-    private val clientService: ClientService
+    private val clientService: ClientService,
 ) {
     private val log = LoggerFactory.getLogger(AuthorizationService::class.java)
 
-    fun getTokens(authorizationDto: AuthorizationDto): TokensDto {
-        return when (authorizationDto) {
+    fun getTokens(authorizationDto: AuthorizationDto): TokensDto =
+        when (authorizationDto) {
             is AuthorizationDto.Password -> login(authorizationDto)
             is AuthorizationDto.Refresh -> refresh(authorizationDto)
         }
-    }
 
     @Transactional
     private fun login(passwordDto: AuthorizationDto.Password): TokensDto {
@@ -38,13 +37,14 @@ class AuthorizationService(
         }
 
         val sessionId = ULID.random()
-        val tokens = tokenService.issueTokens(
-            subject = user.id,
-            audience = passwordDto.clientId,
-            sid = sessionId,
-            roles = user.roles,
-            permissions = setOf()
-        )
+        val tokens =
+            tokenService.issueTokens(
+                subject = user.id,
+                audience = passwordDto.clientId,
+                sid = sessionId,
+                roles = user.roles,
+                permissions = setOf(),
+            )
 
         sessionService.save(sessionId, client, tokens.refreshToken, user)
 
@@ -57,13 +57,14 @@ class AuthorizationService(
         val session = sessionService.findByClientIdAndRefreshToken(refreshDto.clientId, refreshDto.refreshToken)
         val user = session.user
 
-        val tokens = tokenService.issueTokens(
-            subject = user.id,
-            audience = session.client.id,
-            sid = session.id,
-            roles = user.roles,
-            permissions = setOf()
-        )
+        val tokens =
+            tokenService.issueTokens(
+                subject = user.id,
+                audience = session.client.id,
+                sid = session.id,
+                roles = user.roles,
+                permissions = setOf(),
+            )
 
         sessionService.save(session.id, session.client, tokens.refreshToken, user)
 

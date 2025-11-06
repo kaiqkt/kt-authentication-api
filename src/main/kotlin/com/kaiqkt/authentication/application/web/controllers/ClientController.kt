@@ -24,20 +24,20 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class ClientController(
-    private val clientService: ClientService
-){
+    private val clientService: ClientService,
+) {
     @PostMapping("/v1/clients")
     fun create(
-        @Valid @RequestBody requestV1: ClientRequestV1
+        @Valid @RequestBody requestV1: ClientRequestV1,
     ): ResponseEntity<ClientResponseV1> {
-        val response =  clientService.create(requestV1.toDto()).toResponseV1()
+        val response = clientService.create(requestV1.toDto()).toResponseV1()
 
         return ResponseEntity.ok(response)
     }
 
     @DeleteMapping("/v1/clients/{client_id}")
     fun delete(
-        @PathVariable(value = "client_id") clientId: String
+        @PathVariable(value = "client_id") clientId: String,
     ): ResponseEntity<Unit> {
         clientService.delete(clientId)
 
@@ -46,7 +46,7 @@ class ClientController(
 
     @GetMapping("/v1/clients/{client_id}")
     fun findById(
-        @PathVariable(value = "client_id") clientId: String
+        @PathVariable(value = "client_id") clientId: String,
     ): ResponseEntity<ClientResponseV1> {
         val response = clientService.findById(clientId).toResponseV1()
 
@@ -58,12 +58,10 @@ class ClientController(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero
         page: Int,
-
         @RequestParam(value = "size", required = false, defaultValue = "20")
         @Min(value = 1, message = "page size must be at least 1")
         @Max(value = 20, message = "page size should not be greater than 20")
         size: Int,
-
         @RequestParam(value = "sort", required = false, defaultValue = "DESC")
         @Pattern(
             regexp = "ASC|DESC",
@@ -71,9 +69,8 @@ class ClientController(
             message = "sort should be ASC or DESC",
         )
         sort: String,
-
         @RequestParam(value = "sort_by", required = false)
-        sortBy: String?
+        sortBy: String?,
     ): ResponseEntity<Page<ClientResponseV1>> {
         val pageRequestDto = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
         val response = clientService.findAll(pageRequestDto).map { it.toResponseV1() }

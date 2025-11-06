@@ -13,8 +13,8 @@ import kotlin.apply
 @Configuration
 class ObjectMapperConfig {
     @Bean
-    fun objectMapper(): ObjectMapper {
-        return ObjectMapper().apply {
+    fun objectMapper(): ObjectMapper =
+        ObjectMapper().apply {
             registerModule(JavaTimeModule())
             registerKotlinModule()
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -22,5 +22,4 @@ class ObjectMapperConfig {
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
         }
-    }
 }

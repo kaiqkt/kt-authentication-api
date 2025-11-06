@@ -8,14 +8,14 @@ import jakarta.validation.constraints.Pattern
 data class PolicyRequestV1(
     @field:NotBlank(message = "must not be blank")
     val uri: String,
-
     @field:Pattern(regexp = "POST|GET|DELETE|PUT|PATCH", message = "must be POST, GET, DELETE, PUT or PATCH")
     val method: String,
-    val isPublic: Boolean
+    val isPublic: Boolean,
 )
 
-fun PolicyRequestV1.toDto(): PolicyDto = PolicyDto(
-    uri = this.uri,
-    method = Method.valueOf(this.method),
-    isPublic = this.isPublic,
-)
+fun PolicyRequestV1.toDto(): PolicyDto =
+    PolicyDto(
+        uri = this.uri,
+        method = Method.valueOf(this.method),
+        isPublic = this.isPublic,
+    )

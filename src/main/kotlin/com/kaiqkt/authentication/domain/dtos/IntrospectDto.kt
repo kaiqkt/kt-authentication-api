@@ -8,5 +8,5 @@ data class IntrospectDto(
     val exp: Long,
     val iat: Long,
     val roles: List<String>?,
-    val permissions: List<String>?
+    val permissions: List<String>?,
 )

@@ -24,7 +24,7 @@ class ResourceServerServiceTest {
     private val service = ResourceServerService(resourceServerRepository)
 
     @Test
-    fun `given a user id and a resource server dto should create successfully`(){
+    fun `given a user id and a resource server dto should create successfully`() {
         every { resourceServerRepository.save(any()) } returns ResourceServerSampler.sample()
 
         service.create(ResourceServerDtoSampler.sample())
@@ -32,9 +32,8 @@ class ResourceServerServiceTest {
         verify { resourceServerRepository.save(any()) }
     }
 
-
     @Test
-    fun `given a page request dto when sort field are valid should return all resource server successfully`(){
+    fun `given a page request dto when sort field are valid should return all resource server successfully`() {
         every { resourceServerRepository.findAll(any<PageRequest>()) } returns PageImpl(listOf(ResourceServerSampler.sample()))
 
         service.findAll(PageRequestDtoSampler.sample())
@@ -43,16 +42,17 @@ class ResourceServerServiceTest {
     }
 
     @Test
-    fun `given a page request dto when sort field are invalid should throw an exception`(){
-        val exception = assertThrows<DomainException> {
-            service.findAll(PageRequestDtoSampler.sample(sortBy = "desc"))
-        }
+    fun `given a page request dto when sort field are invalid should throw an exception`() {
+        val exception =
+            assertThrows<DomainException> {
+                service.findAll(PageRequestDtoSampler.sample(sortBy = "desc"))
+            }
 
         assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
 
     @Test
-    fun `given a resource server id should delete successfully`(){
+    fun `given a resource server id should delete successfully`() {
         justRun { resourceServerRepository.deleteById(any()) }
 
         service.delete(ULID.random())
@@ -61,7 +61,7 @@ class ResourceServerServiceTest {
     }
 
     @Test
-    fun `given a resource id when found should return successfully`(){
+    fun `given a resource id when found should return successfully`() {
         every { resourceServerRepository.findById(any()) } returns Optional.of(ResourceServerSampler.sample())
 
         service.findById(ULID.random())
@@ -70,12 +70,13 @@ class ResourceServerServiceTest {
     }
 
     @Test
-    fun `given a resource id when not found should return successfully`(){
+    fun `given a resource id when not found should return successfully`() {
         every { resourceServerRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            service.findById(ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                service.findById(ULID.random())
+            }
 
         verify { resourceServerRepository.findById(any()) }
 

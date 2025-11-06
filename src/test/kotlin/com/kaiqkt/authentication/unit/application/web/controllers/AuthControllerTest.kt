@@ -16,9 +16,8 @@ class AuthControllerTest {
     private val authenticationService = mockk<AuthenticationService>()
     private val authController = AuthController(authorizationService, authenticationService)
 
-
     @Test
-    fun `given a request should issue and return the tokens successfully`(){
+    fun `given a request should issue and return the tokens successfully`() {
         val request = AuthenticationTokenRequestV1Sampler.sample()
 
         every { authorizationService.getTokens(any()) } returns AuthenticationDtoSampler.sample()
@@ -29,7 +28,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `given a request should introspect successfully`(){
+    fun `given a request should introspect successfully`() {
         every { authenticationService.introspect(any()) } returns IntrospectionDtoSampler.sample()
 
         authController.introspect("access-token")

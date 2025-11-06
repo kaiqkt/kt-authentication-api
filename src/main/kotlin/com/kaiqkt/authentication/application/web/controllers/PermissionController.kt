@@ -15,18 +15,23 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Validated
 class PermissionController(
-    private val permissionService: PermissionService
+    private val permissionService: PermissionService,
 ) {
-
     @PostMapping("/v1/resources/{resource_server_id}/permissions")
     fun create(
         @PathVariable("resource_server_id") resourceId: String,
-        @Valid @RequestBody requestV1: PermissionRequestV1
+        @Valid @RequestBody requestV1: PermissionRequestV1,
     ): ResponseEntity<PermissionResponseV1> {
         val response = permissionService.create(resourceId, requestV1.toDto()).toResponseV1()
 
@@ -35,7 +40,7 @@ class PermissionController(
 
     @DeleteMapping("/v1/permissions/{permission_id}")
     fun delete(
-        @PathVariable("permission_id") permissionId: String
+        @PathVariable("permission_id") permissionId: String,
     ): ResponseEntity<PermissionResponseV1> {
         permissionService.delete(permissionId)
 
@@ -44,7 +49,7 @@ class PermissionController(
 
     @GetMapping("/v1/permissions/{permission_id}")
     fun findById(
-        @PathVariable("permission_id") permissionId: String
+        @PathVariable("permission_id") permissionId: String,
     ): ResponseEntity<PermissionResponseV1?> {
         val response = permissionService.findById(permissionId).toResponseV1()
 
@@ -56,12 +61,10 @@ class PermissionController(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero
         page: Int,
-
         @RequestParam(value = "size", required = false, defaultValue = "20")
         @Min(value = 1, message = "page size must be at least 1")
         @Max(value = 20, message = "page size should not be greater than 20")
         size: Int,
-
         @RequestParam(value = "sort", required = false, defaultValue = "DESC")
         @Pattern(
             regexp = "ASC|DESC",
@@ -69,10 +72,9 @@ class PermissionController(
             message = "sort should be ASC or DESC",
         )
         sort: String,
-
         @RequestParam(value = "sort_by", required = false)
         sortBy: String?,
-        @RequestParam(value = "resource_server_id", required = false) resourceServerId: String?
+        @RequestParam(value = "resource_server_id", required = false) resourceServerId: String?,
     ): ResponseEntity<Page<PermissionResponseV1>> {
         val pageRequest = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
         val response = permissionService.findAll(resourceServerId, pageRequest).map { it.toResponseV1() }

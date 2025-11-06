@@ -3,7 +3,6 @@ package com.kaiqkt.authentication.application.web.controllers
 import com.kaiqkt.authentication.application.web.requests.PolicyRequestV1
 import com.kaiqkt.authentication.application.web.requests.toDto
 import com.kaiqkt.authentication.application.web.responses.PolicyResponseV1
-import com.kaiqkt.authentication.application.web.responses.ResourceServerResponseV1
 import com.kaiqkt.authentication.application.web.responses.toResponseV1
 import com.kaiqkt.authentication.domain.dtos.PageRequestDto
 import com.kaiqkt.authentication.domain.services.PolicyService
@@ -22,20 +21,18 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Validated
 class PolicyController(
-    private val policyService: PolicyService
+    private val policyService: PolicyService,
 ) {
-
     @PostMapping("/v1/resources/{resource_server_id}/policies")
     fun create(
         @PathVariable("resource_server_id") resourceServerId: String,
-        @Valid @RequestBody requestV1: PolicyRequestV1
+        @Valid @RequestBody requestV1: PolicyRequestV1,
     ): ResponseEntity<PolicyResponseV1> {
         val response = policyService.create(resourceServerId, requestV1.toDto()).toResponseV1()
 
@@ -44,7 +41,7 @@ class PolicyController(
 
     @GetMapping("/v1/resources/{resource_server_id}/policies")
     fun findAllByResourceServerId(
-        @PathVariable("resource_server_id") resourceServerId: String
+        @PathVariable("resource_server_id") resourceServerId: String,
     ): ResponseEntity<List<PolicyResponseV1>> {
         val response = policyService.findAllByResourceId(resourceServerId).map { it.toResponseV1() }
 
@@ -53,7 +50,7 @@ class PolicyController(
 
     @DeleteMapping("/v1/policies/{policy_id}")
     fun delete(
-        @PathVariable("policy_id") policyId: String
+        @PathVariable("policy_id") policyId: String,
     ): ResponseEntity<Unit> {
         policyService.delete(policyId)
 
@@ -65,12 +62,10 @@ class PolicyController(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero
         page: Int,
-
         @RequestParam(value = "size", required = false, defaultValue = "20")
         @Min(value = 1, message = "page size must be at least 1")
         @Max(value = 20, message = "page size should not be greater than 20")
         size: Int,
-
         @RequestParam(value = "sort", required = false, defaultValue = "DESC")
         @Pattern(
             regexp = "ASC|DESC",
@@ -78,23 +73,20 @@ class PolicyController(
             message = "sort should be ASC or DESC",
         )
         sort: String,
-
         @RequestParam(value = "sort_by", required = false)
         sortBy: String?,
-
-        @RequestParam("resource_server_id", required = false) resourceServerId: String
+        @RequestParam("resource_server_id", required = false) resourceServerId: String,
     ): ResponseEntity<Page<PolicyResponseV1>> {
         val pageRequest = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
-        val response = policyService.findAll(resourceServerId,pageRequest).map { it.toResponseV1() }
+        val response = policyService.findAll(resourceServerId, pageRequest).map { it.toResponseV1() }
 
         return ResponseEntity.ok(response)
     }
 
-
     @PatchMapping("/v1/policies/{policy_id}/permissions/{permission_id}")
     fun associatePermission(
         @PathVariable("policy_id") policyId: String,
-        @PathVariable("permission_id") permissionId: String
+        @PathVariable("permission_id") permissionId: String,
     ): ResponseEntity<Unit> {
         policyService.associatePermission(policyId, permissionId)
 
@@ -104,7 +96,7 @@ class PolicyController(
     @PatchMapping("/v1/policies/{policy_id}/roles/{role_id}")
     fun associateRole(
         @PathVariable("policy_id") policyId: String,
-        @PathVariable("role_id") roleId: String
+        @PathVariable("role_id") roleId: String,
     ): ResponseEntity<Unit> {
         policyService.associateRole(policyId, roleId)
 

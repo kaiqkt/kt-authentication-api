@@ -19,7 +19,7 @@ class PolicyControllerTest {
     private val policyController = PolicyController(policyService)
 
     @Test
-    fun `given a request should create a policy successfully`(){
+    fun `given a request should create a policy successfully`() {
         every { policyService.create(any(), any()) } returns PolicySampler.sample()
 
         val response = policyController.create(ULID.random(), PolicyRequestV1Sampler.sample())
@@ -30,7 +30,7 @@ class PolicyControllerTest {
     }
 
     @Test
-    fun `given a resource server id should return all policies successfully`(){
+    fun `given a resource server id should return all policies successfully`() {
         every { policyService.findAllByResourceId(any()) } returns listOf()
 
         policyController.findAllByResourceServerId(ULID.random())
@@ -39,7 +39,7 @@ class PolicyControllerTest {
     }
 
     @Test
-    fun `given a policy id should delete successfully`(){
+    fun `given a policy id should delete successfully`() {
         justRun { policyService.delete(any()) }
 
         val response = policyController.delete(ULID.random())
@@ -50,18 +50,18 @@ class PolicyControllerTest {
     }
 
     @Test
-    fun `given a request should return policies with pagination successfully`(){
+    fun `given a request should return policies with pagination successfully`() {
         every { policyService.findAll(any(), any()) } returns PageImpl(listOf(PolicySampler.sample()))
 
         val response = policyController.findAll(0, 20, "DESC", null, ULID.random())
 
-        verify {  policyService.findAll(any(), any()) }
+        verify { policyService.findAll(any(), any()) }
 
         assertEquals(HttpStatus.OK, response.statusCode)
     }
 
     @Test
-    fun `given a policy id and a permission id should associate successfully`(){
+    fun `given a policy id and a permission id should associate successfully`() {
         justRun { policyService.associatePermission(any(), any()) }
 
         val response = policyController.associatePermission(ULID.random(), ULID.random())
@@ -72,7 +72,7 @@ class PolicyControllerTest {
     }
 
     @Test
-    fun `given a policy id and a role id should associate successfully`(){
+    fun `given a policy id and a role id should associate successfully`() {
         justRun { policyService.associateRole(any(), any()) }
 
         val response = policyController.associateRole(ULID.random(), ULID.random())

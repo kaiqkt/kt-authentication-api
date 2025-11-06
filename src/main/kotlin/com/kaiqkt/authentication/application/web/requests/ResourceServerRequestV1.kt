@@ -9,10 +9,11 @@ data class ResourceServerRequestV1(
     @field:Size(message = "must not exceed 50 characters", max = 50)
     val name: String,
     @field:Size(message = "must not exceed 255 characters", max = 255)
-    val description: String? = null
+    val description: String? = null,
 )
 
-fun ResourceServerRequestV1.toDto(): ResourceServerDto = ResourceServerDto(
-    name = this.name,
-    description = this.description
-)
+fun ResourceServerRequestV1.toDto(): ResourceServerDto =
+    ResourceServerDto(
+        name = this.name,
+        description = this.description,
+    )

@@ -7,7 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PermissionRepository: JpaRepository<Permission, String>{
-    fun existsByResourceAndVerb(resource: String, verb: String): Boolean
-    fun findAllByResourceServerId(resourceId: String, pageable: Pageable): Page<Permission>
+interface PermissionRepository : JpaRepository<Permission, String> {
+    fun existsByResourceAndVerb(
+        resource: String,
+        verb: String,
+    ): Boolean
+
+    fun findAllByResourceServerId(
+        resourceId: String,
+        pageable: Pageable,
+    ): Page<Permission>
 }

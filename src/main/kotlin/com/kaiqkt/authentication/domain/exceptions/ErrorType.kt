@@ -1,6 +1,8 @@
 package com.kaiqkt.authentication.domain.exceptions
 
-enum class ErrorType(val message: String) {
+enum class ErrorType(
+    val message: String,
+) {
     INVALID_TOKEN("Token sign or parsed are invalid"),
     EXPIRED_TOKEN("Expired token"),
     EMAIL_ALREADY_IN_USE("Email already in use"),

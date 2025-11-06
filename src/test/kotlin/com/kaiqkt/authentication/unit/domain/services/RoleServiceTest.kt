@@ -17,7 +17,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import java.util.*
+import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -41,9 +41,10 @@ class RoleServiceTest {
     fun `given a role dto when already exists a role with same name should thrown an exception`() {
         every { roleRepository.existsByName(any()) } returns true
 
-        val exception = assertThrows<DomainException> {
-            roleService.create(RoleDtoSampler.sample())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                roleService.create(RoleDtoSampler.sample())
+            }
 
         verify { roleRepository.existsByName(any()) }
 
@@ -70,9 +71,10 @@ class RoleServiceTest {
 
     @Test
     fun `given a request to find all roles when sort by field is invalid should thrown an exception`() {
-        val exception = assertThrows<DomainException> {
-            roleService.findAll(PageRequestDtoSampler.sample(sortBy = "invalid"))
-        }
+        val exception =
+            assertThrows<DomainException> {
+                roleService.findAll(PageRequestDtoSampler.sample(sortBy = "invalid"))
+            }
 
         assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
@@ -93,9 +95,10 @@ class RoleServiceTest {
         every { permissionService.findById(any()) } returns PermissionSampler.sample()
         every { roleRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            roleService.associate(ULID.random(), ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                roleService.associate(ULID.random(), ULID.random())
+            }
 
         verify { permissionService.findById(any()) }
 
@@ -115,9 +118,10 @@ class RoleServiceTest {
     fun `given a role when not found should thrown an exception`() {
         every { roleRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            roleService.findById(ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                roleService.findById(ULID.random())
+            }
 
         verify { roleRepository.findById(any()) }
 
@@ -127,8 +131,10 @@ class RoleServiceTest {
     @Test
     fun `given a role id and a permission id should disassociate successfully`() {
         val permission = PermissionSampler.sample()
-        val role = RoleSampler.sample()
-            .apply { permissions.add(permission) }
+        val role =
+            RoleSampler
+                .sample()
+                .apply { permissions.add(permission) }
 
         every { roleRepository.findById(any()) } returns Optional.of(role)
         every { permissionService.findById(any()) } returns permission

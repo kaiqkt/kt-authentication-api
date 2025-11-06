@@ -23,14 +23,11 @@ import java.time.LocalDateTime
 @EntityListeners(AuditingEntityListener::class)
 class Policy(
     val uri: String = "",
-
     @Enumerated(value = EnumType.STRING)
     val method: Method = Method.GET,
-
     val isPublic: Boolean = false,
-
     @ManyToOne(fetch = FetchType.LAZY)
-    val resourceServer: ResourceServer = ResourceServer()
+    val resourceServer: ResourceServer = ResourceServer(),
 ) {
     @Id
     val id: String = ULID.random()
@@ -39,7 +36,7 @@ class Policy(
     @JoinTable(
         name = "policies_roles",
         joinColumns = [JoinColumn(name = "policy_id")],
-        inverseJoinColumns = [JoinColumn(name = "role_id")]
+        inverseJoinColumns = [JoinColumn(name = "role_id")],
     )
     val roles: MutableSet<Role> = mutableSetOf()
 
@@ -47,7 +44,7 @@ class Policy(
     @JoinTable(
         name = "policies_permissions",
         joinColumns = [JoinColumn(name = "policy_id")],
-        inverseJoinColumns = [JoinColumn(name = "permission_id")]
+        inverseJoinColumns = [JoinColumn(name = "permission_id")],
     )
     val permissions: MutableSet<Permission> = mutableSetOf()
 
@@ -57,4 +54,3 @@ class Policy(
     @LastModifiedDate
     var updatedAt: LocalDateTime? = null
 }
-

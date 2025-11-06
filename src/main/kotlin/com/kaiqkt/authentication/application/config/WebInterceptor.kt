@@ -8,11 +8,11 @@ import org.springframework.web.servlet.HandlerInterceptor
 import java.util.UUID
 
 @Component
-class WebInterceptor : HandlerInterceptor{
+class WebInterceptor : HandlerInterceptor {
     override fun preHandle(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        handler: Any
+        handler: Any,
     ): Boolean {
         val requestId: String = request.getHeader("X-Request-Id") ?: UUID.randomUUID().toString()
 

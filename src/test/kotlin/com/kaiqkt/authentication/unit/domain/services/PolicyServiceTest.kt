@@ -30,12 +30,13 @@ class PolicyServiceTest {
     private val resourceServerService = mockk<ResourceServerService>()
     private val permissionService = mockk<PermissionService>()
     private val roleService = mockk<RoleService>()
-    private val policyService = PolicyService(
-        policyRepository,
-        resourceServerService,
-        permissionService,
-        roleService
-    )
+    private val policyService =
+        PolicyService(
+            policyRepository,
+            resourceServerService,
+            permissionService,
+            roleService,
+        )
 
     @Test
     fun `given a resource server id and a policy should create successfully`() {
@@ -54,9 +55,10 @@ class PolicyServiceTest {
     fun `given a resource server id and a policy when a policy already exists should thrown an exception`() {
         every { policyRepository.existsByUriAndMethodAndResourceServerId(any(), any(), any()) } returns true
 
-        val exception = assertThrows<DomainException> {
-            policyService.create(ULID.random(), PolicyDtoSampler.sample())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                policyService.create(ULID.random(), PolicyDtoSampler.sample())
+            }
 
         verify { policyRepository.existsByUriAndMethodAndResourceServerId(any(), any(), any()) }
 
@@ -64,7 +66,7 @@ class PolicyServiceTest {
     }
 
     @Test
-    fun `given a resource id should return all policies associated successfully`(){
+    fun `given a resource id should return all policies associated successfully`() {
         every { policyRepository.findAllByResourceServerId(any()) } returns listOf()
 
         policyService.findAllByResourceId(ULID.random())
@@ -73,7 +75,7 @@ class PolicyServiceTest {
     }
 
     @Test
-    fun `given a policy id should return successfully`(){
+    fun `given a policy id should return successfully`() {
         every { policyRepository.findById(any()) } returns Optional.of(PolicySampler.sample())
 
         policyService.findById(ULID.random())
@@ -82,12 +84,13 @@ class PolicyServiceTest {
     }
 
     @Test
-    fun `given a policy id when does not exist should thrown an exception`(){
+    fun `given a policy id when does not exist should thrown an exception`() {
         every { policyRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            policyService.findById(ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                policyService.findById(ULID.random())
+            }
 
         verify { policyRepository.findById(any()) }
 
@@ -95,7 +98,7 @@ class PolicyServiceTest {
     }
 
     @Test
-    fun `given a resource id and a page request should return policies associated and paginated successfully`(){
+    fun `given a resource id and a page request should return policies associated and paginated successfully`() {
         every { policyRepository.findAllByResourceServerId(any(), any()) } returns PageImpl(listOf(PolicySampler.sample()))
 
         policyService.findAll(ULID.random(), PageRequestDtoSampler.sample())
@@ -104,19 +107,20 @@ class PolicyServiceTest {
     }
 
     @Test
-    fun `given a page request when resource server id is null should return policies associated and paginated successfully`(){
-        every { policyRepository.findAll( any<Pageable>()) } returns PageImpl(listOf(PolicySampler.sample()))
+    fun `given a page request when resource server id is null should return policies associated and paginated successfully`() {
+        every { policyRepository.findAll(any<Pageable>()) } returns PageImpl(listOf(PolicySampler.sample()))
 
         policyService.findAll(null, PageRequestDtoSampler.sample())
 
-        verify { policyRepository.findAll( any<Pageable>()) }
+        verify { policyRepository.findAll(any<Pageable>()) }
     }
 
     @Test
-    fun `given a page request when has a invalid sort by field should thrown an exception`(){
-       val exception = assertThrows<DomainException> {
-           policyService.findAll(null, PageRequestDtoSampler.sample(sortBy = "invalid"))
-       }
+    fun `given a page request when has a invalid sort by field should thrown an exception`() {
+        val exception =
+            assertThrows<DomainException> {
+                policyService.findAll(null, PageRequestDtoSampler.sample(sortBy = "invalid"))
+            }
 
         assertEquals(ErrorType.INVALID_FIELD, exception.type)
     }
@@ -146,9 +150,10 @@ class PolicyServiceTest {
         every { permissionService.findById(any()) } returns PermissionSampler.sample()
         every { policyRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            policyService.associatePermission(ULID.random(), ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                policyService.associatePermission(ULID.random(), ULID.random())
+            }
 
         verify { permissionService.findById(any()) }
         verify { policyRepository.findById(any()) }
@@ -185,9 +190,10 @@ class PolicyServiceTest {
         every { roleService.findById(any()) } returns RoleSampler.sample()
         every { policyRepository.findById(any()) } returns Optional.empty()
 
-        val exception = assertThrows<DomainException> {
-            policyService.associateRole(ULID.random(), ULID.random())
-        }
+        val exception =
+            assertThrows<DomainException> {
+                policyService.associateRole(ULID.random(), ULID.random())
+            }
 
         verify { roleService.findById(any()) }
         verify { policyRepository.findById(any()) }
@@ -210,7 +216,7 @@ class PolicyServiceTest {
     }
 
     @Test
-    fun `given a list of ids should return a list of policies`(){
+    fun `given a list of ids should return a list of policies`() {
         every { policyRepository.findAllById(any()) } returns listOf()
 
         policyService.findAllById(listOf())

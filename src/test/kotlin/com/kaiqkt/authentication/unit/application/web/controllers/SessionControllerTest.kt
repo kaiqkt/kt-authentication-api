@@ -13,12 +13,12 @@ import org.springframework.http.HttpStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SessionControllerTest{
+class SessionControllerTest {
     private val sessionService = mockk<SessionService>()
     private val sessionController = SessionController(sessionService)
 
     @Test
-    fun `given a request should revoke successfully`(){
+    fun `given a request should revoke successfully`() {
         justRun { sessionService.revoke(any(), any()) }
 
         val response = sessionController.revokeById(ULID.random(), ULID.random())
@@ -29,7 +29,7 @@ class SessionControllerTest{
     }
 
     @Test
-    fun `given a user id and parameters should return sessions paginated successfully`(){
+    fun `given a user id and parameters should return sessions paginated successfully`() {
         every { sessionService.findAllByUserId(any(), any()) } returns PageImpl(listOf(SessionSampler.sample()))
 
         val response = sessionController.findAllByUserId(ULID.random(), 0, 0, "ASC", null)

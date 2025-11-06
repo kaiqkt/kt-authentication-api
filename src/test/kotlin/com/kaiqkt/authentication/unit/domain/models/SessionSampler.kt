@@ -9,11 +9,11 @@ object SessionSampler {
     fun sample(
         client: Client = Client(),
         user: User = UserSampler.sample(),
-        expireAt: LocalDateTime = LocalDateTime.now().plusSeconds(300)
+        expireAt: LocalDateTime = LocalDateTime.now().plusSeconds(300),
     ) = Session(
         user = user,
         refreshToken = "refresh-token",
         expireAt = expireAt,
-        client = client
+        client = client,
     )
 }

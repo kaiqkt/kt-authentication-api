@@ -16,19 +16,19 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class UserIntegrationTest : IntegrationTest() {
-
     @Test
     fun `given a request to create a user should create successfully`() {
         val request = UserRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/users")
-            .then()
-            .statusCode(200)
-            .extract()
-            .`as`(UserResponseV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/users")
+                .then()
+                .statusCode(200)
+                .extract()
+                .`as`(UserResponseV1::class.java)
 
         assertEquals(request.email, response.email)
         assertFalse { response.isVerified }
@@ -39,19 +39,23 @@ class UserIntegrationTest : IntegrationTest() {
     fun `given a request to create a user when is invalid should thrown an exception`() {
         val request = UserRequestV1Sampler.sample(email = "kt", password = "1")
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/users")
-            .then()
-            .statusCode(400)
-            .extract()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/users")
+                .then()
+                .statusCode(400)
+                .extract()
+                .`as`(ErrorV1::class.java)
 
         assertEquals("INVALID_REQUEST", response.type)
         assertEquals("Invalid request", response.message)
         assertEquals("must be a valid email", response.details["email"])
-        assertEquals("must be at least 8 characters long and include at least one letter, one special character, and one number", response.details["password"])
+        assertEquals(
+            "must be at least 8 characters long and include at least one letter, one special character, and one number",
+            response.details["password"],
+        )
     }
 
     @Test
@@ -59,22 +63,23 @@ class UserIntegrationTest : IntegrationTest() {
         userRepository.save(UserSampler.sample())
         val request = UserRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/users")
-            .then()
-            .statusCode(409)
-            .extract()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/users")
+                .then()
+                .statusCode(409)
+                .extract()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.EMAIL_ALREADY_IN_USE.name, response.type)
         assertEquals(ErrorType.EMAIL_ALREADY_IN_USE.message, response.message)
     }
 
     @Test
-    fun `given a user id and role id should assign user a role successfully`(){
-       val user = userRepository.save(UserSampler.sample())
+    fun `given a user id and role id should assign user a role successfully`() {
+        val user = userRepository.save(UserSampler.sample())
         val role = roleRepository.save(RoleSampler.sample())
 
         given()
@@ -84,7 +89,7 @@ class UserIntegrationTest : IntegrationTest() {
     }
 
     @Test
-    fun `given a user id and role id when user already assigned should reassign successfully`(){
+    fun `given a user id and role id when user already assigned should reassign successfully`() {
         val role = roleRepository.save(RoleSampler.sample())
         val user = userRepository.save(UserSampler.sample(roles = mutableSetOf(role)))
 
@@ -94,30 +99,31 @@ class UserIntegrationTest : IntegrationTest() {
             .statusCode(204)
     }
 
-
     @Test
-    fun `given a user id and role id when user does not found should thrown an exception`(){
+    fun `given a user id and role id when user does not found should thrown an exception`() {
         val role = roleRepository.save(RoleSampler.sample())
 
-        val response = given()
-            .patch("/v1/users/${ULID.random()}/roles/${role.id}")
-            .then()
-            .statusCode(404)
-            .extract()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .patch("/v1/users/${ULID.random()}/roles/${role.id}")
+                .then()
+                .statusCode(404)
+                .extract()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.USER_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.USER_NOT_FOUND.message, response.message)
     }
 
     @Test
-    fun `given a user id and role id when role does not found should thrown an exception`(){
-        val response = given()
-            .patch("/v1/users/${ULID.random()}/roles/${ULID.random()}")
-            .then()
-            .statusCode(404)
-            .extract()
-            .`as`(ErrorV1::class.java)
+    fun `given a user id and role id when role does not found should thrown an exception`() {
+        val response =
+            given()
+                .patch("/v1/users/${ULID.random()}/roles/${ULID.random()}")
+                .then()
+                .statusCode(404)
+                .extract()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.ROLE_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.ROLE_NOT_FOUND.message, response.message)

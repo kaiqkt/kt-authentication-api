@@ -17,23 +17,22 @@ import io.restassured.http.ContentType
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-
 class PolicyIntegrationTest : IntegrationTest() {
-
     @Test
     fun `given a request should create successfully`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         val request = PolicyRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/resources/${resourceServer.id}/policies")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(PolicyResponseV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/resources/${resourceServer.id}/policies")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(PolicyResponseV1::class.java)
 
         assertEquals(request.uri, response.uri)
         assertEquals(request.method, response.method.name)
@@ -42,20 +41,22 @@ class PolicyIntegrationTest : IntegrationTest() {
 
     @Test
     fun `given a request when data is invalid should thrown an exception`() {
-        val request = PolicyRequestV1Sampler.sample(
-            uri = "",
-            method = "invalid"
-        )
+        val request =
+            PolicyRequestV1Sampler.sample(
+                uri = "",
+                method = "invalid",
+            )
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/resources/${ULID.random()}/policies")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/resources/${ULID.random()}/policies")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals("INVALID_REQUEST", response.type)
         assertEquals("Invalid request", response.message)
@@ -69,32 +70,34 @@ class PolicyIntegrationTest : IntegrationTest() {
         policyRepository.save(PolicySampler.sample(resourceServer))
         val request = PolicyRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/resources/${resourceServer.id}/policies")
-            .then()
-            .statusCode(409)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/resources/${resourceServer.id}/policies")
+                .then()
+                .statusCode(409)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.POLICY_ALREADY_EXISTS.name, response.type)
         assertEquals(ErrorType.POLICY_ALREADY_EXISTS.message, response.message)
     }
 
     @Test
-    fun `given a resource server id should return all policies successfully`(){
+    fun `given a resource server id should return all policies successfully`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         policyRepository.save(PolicySampler.sample(resourceServer))
 
-        val response = given()
-            .get("/v1/resources/${resourceServer.id}/policies")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(object : TypeRef<List<PolicyResponseV1>>(){})
+        val response =
+            given()
+                .get("/v1/resources/${resourceServer.id}/policies")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(object : TypeRef<List<PolicyResponseV1>>() {})
 
         assertEquals(1, response.size)
     }
@@ -112,26 +115,28 @@ class PolicyIntegrationTest : IntegrationTest() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         policyRepository.save(PolicySampler.sample(resourceServer))
 
-        val response = given()
-            .get("/v1/policies?resource_server_id=${resourceServer.id}")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(PageResponse::class.java)
+        val response =
+            given()
+                .get("/v1/policies?resource_server_id=${resourceServer.id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(PageResponse::class.java)
 
         assertEquals(1, response.totalElements)
     }
 
     @Test
     fun `given a request to find all policies when sort by field is invalid should thrown an exception`() {
-        val response = given()
-            .get("/v1/policies?sort_by=invalid&resource_server_id=${ULID.random()}")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .get("/v1/policies?sort_by=invalid&resource_server_id=${ULID.random()}")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.INVALID_FIELD.name, response.type)
         assertEquals(ErrorType.INVALID_FIELD.message, response.message)

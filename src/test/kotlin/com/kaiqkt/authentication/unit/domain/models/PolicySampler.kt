@@ -5,10 +5,11 @@ import com.kaiqkt.authentication.domain.models.ResourceServer
 import com.kaiqkt.authentication.domain.models.enums.Method
 
 object PolicySampler {
-    fun sample(resourceServer: ResourceServer = ResourceServerSampler.sample()) = Policy(
-        uri = "/users",
-        method = Method.POST,
-        isPublic = false,
-        resourceServer = resourceServer
-    )
+    fun sample(resourceServer: ResourceServer = ResourceServerSampler.sample()) =
+        Policy(
+            uri = "/users",
+            method = Method.POST,
+            isPublic = false,
+            resourceServer = resourceServer,
+        )
 }

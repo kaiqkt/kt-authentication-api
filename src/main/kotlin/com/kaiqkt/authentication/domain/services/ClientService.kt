@@ -16,7 +16,7 @@ import kotlin.jvm.optionals.getOrNull
 class ClientService(
     private val clientRepository: ClientRepository,
     private val policyService: PolicyService,
-    private val tokenService: TokenService
+    private val tokenService: TokenService,
 ) {
     private val allowedSortFields = Constants.Sort.getAllowedFiled("name")
 
@@ -33,7 +33,7 @@ class ClientService(
             name = clientDto.name,
             description = clientDto.description,
             secret = tokenService.opaqueToken(),
-            policies = policies.toMutableSet()
+            policies = policies.toMutableSet(),
         ).run(clientRepository::save)
             .also { log.info("Client ${it.id} created") }
     }
@@ -44,10 +44,9 @@ class ClientService(
         log.info("Client $clientId deleted")
     }
 
-    fun findById(clientId: String): Client {
-        return clientRepository.findById(clientId).getOrNull()
+    fun findById(clientId: String): Client =
+        clientRepository.findById(clientId).getOrNull()
             ?: throw DomainException(ErrorType.CLIENT_NOT_FOUND)
-    }
 
     fun findAll(pageRequestDto: PageRequestDto): Page<Client> {
         try {

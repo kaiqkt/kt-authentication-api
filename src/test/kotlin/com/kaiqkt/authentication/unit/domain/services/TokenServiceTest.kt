@@ -2,7 +2,6 @@ package com.kaiqkt.authentication.unit.domain.services
 
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
-import com.kaiqkt.authentication.domain.models.Permission
 import com.kaiqkt.authentication.domain.models.Role
 import com.kaiqkt.authentication.domain.services.TokenService
 import com.kaiqkt.authentication.unit.domain.models.PermissionSampler
@@ -42,16 +41,17 @@ class TokenServiceTest {
 
     @Test
     fun `given a token when signature is invalid thrown an DomainException`() {
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(),ULID.random(), setOf(), setOf())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), ULID.random(), setOf(), setOf())
 
         tokenService::class.java.getDeclaredField("accessTokenSecret").apply {
             isAccessible = true
             set(tokenService, "tk2p4/4gX5h0x/1B9Y9O2VJ6ZcfjWQmV5UQJ4cZP9YvE==")
         }
 
-        val exception = assertThrows<DomainException> {
-            tokenService.getClaims(tokens.accessToken)
-        }
+        val exception =
+            assertThrows<DomainException> {
+                tokenService.getClaims(tokens.accessToken)
+            }
 
         assertEquals(ErrorType.INVALID_TOKEN, exception.type)
     }
@@ -63,22 +63,24 @@ class TokenServiceTest {
             set(tokenService, 1L)
         }
 
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(),ULID.random(), setOf(), setOf())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), ULID.random(), setOf(), setOf())
 
         Thread.sleep(1001)
 
-        val exception = assertThrows<DomainException> {
-            tokenService.getClaims(tokens.accessToken)
-        }
+        val exception =
+            assertThrows<DomainException> {
+                tokenService.getClaims(tokens.accessToken)
+            }
 
         assertEquals(ErrorType.EXPIRED_TOKEN, exception.type)
     }
 
     @Test
     fun `given a token when is invalid thrown an DomainException`() {
-        val exception = assertThrows<DomainException> {
-            tokenService.getClaims("token")
-        }
+        val exception =
+            assertThrows<DomainException> {
+                tokenService.getClaims("token")
+            }
 
         assertEquals(ErrorType.INVALID_TOKEN, exception.type)
     }

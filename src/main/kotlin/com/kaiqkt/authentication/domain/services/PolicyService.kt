@@ -5,7 +5,6 @@ import com.kaiqkt.authentication.domain.dtos.PolicyDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.models.Policy
-import com.kaiqkt.authentication.domain.models.ResourceServer
 import com.kaiqkt.authentication.domain.repositories.PolicyRepository
 import com.kaiqkt.authentication.domain.utils.Constants
 import jakarta.transaction.Transactional
@@ -19,18 +18,22 @@ class PolicyService(
     private val policyRepository: PolicyRepository,
     private val resourceServerService: ResourceServerService,
     private val permissionService: PermissionService,
-    private val roleService: RoleService
+    private val roleService: RoleService,
 ) {
     private val log = LoggerFactory.getLogger(PolicyService::class.java)
 
     private val allowedSortFields = Constants.Sort.getAllowedFiled()
 
-    fun create(resourceServerId: String, policyDto: PolicyDto): Policy {
-        val alreadyExists = policyRepository.existsByUriAndMethodAndResourceServerId(
-            policyDto.uri,
-            policyDto.method,
-            resourceServerId
-        )
+    fun create(
+        resourceServerId: String,
+        policyDto: PolicyDto,
+    ): Policy {
+        val alreadyExists =
+            policyRepository.existsByUriAndMethodAndResourceServerId(
+                policyDto.uri,
+                policyDto.method,
+                resourceServerId,
+            )
 
         if (alreadyExists) {
             throw DomainException(ErrorType.POLICY_ALREADY_EXISTS)
@@ -38,12 +41,13 @@ class PolicyService(
 
         val resourceServer = resourceServerService.findById(resourceServerId)
 
-        val policy = Policy(
-            uri = policyDto.uri,
-            method = policyDto.method,
-            isPublic = policyDto.isPublic,
-            resourceServer = resourceServer,
-        )
+        val policy =
+            Policy(
+                uri = policyDto.uri,
+                method = policyDto.method,
+                isPublic = policyDto.isPublic,
+                resourceServer = resourceServer,
+            )
 
         policyRepository.save(policy)
 
@@ -58,20 +62,18 @@ class PolicyService(
         log.info("Policy $policyId deleted")
     }
 
-    fun findAllById(ids: List<String>): List<Policy> {
-        return policyRepository.findAllById(ids)
-    }
+    fun findAllById(ids: List<String>): List<Policy> = policyRepository.findAllById(ids)
 
-    fun findAllByResourceId(resourceServerId: String): List<Policy> {
-        return policyRepository.findAllByResourceServerId(resourceServerId)
-    }
+    fun findAllByResourceId(resourceServerId: String): List<Policy> = policyRepository.findAllByResourceServerId(resourceServerId)
 
-    fun findById(policyId: String): Policy {
-        return policyRepository.findById(policyId).getOrNull()
+    fun findById(policyId: String): Policy =
+        policyRepository.findById(policyId).getOrNull()
             ?: throw DomainException(ErrorType.POLICY_NOT_FOUND)
-    }
 
-    fun findAll(resourceServerId: String?, pageRequestDto: PageRequestDto): Page<Policy> {
+    fun findAll(
+        resourceServerId: String?,
+        pageRequestDto: PageRequestDto,
+    ): Page<Policy> {
         try {
             val pageable = pageRequestDto.toDomain(allowedSortFields)
 
@@ -86,7 +88,10 @@ class PolicyService(
     }
 
     @Transactional
-    fun associatePermission(policyId: String, permissionId: String){
+    fun associatePermission(
+        policyId: String,
+        permissionId: String,
+    ) {
         val permission = permissionService.findById(permissionId)
         val policy = findById(policyId)
 
@@ -103,7 +108,10 @@ class PolicyService(
     }
 
     @Transactional
-    fun associateRole(policyId: String, roleId: String){
+    fun associateRole(
+        policyId: String,
+        roleId: String,
+    ) {
         val role = roleService.findById(roleId)
         val policy = findById(policyId)
 

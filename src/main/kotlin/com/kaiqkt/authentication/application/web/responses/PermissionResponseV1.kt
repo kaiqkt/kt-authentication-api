@@ -9,9 +9,10 @@ data class PermissionResponseV1(
     val description: String? = null,
 )
 
-fun Permission.toResponseV1(): PermissionResponseV1 = PermissionResponseV1(
-    id = this.id,
-    resource = this.resource,
-    verb = this.verb,
-    description = this.description
-)
+fun Permission.toResponseV1(): PermissionResponseV1 =
+    PermissionResponseV1(
+        id = this.id,
+        resource = this.resource,
+        verb = this.verb,
+        description = this.description,
+    )

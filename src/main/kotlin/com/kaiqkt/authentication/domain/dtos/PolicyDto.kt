@@ -5,5 +5,5 @@ import com.kaiqkt.authentication.domain.models.enums.Method
 data class PolicyDto(
     val uri: String,
     val method: Method,
-    val isPublic: Boolean
+    val isPublic: Boolean,
 )

@@ -4,5 +4,5 @@ data class TokensDto(
     val accessToken: String,
     val refreshToken: String,
     val tokenType: String = "bearer",
-    val expiresIn: Long
+    val expiresIn: Long,
 )

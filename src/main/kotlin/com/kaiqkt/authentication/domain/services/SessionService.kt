@@ -20,7 +20,7 @@ import kotlin.jvm.optionals.getOrNull
 class SessionService(
     private val sessionRepository: SessionRepository,
     @param:Value("\${authentication.session-ttl}")
-    private val sessionTtl: Long
+    private val sessionTtl: Long,
 ) {
     private val log = LoggerFactory.getLogger(SessionService::class.java)
     private val allowedSortFields = Constants.Sort.getAllowedFiled()
@@ -29,15 +29,16 @@ class SessionService(
         sessionId: String,
         client: Client,
         refreshToken: String,
-        user: User
+        user: User,
     ): Session {
-        val session = Session(
-            id = sessionId,
-            client = client,
-            user = user,
-            refreshToken = refreshToken,
-            expireAt = LocalDateTime.now().plusSeconds(sessionTtl)
-        )
+        val session =
+            Session(
+                id = sessionId,
+                client = client,
+                user = user,
+                refreshToken = refreshToken,
+                expireAt = LocalDateTime.now().plusSeconds(sessionTtl),
+            )
 
         sessionRepository.save(session)
 
@@ -46,26 +47,33 @@ class SessionService(
         return session
     }
 
-    fun findByClientIdAndRefreshToken(clientId: String, refreshToken: String): Session {
-        return sessionRepository.findByRefreshToken(clientId, refreshToken)
+    fun findByClientIdAndRefreshToken(
+        clientId: String,
+        refreshToken: String,
+    ): Session =
+        sessionRepository.findByRefreshToken(clientId, refreshToken)
             ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)
-    }
 
-    fun findById(sessionId: String): Session? {
-        return sessionRepository.findById(sessionId).getOrNull()
-    }
+    fun findById(sessionId: String): Session? = sessionRepository.findById(sessionId).getOrNull()
 
     @Transactional
-    fun revoke(sessionId: String, userId: String) {
-        val session = sessionRepository.findByIdAndUserId(sessionId, userId)
-            ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)
+    fun revoke(
+        sessionId: String,
+        userId: String,
+    ) {
+        val session =
+            sessionRepository.findByIdAndUserId(sessionId, userId)
+                ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)
 
         session.revokedAt = LocalDateTime.now()
 
         log.info("Session $sessionId revoked")
     }
 
-    fun findAllByUserId(userId: String, pageRequestDto: PageRequestDto): Page<Session> {
+    fun findAllByUserId(
+        userId: String,
+        pageRequestDto: PageRequestDto,
+    ): Page<Session> {
         try {
             val pageable = pageRequestDto.toDomain(allowedSortFields)
 

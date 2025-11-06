@@ -14,21 +14,22 @@ import io.restassured.http.ContentType
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class PermissionIntegrationTest : IntegrationTest(){
+class PermissionIntegrationTest : IntegrationTest() {
     @Test
-    fun `given a permission to create when is valid should create successfully`(){
+    fun `given a permission to create when is valid should create successfully`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         val request = PermissionRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/resources/${resourceServer.id}/permissions")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(PermissionResponseV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/resources/${resourceServer.id}/permissions")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(PermissionResponseV1::class.java)
 
         assertEquals(request.resource, response.resource)
         assertEquals(request.verb, response.verb)
@@ -36,23 +37,25 @@ class PermissionIntegrationTest : IntegrationTest(){
     }
 
     @Test
-    fun `given a permission to create when request is invalid should thrown an exception`(){
+    fun `given a permission to create when request is invalid should thrown an exception`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
-        val request = PermissionRequestV1Sampler.sample(
-            resource = "",
-            verb = "",
-            description = "d".repeat(256)
-        )
+        val request =
+            PermissionRequestV1Sampler.sample(
+                resource = "",
+                verb = "",
+                description = "d".repeat(256),
+            )
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/resources/${resourceServer.id}/permissions")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/resources/${resourceServer.id}/permissions")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals("INVALID_REQUEST", response.type)
         assertEquals("Invalid request", response.message)
@@ -62,39 +65,41 @@ class PermissionIntegrationTest : IntegrationTest(){
     }
 
     @Test
-    fun `given a permission to create when resource and verb already exists should thrown an exception`(){
+    fun `given a permission to create when resource and verb already exists should thrown an exception`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
         val request = PermissionRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/resources/${resourceServer.id}/permissions")
-            .then()
-            .statusCode(409)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/resources/${resourceServer.id}/permissions")
+                .then()
+                .statusCode(409)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS.name, response.type)
         assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS.message, response.message)
     }
 
     @Test
-    fun `given a permission to create when resource server does not exists should thrown an exception`(){
+    fun `given a permission to create when resource server does not exists should thrown an exception`() {
         val request = PermissionRequestV1Sampler.sample()
 
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .post("/v1/resources/${ULID.random()}/permissions")
-            .then()
-            .statusCode(404)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/v1/resources/${ULID.random()}/permissions")
+                .then()
+                .statusCode(404)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.RESOURCE_SERVER_NOT_FOUND.message, response.message)
@@ -105,13 +110,14 @@ class PermissionIntegrationTest : IntegrationTest(){
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
-        val response = given()
-            .get("/v1/permissions?page=0&size=1&sort=ASC")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(PageResponse::class.java)
+        val response =
+            given()
+                .get("/v1/permissions?page=0&size=1&sort=ASC")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(PageResponse::class.java)
 
         assertEquals(1, response.totalElements)
     }
@@ -121,13 +127,14 @@ class PermissionIntegrationTest : IntegrationTest(){
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
-        val response = given()
-            .get("/v1/permissions?page=0&size=1&sort=ASC&resource_server_id=${resourceServer.id}")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(PageResponse::class.java)
+        val response =
+            given()
+                .get("/v1/permissions?page=0&size=1&sort=ASC&resource_server_id=${resourceServer.id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(PageResponse::class.java)
 
         assertEquals(1, response.totalElements)
     }
@@ -136,13 +143,14 @@ class PermissionIntegrationTest : IntegrationTest(){
     fun `given parameters when sort_by field is invalid should thrown an exception`() {
         resourceServerRepository.save(ResourceServerSampler.sample())
 
-        val response = given()
-            .get("/v1/permissions?sort_by=invalid")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .get("/v1/permissions?sort_by=invalid")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.INVALID_FIELD.name, response.type)
         assertEquals(ErrorType.INVALID_FIELD.message, response.message)
@@ -152,13 +160,14 @@ class PermissionIntegrationTest : IntegrationTest(){
     fun `given parameters when sort is invalid should thrown an exception`() {
         resourceServerRepository.save(ResourceServerSampler.sample())
 
-        val response = given()
-            .get("/v1/permissions?sort=invalid")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+        val response =
+            given()
+                .get("/v1/permissions?sort=invalid")
+                .then()
+                .statusCode(400)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals("INVALID_REQUEST", response.type)
         assertEquals("Invalid request", response.message)
@@ -166,7 +175,7 @@ class PermissionIntegrationTest : IntegrationTest(){
     }
 
     @Test
-    fun `given a permission id should delete permission successfully`(){
+    fun `given a permission id should delete permission successfully`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
@@ -177,30 +186,32 @@ class PermissionIntegrationTest : IntegrationTest(){
     }
 
     @Test
-    fun `given a permission id when permission exists should return successfully`(){
+    fun `given a permission id when permission exists should return successfully`() {
         val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
         val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
 
-        val response = given()
-            .get("/v1/permissions/${permission.id}")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response()
-            .`as`(PermissionResponseV1::class.java)
+        val response =
+            given()
+                .get("/v1/permissions/${permission.id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .`as`(PermissionResponseV1::class.java)
 
         assertEquals(permission.id, response.id)
     }
 
     @Test
-    fun `given a permission id when permission does exists should thrown a exception`(){
-        val response = given()
-            .get("/v1/permissions/${ ULID.random()}")
-            .then()
-            .statusCode(404)
-            .extract()
-            .response()
-            .`as`(ErrorV1::class.java)
+    fun `given a permission id when permission does exists should thrown a exception`() {
+        val response =
+            given()
+                .get("/v1/permissions/${ ULID.random()}")
+                .then()
+                .statusCode(404)
+                .extract()
+                .response()
+                .`as`(ErrorV1::class.java)
 
         assertEquals(ErrorType.PERMISSION_NOT_FOUND.name, response.type)
         assertEquals(ErrorType.PERMISSION_NOT_FOUND.message, response.message)

@@ -7,7 +7,7 @@ data class PageRequestDto(
     val page: Int,
     val size: Int,
     val sort: Sort.Direction,
-    val sortBy: String?
+    val sortBy: String?,
 ) {
     fun toDomain(allowedFields: Set<String>): PageRequest {
         if (this.sortBy != null) {
@@ -16,13 +16,13 @@ data class PageRequestDto(
             return PageRequest.of(
                 this.page,
                 this.size,
-                Sort.by(this.sort, this.sortBy)
+                Sort.by(this.sort, this.sortBy),
             )
         }
 
         return PageRequest.of(
             this.page,
-            this.size
+            this.size,
         )
     }
 }

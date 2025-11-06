@@ -6,10 +6,10 @@ object PermissionRequestV1Sampler {
     fun sample(
         resource: String = "authentication",
         verb: String = "view",
-        description: String? = null
+        description: String? = null,
     ) = PermissionRequestV1(
         resource = resource,
         verb = verb,
-        description = description
+        description = description,
     )
 }

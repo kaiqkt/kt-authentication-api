@@ -11,14 +11,15 @@ data class PolicyResponseV1(
     val method: Method,
     val isPublic: Boolean,
     val roles: List<String>,
-    val permissions: List<String>
+    val permissions: List<String>,
 )
 
-fun Policy.toResponseV1(): PolicyResponseV1 = PolicyResponseV1(
-    id = this.id,
-    uri = this.uri,
-    method = this.method,
-    isPublic =this.isPublic,
-    roles = this.roles.map(Role::name),
-    permissions = this.permissions.map(Permission::getResourceVerb)
-)
+fun Policy.toResponseV1(): PolicyResponseV1 =
+    PolicyResponseV1(
+        id = this.id,
+        uri = this.uri,
+        method = this.method,
+        isPublic = this.isPublic,
+        roles = this.roles.map(Role::name),
+        permissions = this.permissions.map(Permission::getResourceVerb),
+    )

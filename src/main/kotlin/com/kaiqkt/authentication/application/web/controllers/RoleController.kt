@@ -15,17 +15,23 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Validated
 class RoleController(
-    private val roleService: RoleService
+    private val roleService: RoleService,
 ) {
-
     @PostMapping("/v1/roles")
     fun create(
-        @Valid @RequestBody requestV1: RoleRequestV1
+        @Valid @RequestBody requestV1: RoleRequestV1,
     ): ResponseEntity<RoleResponseV1> {
         val response = roleService.create(requestV1.toDto()).toResponseV1()
 
@@ -33,14 +39,18 @@ class RoleController(
     }
 
     @DeleteMapping("/v1/roles/{role_id}")
-    fun delete(@PathVariable("role_id") roleId: String): ResponseEntity<Unit> {
+    fun delete(
+        @PathVariable("role_id") roleId: String,
+    ): ResponseEntity<Unit> {
         roleService.delete(roleId)
 
         return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/v1/roles/{role_id}")
-    fun findById(@PathVariable("role_id") roleId: String): ResponseEntity<RoleResponseV1?> {
+    fun findById(
+        @PathVariable("role_id") roleId: String,
+    ): ResponseEntity<RoleResponseV1?> {
         val response = roleService.findById(roleId).toResponseV1()
 
         return ResponseEntity.ok(response)
@@ -49,7 +59,7 @@ class RoleController(
     @PatchMapping("/v1/roles/{role_id}/associate/{permission_id}")
     fun associate(
         @PathVariable("role_id") roleId: String,
-        @PathVariable("permission_id") permissionId: String
+        @PathVariable("permission_id") permissionId: String,
     ): ResponseEntity<Unit> {
         roleService.associate(roleId, permissionId)
 
@@ -61,12 +71,10 @@ class RoleController(
         @RequestParam(value = "page", required = false, defaultValue = "0")
         @PositiveOrZero
         page: Int,
-
         @RequestParam(value = "size", required = false, defaultValue = "20")
         @Min(value = 1, message = "page size must be at least 1")
         @Max(value = 20, message = "page size should not be greater than 20")
         size: Int,
-
         @RequestParam(value = "sort", required = false, defaultValue = "DESC")
         @Pattern(
             regexp = "ASC|DESC",
@@ -74,9 +82,8 @@ class RoleController(
             message = "sort should be ASC or DESC",
         )
         sort: String,
-
         @RequestParam(value = "sort_by", required = false)
-        sortBy: String?
+        sortBy: String?,
     ): ResponseEntity<Page<RoleResponseV1>> {
         val pageRequest = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
         val response = roleService.findAll(pageRequest).map { it.toResponseV1() }

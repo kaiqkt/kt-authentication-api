@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 class ErrorHandler : ResponseEntityExceptionHandler() {
-
     companion object {
         private const val INVALID_REQUEST = "INVALID_REQUEST"
         private const val INVALID_REQUEST_MESSAGE = "Invalid request"
@@ -49,7 +48,7 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         val details = ex.bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "invalid") }
 
@@ -60,18 +59,19 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolationException(ex: ConstraintViolationException): ResponseEntity<ErrorV1> {
-        val details = ex.constraintViolations.associate { v ->
-            val path = v.propertyPath.joinToString(".") { it.name }
-            path to v.message
-        }
+        val details =
+            ex.constraintViolations.associate { v ->
+                val path = v.propertyPath.joinToString(".") { it.name }
+                path to v.message
+            }
 
         val error = ErrorV1(INVALID_REQUEST, INVALID_REQUEST_MESSAGE, details)
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }
 
-    private fun getStatusCode(type: ErrorType): HttpStatus {
-        return when (type) {
+    private fun getStatusCode(type: ErrorType): HttpStatus =
+        when (type) {
             ErrorType.INVALID_TOKEN -> HttpStatus.UNAUTHORIZED
             ErrorType.EXPIRED_TOKEN -> HttpStatus.UNAUTHORIZED
             ErrorType.EMAIL_ALREADY_IN_USE -> HttpStatus.CONFLICT
@@ -88,5 +88,4 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
             ErrorType.POLICY_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.CLIENT_NOT_FOUND -> HttpStatus.NOT_FOUND
         }
-    }
 }

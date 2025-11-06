@@ -200,12 +200,13 @@ class ErrorHandlerTest {
         every { fieldError.defaultMessage } returns "defaultMessage"
         every { methodArgumentNotValidException.bindingResult.fieldErrors } returns listOf(fieldError)
 
-        val response = errorHandler.handleMethodArgumentNotValid(
-            methodArgumentNotValidException,
-            HttpHeaders(),
-            HttpStatus.BAD_REQUEST,
-            webRequest
-        ) as ResponseEntity<ErrorV1>
+        val response =
+            errorHandler.handleMethodArgumentNotValid(
+                methodArgumentNotValidException,
+                HttpHeaders(),
+                HttpStatus.BAD_REQUEST,
+                webRequest,
+            ) as ResponseEntity<ErrorV1>
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
         assertEquals("defaultMessage", response.body?.details?.get("field"))
@@ -215,7 +216,7 @@ class ErrorHandlerTest {
 
     @Suppress("UNCHECKED_CAST")
     @Test
-    fun `given an MethodArgumentNotValid when handling if field error message is null should return all fields errors with invalid message`() {
+    fun `given an MethodArgumentNotValid when field error message is null should return all fields errors with invalid message`() {
         val methodArgumentNotValidException = mockk<MethodArgumentNotValidException>()
         val fieldError = mockk<FieldError>()
 
@@ -223,12 +224,13 @@ class ErrorHandlerTest {
         every { fieldError.defaultMessage } returns null
         every { methodArgumentNotValidException.bindingResult.fieldErrors } returns listOf(fieldError)
 
-        val response = errorHandler.handleMethodArgumentNotValid(
-            methodArgumentNotValidException,
-            HttpHeaders(),
-            HttpStatus.BAD_REQUEST,
-            webRequest
-        ) as ResponseEntity<ErrorV1>
+        val response =
+            errorHandler.handleMethodArgumentNotValid(
+                methodArgumentNotValidException,
+                HttpHeaders(),
+                HttpStatus.BAD_REQUEST,
+                webRequest,
+            ) as ResponseEntity<ErrorV1>
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
         assertEquals("invalid", response.body?.details?.get("field"))

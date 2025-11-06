@@ -10,16 +10,17 @@ data class IntrospectResponseV1(
     val exp: Long,
     val iat: Long,
     val roles: List<String>?,
-    val permissions: List<String>?
+    val permissions: List<String>?,
 )
 
-fun IntrospectDto.toResponseV1(): IntrospectResponseV1 = IntrospectResponseV1(
-    active = this.active,
-    sid = this.sid,
-    sub = this.sub,
-    iss = this.iss,
-    exp = this.exp,
-    iat = this.iat,
-    roles = this.roles,
-    permissions = this.permissions
-)
+fun IntrospectDto.toResponseV1(): IntrospectResponseV1 =
+    IntrospectResponseV1(
+        active = this.active,
+        sid = this.sid,
+        sub = this.sub,
+        iss = this.iss,
+        exp = this.exp,
+        iat = this.iat,
+        roles = this.roles,
+        permissions = this.permissions,
+    )

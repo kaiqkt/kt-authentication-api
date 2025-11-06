@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class AuthenticationService (
+class AuthenticationService(
     private val sessionService: SessionService,
     private val tokenService: TokenService,
 ) {

@@ -9,12 +9,12 @@ object AuthenticationTokenRequestV1Sampler {
         clientId: String? = ULID.random(),
         email: String? = "kt@kt.com",
         password: String? = "strong-password",
-        grantType: String = "refresh_token"
+        grantType: String = "refresh_token",
     ) = AuthorizationRequestV1(
         refreshToken = refreshToken,
         clientId = clientId,
         email = email,
         password = password,
-        grantType = grantType
+        grantType = grantType,
     )
 }

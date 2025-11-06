@@ -19,7 +19,7 @@ class RoleControllerTest {
     private val roleController = RoleController(roleService)
 
     @Test
-    fun `given a request should create a role successfully`(){
+    fun `given a request should create a role successfully`() {
         every { roleService.create(any()) } returns RoleSampler.sample()
 
         val response = roleController.create(RoleRequestV1Sampler.sample())
@@ -30,18 +30,18 @@ class RoleControllerTest {
     }
 
     @Test
-    fun `given a role id and a permission should associate successfully`(){
+    fun `given a role id and a permission should associate successfully`() {
         justRun { roleService.associate(any(), any()) }
 
         val response = roleController.associate(ULID.random(), ULID.random())
 
-        verify { roleService.associate(any(),any()) }
+        verify { roleService.associate(any(), any()) }
 
         assertEquals(HttpStatus.NO_CONTENT, response.statusCode)
     }
 
     @Test
-    fun `given a role id should delete successfully`(){
+    fun `given a role id should delete successfully`() {
         justRun { roleService.delete(any()) }
 
         val response = roleController.delete(ULID.random())
@@ -52,18 +52,18 @@ class RoleControllerTest {
     }
 
     @Test
-    fun `given a request should return roles with pagination successfully`(){
+    fun `given a request should return roles with pagination successfully`() {
         every { roleService.findAll(any()) } returns PageImpl(listOf(RoleSampler.sample()))
 
         val response = roleController.findAll(0, 0, "DESC", null)
 
-        verify {  roleService.findAll(any()) }
+        verify { roleService.findAll(any()) }
 
         assertEquals(HttpStatus.OK, response.statusCode)
     }
 
     @Test
-    fun `given a role id should return a role successfully`(){
+    fun `given a role id should return a role successfully`() {
         every { roleService.findById(any()) } returns RoleSampler.sample()
 
         val response = roleController.findById(ULID.random())

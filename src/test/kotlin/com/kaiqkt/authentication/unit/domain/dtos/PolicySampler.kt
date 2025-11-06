@@ -20,7 +20,7 @@ object PolicySampler {
         uri = uri,
         method = method,
         isPublic = isPublic,
-        resourceServer = resourceServer
+        resourceServer = resourceServer,
     ).apply {
         permissions.add(permission)
         roles.add(role)

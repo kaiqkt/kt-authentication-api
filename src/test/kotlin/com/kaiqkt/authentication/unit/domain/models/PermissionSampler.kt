@@ -7,10 +7,10 @@ object PermissionSampler {
     fun sample(
         resource: String = "authentication",
         verb: String = "view",
-        resourceServer: ResourceServer = ResourceServerSampler.sample()
+        resourceServer: ResourceServer = ResourceServerSampler.sample(),
     ) = Permission(
         resource = resource,
         verb = verb,
-        resourceServer = resourceServer
+        resourceServer = resourceServer,
     )
 }

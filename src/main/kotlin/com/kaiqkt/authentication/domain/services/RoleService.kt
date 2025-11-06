@@ -16,7 +16,7 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class RoleService(
     private val roleRepository: RoleRepository,
-    private val permissionService: PermissionService
+    private val permissionService: PermissionService,
 ) {
     private val log = LoggerFactory.getLogger(PermissionService::class.java)
     private val allowedSortFields = Constants.Sort.getAllowedFiled("name")
@@ -26,10 +26,11 @@ class RoleService(
             throw DomainException(ErrorType.ROLE_ALREADY_EXISTS)
         }
 
-        val role = Role(
-            name = roleDto.name.uppercase(),
-            description = roleDto.description
-        )
+        val role =
+            Role(
+                name = roleDto.name.uppercase(),
+                description = roleDto.description,
+            )
 
         roleRepository.save(role)
 
@@ -38,10 +39,9 @@ class RoleService(
         return role
     }
 
-    fun findById(roleId: String): Role {
-        return roleRepository.findById(roleId).getOrNull()
+    fun findById(roleId: String): Role =
+        roleRepository.findById(roleId).getOrNull()
             ?: throw DomainException(ErrorType.ROLE_NOT_FOUND)
-    }
 
     fun delete(roleId: String) {
         roleRepository.deleteById(roleId)
@@ -60,7 +60,10 @@ class RoleService(
     }
 
     @Transactional
-    fun associate(roleId: String, permissionId: String) {
+    fun associate(
+        roleId: String,
+        permissionId: String,
+    ) {
         val permission = permissionService.findById(permissionId)
         val role = findById(roleId)
 
