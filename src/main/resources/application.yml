@@ -15,7 +15,7 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 authentication:
-  session-ttl: ${AUTHENTICATION_SESSION_TTL}
-  issuer: ${AUTHENTICATION_ISSUER}
-  access-token-ttl: ${AUTHENTICATION_ACCESS_TOKEN_TTL}
-  access-token-secret: ${AUTHENTICATION_ACCESS_TOKEN_SECRET}
+  session-ttl: ${SESSION_TTL}
+  issuer: ${ISSUER}
+  access-token-ttl: ${ACCESS_TOKEN_TTL}
+  access-token-secret: ${ACCESS_TOKEN_SECRET}
