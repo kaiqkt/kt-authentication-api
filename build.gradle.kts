@@ -16,6 +16,10 @@ java {
     }
 }
 
+tasks.named<Jar>("bootJar") {
+    archiveFileName.set("app.jar")
+}
+
 jacoco {
     toolVersion = "0.8.12"
 }
