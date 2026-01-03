@@ -15,18 +15,18 @@ class TokenServiceTest {
     private val issuer = "kt-authentication-api"
     private val accessTokenTll = 300L
     private val accessTokenSecret = "k2p4/4gX5h0x/1B9Y9O2VJ6ZcfjWQmV5UQJ4cZP9YvE="
-    private val tokenService = TokenService(issuer, accessTokenTll, accessTokenSecret)
+    private val applicationName = "app-name"
+    private val tokenService = TokenService(issuer, accessTokenTll, accessTokenSecret, applicationName)
 
     @Test
     fun `given a token should return JWTClaimsSet`() {
         val subjectId = ULID.random()
         val sidId = ULID.random()
-        val audience = ULID.random()
         val permissions = setOf(PermissionSampler.sample())
         val roles = setOf(RoleSampler.sample().apply { this.permissions.addAll(permissions) })
         val resourceVerbs = roles.flatMap(Role::permissions).map { "${it.resource}.${it.verb}" }
 
-        val tokens = tokenService.issueTokens(subjectId, audience, sidId, roles, permissions)
+        val tokens = tokenService.issueTokens(subjectId, sidId, roles, permissions)
 
         val claims = tokenService.getClaims(tokens.accessToken)
 
@@ -41,7 +41,7 @@ class TokenServiceTest {
 
     @Test
     fun `given a token when signature is invalid thrown an DomainException`() {
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), ULID.random(), setOf(), setOf())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), setOf(), setOf())
 
         tokenService::class.java.getDeclaredField("accessTokenSecret").apply {
             isAccessible = true
@@ -63,7 +63,7 @@ class TokenServiceTest {
             set(tokenService, 1L)
         }
 
-        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), ULID.random(), setOf(), setOf())
+        val tokens = tokenService.issueTokens(ULID.random(), ULID.random(), setOf(), setOf())
 
         Thread.sleep(1001)
 

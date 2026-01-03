@@ -5,7 +5,6 @@ import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.repositories.SessionRepository
 import com.kaiqkt.authentication.domain.services.SessionService
 import com.kaiqkt.authentication.unit.domain.dtos.PageRequestDtoSampler
-import com.kaiqkt.authentication.unit.domain.models.ClientSampler
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import io.azam.ulidj.ULID
@@ -30,30 +29,30 @@ class SessionServiceTest {
     fun `given a id, refresh token and a user should create a session`() {
         every { sessionRepository.save(any()) } returns SessionSampler.sample()
 
-        sessionService.save(ULID.random(), ClientSampler.sample(), "refreshToken", UserSampler.sample())
+        sessionService.save(ULID.random(), "refreshToken", UserSampler.sample())
 
         verify { sessionRepository.save(any()) }
     }
 
     @Test
-    fun `given a client id and refresh token when exist a session should return successfully`() {
-        every { sessionRepository.findByRefreshToken(any(), any()) } returns SessionSampler.sample()
+    fun `given a refresh token when exist a session should return successfully`() {
+        every { sessionRepository.findByRefreshToken(any()) } returns SessionSampler.sample()
 
-        sessionService.findByClientIdAndRefreshToken(ULID.random(), "refreshToken")
+        sessionService.findByRefreshToken("refreshToken")
 
-        verify { sessionRepository.findByRefreshToken(any(), any()) }
+        verify { sessionRepository.findByRefreshToken(any()) }
     }
 
     @Test
-    fun `given a client id and refresh token when not exist a session should thrown a exception`() {
-        every { sessionRepository.findByRefreshToken(any(), any()) } returns null
+    fun `given a refresh token when not exist a session should thrown a exception`() {
+        every { sessionRepository.findByRefreshToken(any()) } returns null
 
         val exception =
             assertThrows<DomainException> {
-                sessionService.findByClientIdAndRefreshToken(ULID.random(), "refreshToken")
+                sessionService.findByRefreshToken("refreshToken")
             }
 
-        verify { sessionRepository.findByRefreshToken(any(), any()) }
+        verify { sessionRepository.findByRefreshToken(any()) }
 
         assertEquals(ErrorType.SESSION_NOT_FOUND, exception.type)
     }

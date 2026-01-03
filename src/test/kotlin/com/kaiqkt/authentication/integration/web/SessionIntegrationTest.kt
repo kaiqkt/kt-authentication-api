@@ -4,7 +4,6 @@ import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.responses.PageResponse
-import com.kaiqkt.authentication.unit.domain.models.ClientSampler
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import io.azam.ulidj.ULID
@@ -16,8 +15,7 @@ class SessionIntegrationTest : IntegrationTest() {
     @Test
     fun `given a session id and a user id when session exist should revoke successfully`() {
         val user = userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val session = sessionRepository.save(SessionSampler.sample(client, user))
+        val session = sessionRepository.save(SessionSampler.sample(user))
 
         given()
             .header("X-User-Id", user.id)
@@ -61,8 +59,7 @@ class SessionIntegrationTest : IntegrationTest() {
     @Test
     fun `given a user id and parameters should return sessions paginated successfully`() {
         val user = userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        sessionRepository.save(SessionSampler.sample(client, user))
+        sessionRepository.save(SessionSampler.sample(user))
 
         val response =
             given()

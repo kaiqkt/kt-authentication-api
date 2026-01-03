@@ -12,15 +12,11 @@ interface SessionRepository : JpaRepository<Session, String> {
         """
         SELECT s FROM Session s
         WHERE s.refreshToken = :refreshToken
-        AND s.client.id = :clientId
         AND s.expireAt > CURRENT_TIMESTAMP AND s.revokedAt IS NULL
         AND s.revokedAt IS NULL
     """,
     )
-    fun findByRefreshToken(
-        clientId: String,
-        refreshToken: String,
-    ): Session?
+    fun findByRefreshToken(refreshToken: String): Session?
 
     @Query(
         """

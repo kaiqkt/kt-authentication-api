@@ -7,7 +7,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
 }
 
-group = "com.trippy"
+group = "com.kaiqkt"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -42,6 +42,8 @@ dependencies {
     implementation("com.nimbusds:nimbus-jose-jwt:10.5")
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
     implementation("ch.qos.logback:logback-classic:1.5.20")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 
     testImplementation("org.mock-server:mockserver-netty-no-dependencies:5.15.0")
     testImplementation("org.mock-server:mockserver-client-java-no-dependencies:5.15.0") {

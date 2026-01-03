@@ -1,4 +1,4 @@
-package com.kaiqkt.authentication.application.web.handler
+package com.kaiqkt.authentication.application.web.handlers
 
 import com.kaiqkt.authentication.application.exceptions.InvalidRequestException
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
@@ -79,13 +79,9 @@ class ErrorHandler : ResponseEntityExceptionHandler() {
             ErrorType.USER_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.SESSION_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.INVALID_FIELD -> HttpStatus.BAD_REQUEST
-            ErrorType.RESOURCE_SERVER_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.PERMISSION_ALREADY_EXISTS -> HttpStatus.CONFLICT
             ErrorType.PERMISSION_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.ROLE_NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorType.ROLE_ALREADY_EXISTS -> HttpStatus.CONFLICT
-            ErrorType.POLICY_ALREADY_EXISTS -> HttpStatus.CONFLICT
-            ErrorType.POLICY_NOT_FOUND -> HttpStatus.NOT_FOUND
-            ErrorType.CLIENT_NOT_FOUND -> HttpStatus.NOT_FOUND
         }
 }

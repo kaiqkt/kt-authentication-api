@@ -7,7 +7,6 @@ import com.kaiqkt.authentication.domain.exceptions.ErrorType
 import com.kaiqkt.authentication.domain.utils.Constants
 import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.requests.AuthenticationTokenRequestV1Sampler
-import com.kaiqkt.authentication.unit.domain.models.ClientSampler
 import com.kaiqkt.authentication.unit.domain.models.SessionSampler
 import com.kaiqkt.authentication.unit.domain.models.UserSampler
 import com.nimbusds.jose.JOSEObjectType
@@ -29,27 +28,8 @@ import kotlin.test.assertTrue
 
 class AuthIntegrationTest : IntegrationTest() {
     @Test
-    fun `given a request to login with client id, email and password client user does not exist should thrown an exception`() {
+    fun `given a request to login email and password when user does not exist should thrown an exception`() {
         val request = AuthenticationTokenRequestV1Sampler.sample(grantType = "password")
-
-        val response =
-            given()
-                .contentType(ContentType.JSON)
-                .body(request)
-                .post("/v1/oauth/token")
-                .then()
-                .statusCode(404)
-                .extract()
-                .`as`(ErrorV1::class.java)
-
-        assertEquals(ErrorType.CLIENT_NOT_FOUND.name, response.type)
-        assertEquals(ErrorType.CLIENT_NOT_FOUND.message, response.message)
-    }
-
-    @Test
-    fun `given a request to login with client id, email and password when user does not exist should thrown an exception`() {
-        val client = clientRepository.save(ClientSampler.sample())
-        val request = AuthenticationTokenRequestV1Sampler.sample(clientId = client.id, grantType = "password")
 
         val response =
             given()
@@ -68,8 +48,7 @@ class AuthIntegrationTest : IntegrationTest() {
     @Test
     fun `given a request to login with email and password when user exist but password does not match should thrown an exception`() {
         userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val request = AuthenticationTokenRequestV1Sampler.sample(clientId = client.id, grantType = "password", password = "pass")
+        val request = AuthenticationTokenRequestV1Sampler.sample(grantType = "password", password = "pass")
 
         val response =
             given()
@@ -88,8 +67,7 @@ class AuthIntegrationTest : IntegrationTest() {
     @Test
     fun `given a request to login with email and password when user exist and password does match should authenticate successfully`() {
         userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val request = AuthenticationTokenRequestV1Sampler.sample(clientId = client.id, grantType = "password")
+        val request = AuthenticationTokenRequestV1Sampler.sample(grantType = "password")
 
         val response =
             given()
@@ -108,12 +86,10 @@ class AuthIntegrationTest : IntegrationTest() {
     @Test
     fun `given a request to access tokens using a refresh token should return a pair of tokens successfully`() {
         val user = userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val session = sessionRepository.save(SessionSampler.sample(client, user))
+        val session = sessionRepository.save(SessionSampler.sample(user))
 
         val request =
             AuthenticationTokenRequestV1Sampler.sample(
-                clientId = client.id,
                 refreshToken = session.refreshToken,
                 grantType = "refresh_token",
             )
@@ -204,7 +180,6 @@ class AuthIntegrationTest : IntegrationTest() {
     fun `given a request to access token using refresh token when request is invalid thrown an exception`() {
         val request =
             AuthenticationTokenRequestV1Sampler.sample(
-                clientId = null,
                 refreshToken = null,
             )
 
@@ -221,7 +196,6 @@ class AuthIntegrationTest : IntegrationTest() {
         println(response)
 
         assertEquals("must not be null or blank", response.details["refresh_token"])
-        assertEquals("must not be null or blank", response.details["client_id"])
         assertEquals("INVALID_REQUEST", response.type)
         assertEquals("Invalid request", response.message)
     }
@@ -229,8 +203,7 @@ class AuthIntegrationTest : IntegrationTest() {
     @Test
     fun `given a introspect when session is not expired and revoked should return active`() {
         val user = userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val session = sessionRepository.save(SessionSampler.sample(client, user))
+        val session = sessionRepository.save(SessionSampler.sample(user))
         val accessToken = getAccessToken(user.id, session.id, accessTokenSecret)
 
         val response =
@@ -251,8 +224,7 @@ class AuthIntegrationTest : IntegrationTest() {
     @Test
     fun `given a request to introspect when session is expired and revoked should return the introspection data with active false`() {
         val user = userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val session = sessionRepository.save(SessionSampler.sample(client, user, LocalDateTime.now().minusSeconds(300)))
+        val session = sessionRepository.save(SessionSampler.sample(user, LocalDateTime.now().minusSeconds(300)))
         val accessToken = getAccessToken(user.id, session.id, accessTokenSecret)
 
         val response =
@@ -273,8 +245,7 @@ class AuthIntegrationTest : IntegrationTest() {
     @Test
     fun `given a request to introspect when access token has a invalid signature should thrown an exception`() {
         val user = userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val session = sessionRepository.save(SessionSampler.sample(client, user, LocalDateTime.now().minusSeconds(300)))
+        val session = sessionRepository.save(SessionSampler.sample(user, LocalDateTime.now().minusSeconds(300)))
         val accessToken = getAccessToken(user.id, session.id, "i".repeat(256))
 
         val response =
@@ -310,8 +281,7 @@ class AuthIntegrationTest : IntegrationTest() {
     @Test
     fun `given a request to introspect when access token is expired should thrown an exception`() {
         val user = userRepository.save(UserSampler.sample())
-        val client = clientRepository.save(ClientSampler.sample())
-        val session = sessionRepository.save(SessionSampler.sample(client, user, LocalDateTime.now().minusSeconds(300)))
+        val session = sessionRepository.save(SessionSampler.sample(user, LocalDateTime.now().minusSeconds(300)))
         val accessToken = getAccessToken(user.id, session.id, accessTokenSecret, Instant.now().minusSeconds(300))
 
         val response =

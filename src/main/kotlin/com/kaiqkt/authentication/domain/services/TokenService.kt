@@ -23,23 +23,24 @@ import java.util.Date
 
 @Service
 class TokenService(
-    @param:Value("\${authentication.issuer}")
+    @param:Value($$"${authentication.issuer}")
     private val issuer: String,
-    @param:Value("\${authentication.access-token-ttl}")
+    @param:Value($$"${authentication.access-token-ttl}")
     private val accessTokenTll: Long,
-    @param:Value("\${authentication.access-token-secret}")
+    @param:Value($$"${authentication.access-token-secret}")
     private val accessTokenSecret: String,
+    @param:Value($$"${spring.application.name}")
+    private val applicationName: String,
 ) {
     private val secureRandom = SecureRandom()
 
     fun issueTokens(
         subject: String,
-        audience: String,
         sid: String,
         roles: Set<Role>,
         permissions: Set<Permission>,
     ): TokensDto {
-        val accessToken = signToken(subject, audience, accessTokenTll, sid, roles, permissions)
+        val accessToken = signToken(subject, accessTokenTll, sid, roles, permissions)
         val refreshToken = opaqueToken()
 
         return TokensDto(
@@ -71,7 +72,6 @@ class TokenService(
 
     private fun signToken(
         subject: String,
-        audience: String,
         ttl: Long,
         sid: String,
         roles: Set<Role>,
@@ -84,7 +84,7 @@ class TokenService(
                 .Builder()
                 .issuer(issuer)
                 .subject(subject)
-                .audience(audience)
+                .audience(applicationName)
                 .issueTime(Date.from(now))
                 .expirationTime(Date.from(now.plusSeconds(ttl)))
                 .claim(Constants.Keys.SID, sid)

@@ -8,7 +8,6 @@ import com.kaiqkt.authentication.integration.IntegrationTest
 import com.kaiqkt.authentication.unit.application.web.requests.RoleRequestV1Sampler
 import com.kaiqkt.authentication.unit.application.web.responses.PageResponse
 import com.kaiqkt.authentication.unit.domain.models.PermissionSampler
-import com.kaiqkt.authentication.unit.domain.models.ResourceServerSampler
 import com.kaiqkt.authentication.unit.domain.models.RoleSampler
 import io.azam.ulidj.ULID
 import io.restassured.RestAssured.given
@@ -123,8 +122,7 @@ class RoleIntegrationTest : IntegrationTest() {
     @Test
     fun `given a role id and a permission id should associate successfully`() {
         val role = roleRepository.save(RoleSampler.sample())
-        val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
-        val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
+        val permission = permissionRepository.save(PermissionSampler.sample())
 
         given()
             .patch("/v1/roles/${role.id}/associate/${permission.id}")
@@ -134,8 +132,7 @@ class RoleIntegrationTest : IntegrationTest() {
 
     @Test
     fun `given a role id and a permission id to associate when role does not exists should thrown an exception`() {
-        val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
-        val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
+        val permission = permissionRepository.save(PermissionSampler.sample())
 
         val response =
             given()
@@ -184,8 +181,7 @@ class RoleIntegrationTest : IntegrationTest() {
     @Test
     fun `given a role id and a permission id should disassociate successfully`() {
         val role = roleRepository.save(RoleSampler.sample())
-        val resourceServer = resourceServerRepository.save(ResourceServerSampler.sample())
-        val permission = permissionRepository.save(PermissionSampler.sample(resourceServer = resourceServer))
+        val permission = permissionRepository.save(PermissionSampler.sample())
 
         given()
             .patch("/v1/roles/${role.id}/associate/${permission.id}")

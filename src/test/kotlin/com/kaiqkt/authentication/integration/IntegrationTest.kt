@@ -1,10 +1,7 @@
 package com.kaiqkt.authentication.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kaiqkt.authentication.domain.repositories.ClientRepository
 import com.kaiqkt.authentication.domain.repositories.PermissionRepository
-import com.kaiqkt.authentication.domain.repositories.PolicyRepository
-import com.kaiqkt.authentication.domain.repositories.ResourceServerRepository
 import com.kaiqkt.authentication.domain.repositories.RoleRepository
 import com.kaiqkt.authentication.domain.repositories.SessionRepository
 import com.kaiqkt.authentication.domain.repositories.UserRepository
@@ -46,19 +43,10 @@ class IntegrationTest {
     lateinit var sessionRepository: SessionRepository
 
     @Autowired
-    lateinit var resourceServerRepository: ResourceServerRepository
-
-    @Autowired
     lateinit var permissionRepository: PermissionRepository
 
     @Autowired
     lateinit var roleRepository: RoleRepository
-
-    @Autowired
-    lateinit var policyRepository: PolicyRepository
-
-    @Autowired
-    lateinit var clientRepository: ClientRepository
 
     @BeforeAll
     fun before() {
@@ -75,10 +63,7 @@ class IntegrationTest {
     @BeforeEach
     fun beforeEach() {
         userRepository.deleteAll()
-        policyRepository.deleteAll()
         roleRepository.deleteAll()
         permissionRepository.deleteAll()
-        resourceServerRepository.deleteAll()
-        clientRepository.deleteAll()
     }
 }

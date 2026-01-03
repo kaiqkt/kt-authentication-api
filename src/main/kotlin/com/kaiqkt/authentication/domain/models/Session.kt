@@ -22,9 +22,6 @@ class Session(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     val user: User = User(),
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id")
-    val client: Client = Client(),
     var refreshToken: String = "",
     var expireAt: LocalDateTime = LocalDateTime.now(),
 ) {

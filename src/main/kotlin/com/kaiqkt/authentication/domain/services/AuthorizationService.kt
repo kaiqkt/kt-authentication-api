@@ -17,7 +17,6 @@ class AuthorizationService(
     private val passwordEncoder: PasswordEncoder,
     private val tokenService: TokenService,
     private val userService: UserService,
-    private val clientService: ClientService,
 ) {
     private val log = LoggerFactory.getLogger(AuthorizationService::class.java)
 
@@ -29,7 +28,6 @@ class AuthorizationService(
 
     @Transactional
     private fun login(passwordDto: AuthorizationDto.Password): TokensDto {
-        val client = clientService.findById(passwordDto.clientId)
         val user = userService.findByEmailAndType(passwordDto.email, AuthenticationType.PASSWORD)
 
         if (!passwordEncoder.matches(passwordDto.password, user.password)) {
@@ -40,13 +38,15 @@ class AuthorizationService(
         val tokens =
             tokenService.issueTokens(
                 subject = user.id,
-                audience = passwordDto.clientId,
                 sid = sessionId,
                 roles = user.roles,
                 permissions = setOf(),
             )
 
-        sessionService.save(sessionId, client, tokens.refreshToken, user)
+        sessionService.save(sessionId, tokens.refreshToken, user)
+
+        // AUTHORIZATION
+        // TYPE:PASSWROD
 
         log.info("User ${user.id} authenticated")
 
@@ -54,19 +54,21 @@ class AuthorizationService(
     }
 
     private fun refresh(refreshDto: AuthorizationDto.Refresh): TokensDto {
-        val session = sessionService.findByClientIdAndRefreshToken(refreshDto.clientId, refreshDto.refreshToken)
+        val session = sessionService.findByRefreshToken(refreshDto.refreshToken)
         val user = session.user
 
         val tokens =
             tokenService.issueTokens(
                 subject = user.id,
-                audience = session.client.id,
                 sid = session.id,
                 roles = user.roles,
                 permissions = setOf(),
             )
 
-        sessionService.save(session.id, session.client, tokens.refreshToken, user)
+        sessionService.save(session.id, tokens.refreshToken, user)
+
+        // AUTHORIZATION
+        // TYPE:REFRESH
 
         log.info("Refresh authentication for session ${session.id} of user ${user.id}")
 

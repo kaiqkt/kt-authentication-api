@@ -3,7 +3,6 @@ package com.kaiqkt.authentication.domain.services
 import com.kaiqkt.authentication.domain.dtos.PageRequestDto
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
-import com.kaiqkt.authentication.domain.models.Client
 import com.kaiqkt.authentication.domain.models.Session
 import com.kaiqkt.authentication.domain.models.User
 import com.kaiqkt.authentication.domain.repositories.SessionRepository
@@ -19,7 +18,7 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class SessionService(
     private val sessionRepository: SessionRepository,
-    @param:Value("\${authentication.session-ttl}")
+    @param:Value($$"${authentication.session-ttl}")
     private val sessionTtl: Long,
 ) {
     private val log = LoggerFactory.getLogger(SessionService::class.java)
@@ -27,14 +26,12 @@ class SessionService(
 
     fun save(
         sessionId: String,
-        client: Client,
         refreshToken: String,
         user: User,
     ): Session {
         val session =
             Session(
                 id = sessionId,
-                client = client,
                 user = user,
                 refreshToken = refreshToken,
                 expireAt = LocalDateTime.now().plusSeconds(sessionTtl),
@@ -47,11 +44,8 @@ class SessionService(
         return session
     }
 
-    fun findByClientIdAndRefreshToken(
-        clientId: String,
-        refreshToken: String,
-    ): Session =
-        sessionRepository.findByRefreshToken(clientId, refreshToken)
+    fun findByRefreshToken(refreshToken: String): Session =
+        sessionRepository.findByRefreshToken(refreshToken)
             ?: throw DomainException(ErrorType.SESSION_NOT_FOUND)
 
     fun findById(sessionId: String): Session? = sessionRepository.findById(sessionId).getOrNull()
@@ -70,6 +64,7 @@ class SessionService(
         log.info("Session $sessionId revoked")
     }
 
+    // fix
     fun findAllByUserId(
         userId: String,
         pageRequestDto: PageRequestDto,

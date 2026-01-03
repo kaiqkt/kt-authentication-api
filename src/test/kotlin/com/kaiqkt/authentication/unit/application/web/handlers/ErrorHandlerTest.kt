@@ -1,7 +1,7 @@
-package com.kaiqkt.authentication.unit.application.web.handler
+package com.kaiqkt.authentication.unit.application.web.handlers
 
 import com.kaiqkt.authentication.application.exceptions.InvalidRequestException
-import com.kaiqkt.authentication.application.web.handler.ErrorHandler
+import com.kaiqkt.authentication.application.web.handlers.ErrorHandler
 import com.kaiqkt.authentication.application.web.responses.ErrorV1
 import com.kaiqkt.authentication.domain.exceptions.DomainException
 import com.kaiqkt.authentication.domain.exceptions.ErrorType
@@ -23,39 +23,6 @@ import kotlin.test.assertEquals
 class ErrorHandlerTest {
     private val webRequest: WebRequest = mockk()
     private val errorHandler = ErrorHandler()
-
-    @Test
-    fun `given an DomainException when is CLIENT_NOT_FOUND should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.CLIENT_NOT_FOUND)
-
-        val response = errorHandler.handleDomainException(domainException)
-
-        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.CLIENT_NOT_FOUND.name, response.body?.type)
-        assertEquals("Client not found", response.body?.message)
-    }
-
-    @Test
-    fun `given an DomainException when is POLICY_ALREADY_EXISTS should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.POLICY_ALREADY_EXISTS)
-
-        val response = errorHandler.handleDomainException(domainException)
-
-        assertEquals(HttpStatus.CONFLICT, response.statusCode)
-        assertEquals(ErrorType.POLICY_ALREADY_EXISTS.name, response.body?.type)
-        assertEquals("Policy already exists with uri and method for the given resource server", response.body?.message)
-    }
-
-    @Test
-    fun `given an DomainException when is POLICY_NOT_FOUND should return the message based on the error type`() {
-        val domainException = DomainException(ErrorType.POLICY_NOT_FOUND)
-
-        val response = errorHandler.handleDomainException(domainException)
-
-        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
-        assertEquals(ErrorType.POLICY_NOT_FOUND.name, response.body?.type)
-        assertEquals("Policy not found", response.body?.message)
-    }
 
     @Test
     fun `given an DomainException when is PERMISSION_NOT_FOUND should return the message based on the error type`() {
@@ -98,7 +65,7 @@ class ErrorHandlerTest {
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
         assertEquals(ErrorType.PERMISSION_ALREADY_EXISTS.name, response.body?.type)
-        assertEquals("Permission with resource and verb already exists", response.body?.message)
+        assertEquals("Permission already exists", response.body?.message)
     }
 
     @Test

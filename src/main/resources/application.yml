@@ -14,6 +14,16 @@ spring:
     password: ${POSTGRESQL_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  metrics:
+    tags:
+      application: kt-authentication-api
+
+
 authentication:
   session-ttl: ${SESSION_TTL}
   issuer: ${ISSUER}

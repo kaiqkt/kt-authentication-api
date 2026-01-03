@@ -17,6 +17,8 @@ class AuthenticationService(
         val sessionId = claims.getStringClaim(Constants.Keys.SID)
         val session = sessionService.findById(sessionId)
 
+        // INTROSPECTION
+
         return IntrospectDto(
             active = session != null,
             sid = sessionId,

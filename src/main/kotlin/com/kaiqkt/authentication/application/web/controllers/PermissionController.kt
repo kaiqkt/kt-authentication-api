@@ -28,12 +28,11 @@ import org.springframework.web.bind.annotation.RestController
 class PermissionController(
     private val permissionService: PermissionService,
 ) {
-    @PostMapping("/v1/resources/{resource_server_id}/permissions")
+    @PostMapping("/v1/permissions")
     fun create(
-        @PathVariable("resource_server_id") resourceId: String,
         @Valid @RequestBody requestV1: PermissionRequestV1,
     ): ResponseEntity<PermissionResponseV1> {
-        val response = permissionService.create(resourceId, requestV1.toDto()).toResponseV1()
+        val response = permissionService.create(requestV1.toDto()).toResponseV1()
 
         return ResponseEntity.ok(response)
     }
@@ -74,10 +73,9 @@ class PermissionController(
         sort: String,
         @RequestParam(value = "sort_by", required = false)
         sortBy: String?,
-        @RequestParam(value = "resource_server_id", required = false) resourceServerId: String?,
     ): ResponseEntity<Page<PermissionResponseV1>> {
         val pageRequest = PageRequestDto(page, size, Sort.Direction.valueOf(sort), sortBy)
-        val response = permissionService.findAll(resourceServerId, pageRequest).map { it.toResponseV1() }
+        val response = permissionService.findAll(pageRequest).map { it.toResponseV1() }
 
         return ResponseEntity.ok(response)
     }
